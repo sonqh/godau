@@ -65,6 +65,11 @@ The active OpenSpec change is [macos-transport-spike](openspec/changes/macos-tra
 It proves ordered replacement and context resets with `as` → `á` and `aa` → `â` before a full Telex engine.
 Native verification must cover the required fields and autocomplete behavior in all five apps.
 
+The follow-on [Telex input MVP plan](openspec/changes/telex-input-mvp/proposal.md) covers the complete reducer,
+English/Vietnamese controls, full-engine native acceptance, and separate reducer/callback performance gates.
+Its [specifications](openspec/changes/telex-input-mvp/specs/telex-composition/spec.md) use Son's selected `hòa`, `khỏe`, and `thúy` convention.
+Implement it only after the native spike passes; these artifacts describe planned behavior, not delivered typing support.
+
 ```sh
 ./scripts/openspec.sh status --change macos-transport-spike
 python3 scripts/ledger.py recent --limit 5

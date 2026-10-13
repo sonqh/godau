@@ -10,6 +10,7 @@ Prove the no-underline replacement path in Son's required apps before implementi
 - Add a user-session event tap, generated-event tagging, and explicit key pairing.
 - Add ordered replacement for synthetic `as` → `á` and `aa` → `â` examples.
 - Add context invalidation, permission status, pause, and bounded lifecycle recovery.
+- Prevent replacement when field ownership or the tracked suffix is uncertain; do not attempt blind rollback after a partial send.
 - Check native behavior in VS Code, Chrome, Edge, Dia, and Apple Notes, including browser suggestions.
 - Record callback own-work timing separately from planner timings.
 
@@ -33,3 +34,10 @@ It adds native test evidence and measured callback instrumentation.
 It requires a usable app identity and user-enabled capabilities for interactive acceptance.
 The app must not create marked text or composition underline.
 No compatibility claim is complete until each required field family has native evidence.
+
+## Completion and follow-on
+
+The gate requires every field in the native matrix to pass, with exact text, caret, selection, and preservation checks.
+Model checks and a successful build do not satisfy this gate.
+The follow-on `telex-input-mvp` change adds the language engine and daily-use acceptance after M0 passes.
+Both changes describe planned behavior; this proposal does not establish runtime compatibility.

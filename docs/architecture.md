@@ -112,4 +112,10 @@ The development ledger supports agent continuity without entering the keyboard p
 4. M3 verifies personal packaging, signing identity, permissions, sleep/wake, and opt-in startup.
 
 The shell and planner do not complete M0. Native acceptance tasks remain unchecked.
+The planned [Telex input MVP change](../openspec/changes/telex-input-mvp/proposal.md) groups M1 through personal M3 acceptance,
+with explicit [language behavior](../openspec/changes/telex-input-mvp/specs/telex-composition/spec.md),
+[mode controls](../openspec/changes/telex-input-mvp/specs/input-mode-control/spec.md),
+[native/model acceptance](../openspec/changes/telex-input-mvp/specs/telex-mvp-acceptance/spec.md),
+and [performance additions](../openspec/changes/telex-input-mvp/specs/performance-measurement/spec.md).
+It does not bypass the M0 gate or add implemented capabilities to the table above.
 The [performance policy](performance.md) defines measurement scopes and provisional budgets.
