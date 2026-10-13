@@ -34,7 +34,7 @@ Event delivery and visible application latency require separate observation.
 
 ## Benchmark evidence
 
-`sonkey-bench` warms the planner, records 10,000 durations, consumes results with a checksum, and emits JSON percentiles.
+`vietmac-bench` warms the planner, records 10,000 durations, consumes results with a checksum, and emits JSON percentiles.
 It refuses a Debug build. Measurements include timer overhead and are a local microbenchmark.
 Run without sanitizers or active profilers when collecting comparable baseline timings.
 Run sanitizer checks separately for safety.

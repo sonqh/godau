@@ -1,6 +1,6 @@
 # Research provenance
 
-SonKey's requirements come from Son's instructions on 2026-10-13:
+VietMac's requirements come from Son's instructions on 2026-10-13:
 
 - Personal macOS-only Vietnamese input app.
 - Telex and precomposed Unicode for the MVP.
@@ -8,7 +8,8 @@ SonKey's requirements come from Son's instructions on 2026-10-13:
 - VS Code, Chrome, Edge, Dia, and Notes as required apps.
 - Reusable boundaries, extension paths, a development ledger, and measured performance.
 
-Notes currently means Apple Notes. macOS 13 as the deployment floor and the name SonKey are implementation choices.
+Notes currently means Apple Notes. macOS 13 is the selected deployment floor.
+Son approved the name VietMac on 2026-10-13. The original scaffold was named SonKey.
 
 The source research baseline is OpenKey commit `89c2fd3bf258562f2349f89b49d81e2f140c3fc3`.
 The local research source is the sibling `OpenKey` repository.
@@ -17,7 +18,7 @@ Its `docs/vietnamese-input-review.md` and `docs/macos-vietnamese-input-design.md
 Verified old-engine examples include invalid standalone indexes, case-dependent vowel rules,
 lost tone on shape restoration, and raw history loss after Backspace.
 The old check count was 14 passing cases and 12 failing reproductions across engine and Windows helper scopes.
-Those counts describe OpenKey, not SonKey's tests or app compatibility.
+Those counts describe OpenKey, not VietMac's tests or app compatibility.
 
 This scaffold contains original contracts, a planner, and tooling. It does not import OpenKey production code or vowel tables.
 If later changes copy source or tables, record the exact source and retain its notices and stated license.

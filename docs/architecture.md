@@ -1,14 +1,14 @@
-# SonKey architecture
+# VietMac architecture
 
 The runtime consists of a reusable Swift core, a macOS adapter, and a small menu bar app.
 Development replay, benchmarks, OpenSpec, and the ledger remain outside the runtime dependency graph.
 
 ```mermaid
 flowchart LR
-    App[SonKeyApp presentation] --> Mac[SonKeyMac event adapter]
-    Mac --> Core[SonKeyCore composition and planning]
-    Replay[sonkey-replay] --> Core
-    Bench[sonkey-bench] --> Core
+    App[VietMacApp presentation] --> Mac[VietMacPlatform event adapter]
+    Mac --> Core[VietMacCore composition and planning]
+    Replay[vietmac-replay] --> Core
+    Bench[vietmac-bench] --> Core
     Tests[Model tests] --> Core
     Agents[Claude or Codex] --> Spec[OpenSpec specs and changes]
     Agents --> Ledger[Development ledger]
@@ -18,11 +18,11 @@ flowchart LR
 
 | Boundary | Responsibility | Current state |
 | --- | --- | --- |
-| `SonKeyCore` | Semantic input contracts and bounded Unicode replacement plans | Planner implemented. Telex reducer pending. |
-| `SonKeyMac` | macOS capabilities, event normalization, context, lifecycle, and transport | Read-only permission checks implemented. Tap and transport pending. |
-| `SonKeyApp` | Menu and settings, bundle identity, startup | Menu bar shell builds. Native app session untested. |
-| `sonkey-replay` | Synthetic expected plans and text reconstruction | Six fixtures implemented. No live keyboard input. |
-| `sonkey-bench` | Release timing with explicit scope | Planner microbenchmark implemented. Callback benchmark pending. |
+| `VietMacCore` | Semantic input contracts and bounded Unicode replacement plans | Planner implemented. Telex reducer pending. |
+| `VietMacPlatform` | macOS capabilities, event normalization, context, lifecycle, and transport | Read-only permission checks implemented. Tap and transport pending. |
+| `VietMacApp` | Menu and settings, bundle identity, startup | Menu bar shell builds. Native app session untested. |
+| `vietmac-replay` | Synthetic expected plans and text reconstruction | Six fixtures implemented. No live keyboard input. |
+| `vietmac-bench` | Release timing with explicit scope | Planner microbenchmark implemented. Callback benchmark pending. |
 | `ledger` | Decisions, verification, and handoffs | Append-only development records and validation implemented. |
 
 The core imports Foundation for Unicode normalization, but no UI or event frameworks.
@@ -54,8 +54,8 @@ Later reducer state can reuse fixed-capacity or reserved buffers when profiling 
 ```mermaid
 sequenceDiagram
     participant Key as Physical key
-    participant Host as SonKeyMac
-    participant Core as SonKeyCore
+    participant Host as VietMacPlatform
+    participant Core as VietMacCore
     participant App as Active app
     Key->>Host: s after a
     Host->>Host: Check own-event marker and context

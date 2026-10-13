@@ -1,4 +1,4 @@
-# SonKey instructions for Codex and Claude
+# VietMac instructions for Codex and Claude
 
 ## Working with Son
 
@@ -25,8 +25,8 @@ Keep shared instructions here. `CLAUDE.md` directs Claude to this file.
 
 - macOS only. MVP input is Telex with precomposed Unicode and no composition underline.
 - Core code must not import AppKit, Core Graphics, ApplicationServices, or development ledger code.
-- Keep event normalization, lifecycle, context, and text transport in `SonKeyMac`.
-- Keep presentation and bundle metadata in `Apps/SonKey`.
+- Keep event normalization, lifecycle, context, and text transport in `VietMacPlatform`.
+- Keep presentation and bundle metadata in `Apps/VietMac`.
 - Keep the input pipeline on one owning run loop. Do not create a Task, actor hop, or process for each key.
 - Avoid process-global mutable composition state.
 - Track logical characters separately from UTF-16 units and physical keycodes.

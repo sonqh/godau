@@ -28,7 +28,7 @@ None. Existing planner and development evidence contracts remain in force.
 
 ## Impact
 
-Implementation primarily affects `Sources/SonKeyMac` and `Apps/SonKey`.
+Implementation primarily affects `Sources/VietMacPlatform` and `Apps/VietMac`.
 It adds native test evidence and measured callback instrumentation.
 It requires a usable app identity and user-enabled capabilities for interactive acceptance.
 The app must not create marked text or composition underline.

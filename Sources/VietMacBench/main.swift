@@ -1,6 +1,6 @@
 import Foundation
 import Dispatch
-import SonKeyCore
+import VietMacCore
 
 struct Report: Encodable {
     let schemaVersion: Int

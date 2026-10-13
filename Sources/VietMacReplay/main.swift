@@ -1,5 +1,5 @@
 import Foundation
-import SonKeyCore
+import VietMacCore
 
 struct Fixture: Decodable {
     let id: String
@@ -12,7 +12,7 @@ struct Fixture: Decodable {
 do {
     let path = CommandLine.arguments.dropFirst().first ?? "Fixtures/replacement-plans.json"
     let fixtures = try JSONDecoder().decode([Fixture].self, from: Data(contentsOf: URL(fileURLWithPath: path)))
-    guard !fixtures.isEmpty else { throw NSError(domain: "SonKeyReplay", code: 1) }
+    guard !fixtures.isEmpty else { throw NSError(domain: "VietMacReplay", code: 1) }
     var failures = 0
     for fixture in fixtures {
         let plan = try ReplacementPlan.compute(previous: fixture.previous, next: fixture.next)

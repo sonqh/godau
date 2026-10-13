@@ -1,7 +1,7 @@
 schema: spec-driven
 
 context: |
-  SonKey is Son's personal macOS Vietnamese input app.
+  VietMac is Son's personal macOS Vietnamese input app.
   The MVP uses Telex, precomposed Unicode, and event-based text replacement.
   Composition underline is forbidden. Do not introduce marked text as the default integration.
   Required applications are VS Code, Chrome, Edge, Dia, and Apple Notes.

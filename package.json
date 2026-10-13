@@ -1,8 +1,8 @@
 {
-  "name": "sonkey-dev-tools",
+  "name": "vietmac-dev-tools",
   "version": "0.0.0",
   "private": true,
-  "description": "Local specification tooling for the SonKey macOS input app",
+  "description": "Local specification tooling for the VietMac macOS input app",
   "scripts": {
     "spec:list": "OPENSPEC_TELEMETRY=0 openspec list",
     "spec:check": "OPENSPEC_TELEMETRY=0 openspec validate --all --strict",

@@ -1,5 +1,5 @@
 import Testing
-@testable import SonKeyCore
+@testable import VietMacCore
 
 struct ReplacementPlanTests {
     @Test func reconstructsDesiredTextAndKeepsCommonPrefix() throws {

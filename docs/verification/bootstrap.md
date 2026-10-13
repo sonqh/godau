@@ -1,5 +1,8 @@
 # Bootstrap verification on 2026 10 13
 
+This report retains the original SonKey names and commands as historical evidence.
+The project is now named VietMac; current commands and module names are in the README.
+
 The initial SonKey scaffold passed local source/model checks and builds.
 Native Vietnamese typing, application compatibility, and callback performance remain unverified.
 The prepared M0 change has 11 implementation tasks with zero completed tasks.

@@ -1,6 +1,6 @@
 import ApplicationServices
 import CoreGraphics
-import SonKeyCore
+import VietMacCore
 
 public struct PermissionSnapshot: Sendable {
     public let accessibility: Bool

@@ -20,7 +20,7 @@ Append one useful record at a milestone or handoff:
 python3 scripts/ledger.py append \
   --actor claude --kind verification --scope core-model \
   --confidence verified --summary "Focused model checks passed. Native typing remains untested." \
-  --artifact Tests/SonKeyCoreTests/ReplacementPlanTests.swift \
+  --artifact Tests/VietMacCoreTests/ReplacementPlanTests.swift \
   --command "make test" --result pass
 ```
 

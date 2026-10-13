@@ -32,8 +32,8 @@ Verification records MUST contain a command and a pass, fail, or not-run result.
 The input app and reusable core SHALL have no dependency on the development ledger, Node.js, Python, or OpenSpec.
 
 #### Scenario: Build the app runtime
-- **WHEN** Swift builds `SonKeyApp`
-- **THEN** its application dependency path contains `SonKeyMac` and `SonKeyCore`
+- **WHEN** Swift builds `VietMacApp`
+- **THEN** its application dependency path contains `VietMacPlatform` and `VietMacCore`
 - **AND** no development ledger module enters that path
 
 ### Requirement: Evidence scope stays explicit

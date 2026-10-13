@@ -1,4 +1,4 @@
-# Claude instructions for SonKey
+# Claude instructions for VietMac
 
 Read [AGENTS.md](AGENTS.md) for the shared project instructions.
 Claude and Codex use the same specifications, tasks, and development ledger.

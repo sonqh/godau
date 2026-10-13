@@ -19,10 +19,10 @@ test-sanitize:
 	ASAN_OPTIONS=detect_leaks=0 ./scripts/swift.sh test --disable-xctest --sanitize address
 
 replay:
-	./scripts/swift.sh run sonkey-replay Fixtures/replacement-plans.json
+	./scripts/swift.sh run vietmac-replay Fixtures/replacement-plans.json
 
 bench:
-	./scripts/swift.sh run -c release sonkey-bench
+	./scripts/swift.sh run -c release vietmac-bench
 
 app:
 	./scripts/build-app.sh

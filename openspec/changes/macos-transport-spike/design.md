@@ -16,7 +16,7 @@ Use the required field matrix as the completion gate.
 ## Decisions
 
 Use one owning run loop for the tap, prototype state, and prepared transport.
-Keep OS objects in `SonKeyMac`, presentation in the app, and the planner independent of OS event frameworks.
+Keep OS objects in `VietMacPlatform`, presentation in the app, and the planner independent of OS event frameworks.
 The prototype must not grow into a second production engine.
 
 Tag generated events with a per-process marker and preserve physical key-down/key-up policy.

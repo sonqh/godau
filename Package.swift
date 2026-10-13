@@ -2,26 +2,26 @@
 import PackageDescription
 
 let package = Package(
-    name: "SonKey",
+    name: "VietMac",
     platforms: [.macOS(.v13)],
     products: [
-        .library(name: "SonKeyCore", targets: ["SonKeyCore"]),
-        .library(name: "SonKeyMac", targets: ["SonKeyMac"]),
-        .executable(name: "SonKeyApp", targets: ["SonKeyApp"]),
-        .executable(name: "sonkey-replay", targets: ["SonKeyReplay"]),
-        .executable(name: "sonkey-bench", targets: ["SonKeyBench"]),
+        .library(name: "VietMacCore", targets: ["VietMacCore"]),
+        .library(name: "VietMacPlatform", targets: ["VietMacPlatform"]),
+        .executable(name: "VietMacApp", targets: ["VietMacApp"]),
+        .executable(name: "vietmac-replay", targets: ["VietMacReplay"]),
+        .executable(name: "vietmac-bench", targets: ["VietMacBench"]),
     ],
     targets: [
-        .target(name: "SonKeyCore"),
-        .target(name: "SonKeyMac", dependencies: ["SonKeyCore"]),
+        .target(name: "VietMacCore"),
+        .target(name: "VietMacPlatform", dependencies: ["VietMacCore"]),
         .executableTarget(
-            name: "SonKeyApp",
-            dependencies: ["SonKeyMac"],
-            path: "Apps/SonKey",
+            name: "VietMacApp",
+            dependencies: ["VietMacPlatform"],
+            path: "Apps/VietMac",
             exclude: ["Info.plist", "README.md"]
         ),
-        .executableTarget(name: "SonKeyReplay", dependencies: ["SonKeyCore"]),
-        .executableTarget(name: "SonKeyBench", dependencies: ["SonKeyCore"]),
-        .testTarget(name: "SonKeyCoreTests", dependencies: ["SonKeyCore"]),
+        .executableTarget(name: "VietMacReplay", dependencies: ["VietMacCore"]),
+        .executableTarget(name: "VietMacBench", dependencies: ["VietMacCore"]),
+        .testTarget(name: "VietMacCoreTests", dependencies: ["VietMacCore"]),
     ]
 )

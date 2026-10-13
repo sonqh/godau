@@ -4,61 +4,61 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Debug SonKeyApp",
-            "target": "SonKeyApp",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Debug VietMacApp",
+            "target": "VietMacApp",
             "configuration": "debug",
-            "preLaunchTask": "swift: Build Debug SonKeyApp"
+            "preLaunchTask": "swift: Build Debug VietMacApp"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Release SonKeyApp",
-            "target": "SonKeyApp",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Release VietMacApp",
+            "target": "VietMacApp",
             "configuration": "release",
-            "preLaunchTask": "swift: Build Release SonKeyApp"
+            "preLaunchTask": "swift: Build Release VietMacApp"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Debug sonkey-replay",
-            "target": "sonkey-replay",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Debug vietmac-replay",
+            "target": "vietmac-replay",
             "configuration": "debug",
-            "preLaunchTask": "swift: Build Debug sonkey-replay"
+            "preLaunchTask": "swift: Build Debug vietmac-replay"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Release sonkey-replay",
-            "target": "sonkey-replay",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Release vietmac-replay",
+            "target": "vietmac-replay",
             "configuration": "release",
-            "preLaunchTask": "swift: Build Release sonkey-replay"
+            "preLaunchTask": "swift: Build Release vietmac-replay"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Debug sonkey-bench",
-            "target": "sonkey-bench",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Debug vietmac-bench",
+            "target": "vietmac-bench",
             "configuration": "debug",
-            "preLaunchTask": "swift: Build Debug sonkey-bench"
+            "preLaunchTask": "swift: Build Debug vietmac-bench"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:SonKey}",
-            "name": "Release sonkey-bench",
-            "target": "sonkey-bench",
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Release vietmac-bench",
+            "target": "vietmac-bench",
             "configuration": "release",
-            "preLaunchTask": "swift: Build Release sonkey-bench"
+            "preLaunchTask": "swift: Build Release vietmac-bench"
         }
     ]
 }
