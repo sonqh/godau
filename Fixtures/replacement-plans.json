@@ -1,0 +1,8 @@
+[
+  {"id":"acute-tone","previous":"a","next":"á","deleteCount":1,"insertion":"á"},
+  {"id":"circumflex-suffix","previous":"tieng","next":"tiêng","deleteCount":3,"insertion":"êng"},
+  {"id":"tone-suffix","previous":"tiêng","next":"tiếng","deleteCount":3,"insertion":"ếng"},
+  {"id":"shape-restoration","previous":"ấ","next":"áa","deleteCount":1,"insertion":"áa"},
+  {"id":"backspace","previous":"tiếng","next":"tiến","deleteCount":1,"insertion":""},
+  {"id":"unchanged","previous":"á","next":"á","deleteCount":0,"insertion":""}
+]

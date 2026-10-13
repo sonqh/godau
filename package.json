@@ -1,0 +1,18 @@
+{
+  "name": "sonkey-dev-tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local specification tooling for the SonKey macOS input app",
+  "scripts": {
+    "spec:list": "OPENSPEC_TELEMETRY=0 openspec list",
+    "spec:check": "OPENSPEC_TELEMETRY=0 openspec validate --all --strict",
+    "spec:status": "OPENSPEC_TELEMETRY=0 openspec status --change macos-transport-spike",
+    "spec:refresh": "OPENSPEC_TELEMETRY=0 openspec init --tools claude,codex --profile core --no-animation"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.14.1"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

@@ -1,0 +1,64 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Debug SonKeyApp",
+            "target": "SonKeyApp",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug SonKeyApp"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Release SonKeyApp",
+            "target": "SonKeyApp",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release SonKeyApp"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Debug sonkey-replay",
+            "target": "sonkey-replay",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug sonkey-replay"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Release sonkey-replay",
+            "target": "sonkey-replay",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release sonkey-replay"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Debug sonkey-bench",
+            "target": "sonkey-bench",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug sonkey-bench"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:SonKey}",
+            "name": "Release sonkey-bench",
+            "target": "sonkey-bench",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release sonkey-bench"
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+.DS_Store
+.build/
+.swiftpm/
+.artifacts/
+node_modules/
+*.xcuserstate
+xcuserdata/
+CLAUDE.local.md
+.claude/settings.local.json
+.env
+.env.*
+__pycache__/
+*.pyc
