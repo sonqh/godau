@@ -2,12 +2,12 @@
 
 ## 1. Host and event ownership
 
-- [ ] 1.1 Add the session event tap, lifecycle notifications, pause state, and permission status without per-key I/O; verify capability loss, secure-input handling, three-retry timeout bounds, and fresh-state resume with focused lifecycle checks and document the status meanings.
-- [ ] 1.2 Add per-process event tagging, consumed key pairing, and bounded prototype composition; verify own-event bypass, ordinary key pairing, consumed key-up behavior, case, and autorepeat with ordered model traces.
+- [x] 1.1 Add the session event tap, lifecycle notifications, pause state, and permission status without per-key I/O; verify capability loss, secure-input handling, three-retry timeout bounds, and fresh-state resume with focused lifecycle checks and document the status meanings.
+- [x] 1.2 Add per-process event tagging, consumed key pairing, and bounded prototype composition; verify own-event bypass, ordinary key pairing, consumed key-up behavior, case, and autorepeat with ordered model traces.
 
 ## 2. Prepared transport and context
 
-- [ ] 2.1 Prepare all output before deletion and send the planner result for `as` and `aa` in serialized order; verify zero deletions on preparation failure or stale context, multi-character insertion, no blind rollback after partial send, and no event interleaving through a synthetic transport harness.
+- [x] 2.1 Prepare all output before deletion and send the planner result for `as` and `aa` in serialized order; verify zero deletions on preparation failure or stale context, multi-character insertion, no blind rollback after partial send, and no event interleaving through a synthetic transport harness.
 - [ ] 2.2 Reset state on observed app, field, caret, source, navigation, selection, edit shortcuts, and lifecycle changes; verify same-app switches and external-edit notifications with focused tests, and document unobserved focus/selection limits.
 - [ ] 2.3 Measure callback own-work in Release and keep collection and export outside the callback; save a report with sample count, workload, environment, and percentiles distinct from planner and native latency.
 

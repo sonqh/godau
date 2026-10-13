@@ -6,9 +6,9 @@ VietMac is the foundation for Son's personal macOS Vietnamese input app.
 The product uses Telex, precomposed Unicode, and event-based replacement without marked text.
 Required applications are VS Code, Chrome, Edge, Dia, and Apple Notes.
 
-**Current status:** project scaffold, a tested replacement planner, replay fixtures, and development tooling.
-The menu bar shell builds, but Vietnamese composition and native event transport are not implemented.
-App compatibility and callback performance remain unverified.
+**Current status:** an M0 event-tap prototype, prepared Unicode replacement, bounded example composition,
+permission/pause controls, and tested core/platform models. The prototype starts disabled and implements only `as` → `á` and `aa` → `â`.
+The complete Telex engine is not implemented. Native typing, app compatibility, and callback performance remain unverified.
 
 ## Quick start
 
@@ -22,7 +22,10 @@ make bench
 make app
 ```
 
-`make app` builds `.artifacts/VietMac.app` without launching, installing, or signing it.
+`make app` builds and locally signs `.artifacts/VietMac.app` without launching or installing it.
+Signing defaults to ad hoc; set `VIETMAC_SIGNING_IDENTITY` explicitly to use a chosen local identity.
+Run `.artifacts/VietMac.app/Contents/MacOS/VietMac --diagnostics` for a read-only capability snapshot without creating an event tap.
+See [M0 verification and pending native checks](docs/verification/macos-transport-spike.md) before enabling the prototype.
 `scripts/swift.sh` uses the installed Command Line Tools when available without changing global developer settings.
 Set `VIETMAC_SWIFT_BIN` to an explicit Swift executable to use another toolchain.
 Swift Testing provides the core tests. XCTest is disabled for the local test command.
@@ -38,10 +41,10 @@ VietMac/
   Apps/VietMac/                    Menu bar application shell and bundle metadata
   Sources/
     VietMacCore/                   Reusable semantic contracts and replacement planner
-    VietMacPlatform/               macOS adapter boundary and capability inspection
+    VietMacPlatform/               Event tap, context inspection, prototype, and prepared transport
     VietMacReplay/                 Synthetic fixture replay
     VietMacBench/                  Release benchmark with explicit measurement scope
-  Tests/VietMacCoreTests/          Model and Unicode checks
+  Tests/                          Core/Unicode and synthetic platform checks
   Fixtures/                        Synthetic expected behavior
   benchmarks/baselines/            Tracked measurements with scope and environment
   openspec/

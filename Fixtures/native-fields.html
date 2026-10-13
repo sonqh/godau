@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VietMac synthetic native fields</title>
+<style>
+  body { max-width: 800px; margin: 40px auto; padding: 0 20px; font: 16px/1.5 system-ui; color: #222; }
+  label { display: block; margin-top: 24px; font-weight: 600; }
+  input, textarea, [contenteditable] { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #888; border-radius: 6px; font: 20px/1.5 system-ui; }
+  textarea { height: 100px; }
+  button { padding: 8px 12px; margin: 12px 6px 0 0; }
+  #status { min-height: 2em; }
+</style>
+<h1>VietMac native test fields</h1>
+<p>This local page contains synthetic text only. It makes no network requests and does not read or change the clipboard.</p>
+<p>M0 implements only <code>as → á</code> and <code>aa → â</code>. Test each browser separately. The browser address bar still needs its own native test.</p>
+<p>Start at a known word boundary. Type <code>as</code>, then check exact text, caret, surrounding markers, undo/redo, and clipboard preservation. Repeat with <code>aa</code>, uppercase variants, Backspace, and held keys.</p>
+<label for="ordinary">Ordinary input</label>
+<input id="ordinary" value="LEFT  RIGHT" autocomplete="off" spellcheck="false">
+<label for="other">Second input for focus changes</label>
+<input id="other" value="OTHER  END" autocomplete="off" spellcheck="false">
+<label for="area">Text area</label>
+<textarea id="area" spellcheck="false">LEFT  RIGHT</textarea>
+<label>Rich editing with existing formatting and emoji</label>
+<div id="rich" contenteditable="true" spellcheck="false"><strong>LEFT</strong>  RIGHT 👩🏽‍💻</div>
+<button id="focus-change">Focus the second input after 2 seconds</button>
+<button id="external-edit">Change ordinary input after 2 seconds</button>
+<button id="selection">Select a synthetic completion</button>
+<button id="reset">Reset synthetic content</button>
+<p id="status" role="status"></p>
+<script>
+  const ordinary = document.getElementById('ordinary');
+  const other = document.getElementById('other');
+  const status = document.getElementById('status');
+  document.getElementById('focus-change').onclick = () => {
+    status.textContent = 'Return to the first field and type a. Focus will move in 2 seconds; then type s.';
+    setTimeout(() => { other.focus(); other.setSelectionRange(6, 6); status.textContent = 'Focus moved. Old tracked text must not be edited.'; }, 2000);
+  };
+  document.getElementById('external-edit').onclick = () => {
+    status.textContent = 'Return to ordinary input. Its content will change in 2 seconds without a key event.';
+    setTimeout(() => {
+      const caret = ordinary.selectionStart;
+      ordinary.value = 'EXTERNAL CONTENT';
+      ordinary.setSelectionRange(Math.min(caret, ordinary.value.length), Math.min(caret, ordinary.value.length));
+      ordinary.dispatchEvent(new Event('input', { bubbles: true }));
+      status.textContent = 'External edit applied. Record whether later modifiers preserve this context.';
+    }, 2000);
+  };
+  document.getElementById('selection').onclick = () => {
+    ordinary.value = 'acompletion';
+    ordinary.focus();
+    ordinary.setSelectionRange(1, ordinary.value.length);
+    status.textContent = 'Synthetic selection active. This does not replace real address-bar autocomplete testing.';
+  };
+  document.getElementById('reset').onclick = () => {
+    ordinary.value = 'LEFT  RIGHT'; other.value = 'OTHER  END';
+    document.getElementById('area').value = 'LEFT  RIGHT';
+    document.getElementById('rich').innerHTML = '<strong>LEFT</strong>  RIGHT 👩🏽‍💻';
+    status.textContent = 'Synthetic fields reset. Reset invalidates any prior tracked word.';
+  };
+</script>
+</html>

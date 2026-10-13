@@ -19,10 +19,10 @@ flowchart LR
 | Boundary | Responsibility | Current state |
 | --- | --- | --- |
 | `VietMacCore` | Semantic input contracts and bounded Unicode replacement plans | Planner implemented. Telex reducer pending. |
-| `VietMacPlatform` | macOS capabilities, event normalization, context, lifecycle, and transport | Read-only permission checks implemented. Tap and transport pending. |
-| `VietMacApp` | Menu and settings, bundle identity, startup | Menu bar shell builds. Native app session untested. |
+| `VietMacPlatform` | macOS capabilities, event normalization, context, lifecycle, and transport | M0 tap/transport implementation and synthetic tests exist. Native acceptance pending. |
+| `VietMacApp` | Menu and settings, bundle identity, startup | Prototype controls and read-only diagnostics build. Launch/process smoke passed; UI and native typing unverified. |
 | `vietmac-replay` | Synthetic expected plans and text reconstruction | Six fixtures implemented. No live keyboard input. |
-| `vietmac-bench` | Release timing with explicit scope | Planner microbenchmark implemented. Callback benchmark pending. |
+| `vietmac-bench` | Release timing with explicit scope | Planner microbenchmark implemented. Callback collection exists; native Release capture pending. |
 | `ledger` | Decisions, verification, and handoffs | Append-only development records and validation implemented. |
 
 The core imports Foundation for Unicode normalization, but no UI or event frameworks.
@@ -35,6 +35,8 @@ The macOS adapter computes an edit, prepares generated events, checks context, a
 `ContextToken` identifies the adapter's context generation.
 `CompositionIntent` returns pass-through or explicit previous and desired text with a context token.
 These types establish a boundary. They do not implement composition.
+M0's `PrototypePipeline` lives in the platform module and implements only its two transport examples.
+The production reducer will replace those example rules after the native gate passes.
 
 `ReplacementPlan.compute` finds a common grapheme prefix and returns a suffix deletion count and insertion string.
 It accepts NFC text with a logical limit between 1 and 64.
@@ -90,6 +92,12 @@ Backspace outside that word does not restore previous-word state for the MVP.
 The initial trial uses tested apps and ABC or U.S. input sources.
 Pass through unsupported contexts, secure input, unknown layouts, and non-ASCII input conservatively.
 Programmatic focus changes can remain unobserved. Do not claim a PID check solves that uncertainty.
+
+The M0 host currently caches frontmost app, input source, focused-element identity, and selected UTF-16 range on its main run loop outside the key callback.
+Accessibility focus/selection notifications and periodic inspection invalidate detected mismatches; no document text is read or persisted.
+These observations do not guarantee detection of a programmatic edit that leaves the same caret or of a focus change before its notification arrives.
+Task 2.2 remains pending until external-edit handling and the corresponding native reproductions are resolved.
+App menus and diagnostics consume status outside the callback. Timing storage is a fixed 1,024-sample ring, with sorting/JSON export outside the callback.
 
 ## Reuse and extensions
 

@@ -23,5 +23,6 @@ let package = Package(
         .executableTarget(name: "VietMacReplay", dependencies: ["VietMacCore"]),
         .executableTarget(name: "VietMacBench", dependencies: ["VietMacCore"]),
         .testTarget(name: "VietMacCoreTests", dependencies: ["VietMacCore"]),
+        .testTarget(name: "VietMacPlatformTests", dependencies: ["VietMacPlatform"]),
     ]
 )

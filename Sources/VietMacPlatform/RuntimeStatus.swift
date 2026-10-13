@@ -2,10 +2,16 @@ import ApplicationServices
 import CoreGraphics
 import VietMacCore
 
-public struct PermissionSnapshot: Sendable {
+public struct PermissionSnapshot: Equatable, Sendable {
     public let accessibility: Bool
     public let eventListening: Bool
     public let eventPosting: Bool
+
+    public init(accessibility: Bool, eventListening: Bool, eventPosting: Bool) {
+        self.accessibility = accessibility
+        self.eventListening = eventListening
+        self.eventPosting = eventPosting
+    }
 
     /// Read-only capability checks. This function never requests permission.
     public static func current() -> PermissionSnapshot {
@@ -17,7 +23,57 @@ public struct PermissionSnapshot: Sendable {
     }
 }
 
-/// M0 will add the event tap and transport here. No interception exists yet.
+/// Implementation availability is distinct from native acceptance.
 public enum RuntimeStatus {
-    public static let transportImplemented = false
+    public static let transportImplemented = true
+}
+
+public enum PauseReason: String, Equatable, Sendable {
+    case accessibility = "Accessibility access is unavailable"
+    case listening = "Input monitoring is unavailable"
+    case posting = "Event posting is unavailable"
+    case secureInput = "Secure input is active"
+    case unsupportedApp = "Application is outside the M0 trial"
+    case unsupportedSource = "Use ABC or U.S. input source"
+    case uncertainContext = "Focus or selection is uncertain"
+    case tapUnavailable = "The event tap could not start"
+    case recoveryLimit = "Timeout recovery limit reached; resume explicitly"
+    case userDisabledTap = "The event tap was disabled by the user"
+    case sleeping = "The user session is sleeping"
+    case transportUncertain = "Replacement delivery became uncertain"
+}
+
+public enum InputRuntimeState: Equatable, Sendable {
+    case disabled
+    case active
+    case paused(PauseReason)
+}
+
+public struct InputEnvironment: Equatable, Sendable {
+    public var permissions: PermissionSnapshot
+    public var secureInput: Bool
+    public var supportedApp: Bool
+    public var supportedSource: Bool
+    public var certainContext: Bool
+
+    public init(permissions: PermissionSnapshot, secureInput: Bool = false,
+                supportedApp: Bool = true, supportedSource: Bool = true,
+                certainContext: Bool = true) {
+        self.permissions = permissions
+        self.secureInput = secureInput
+        self.supportedApp = supportedApp
+        self.supportedSource = supportedSource
+        self.certainContext = certainContext
+    }
+
+    var pauseReason: PauseReason? {
+        if !permissions.accessibility { return .accessibility }
+        if !permissions.eventListening { return .listening }
+        if !permissions.eventPosting { return .posting }
+        if secureInput { return .secureInput }
+        if !supportedApp { return .unsupportedApp }
+        if !supportedSource { return .unsupportedSource }
+        if !certainContext { return .uncertainContext }
+        return nil
+    }
 }

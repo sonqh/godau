@@ -24,7 +24,7 @@ Its benchmark establishes the cost of that implementation, not the cost of a com
 | --- | --- | --- |
 | Replacement planner | `make bench`, release build, synthetic small and 64-character cases | Implemented |
 | Complete composition reducer | Replay real synthetic event sequences and record per-event durations | Pending M1 |
-| Callback own work | Timers around normalization, reduction, and event preparation | Pending M0/M2 |
+| Callback own work | Bounded timings around normalization, prototype reduction, planning, preparation, and posting; menu export | Collection implemented for M0; native Release capture pending |
 | Native visible input | Required apps and fields with controlled sequences | Pending |
 | Memory and allocations | Instruments or scoped allocation measurements on the release host | Pending |
 
