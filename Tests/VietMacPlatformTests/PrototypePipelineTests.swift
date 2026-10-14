@@ -28,6 +28,22 @@ struct PrototypePipelineTests {
         }
     }
 
+    /// Session 6 rollover: `s` triggered while the physical `a` was still down.
+    @Test func rolloverReleasesTheHeldKeyAndOwnsOnlyTheTrigger() {
+        var model = activePipeline()
+        #expect(model.handle(.letter(97, keyCode: 0, isRepeat: false)) == .passThrough)
+        guard case .replace(let edit) = model.handle(.letter(115, keyCode: 1, isRepeat: false)) else {
+            Issue.record("Expected replacement while A is still down")
+            return
+        }
+        #expect(edit.keyCode == 1) // The transport inserts with this key, not the held A.
+        let accepted = model.accept(edit)
+        #expect(accepted)
+        #expect(model.handle(.keyUp(0)) == .passThrough) // The client saw A go down, so it must see A go up.
+        #expect(model.handle(.keyUp(1)) == .consume)
+        #expect(model.word == "á")
+    }
+
     @Test func consumedRepeatAndReleaseSurviveContextLoss() {
         var model = activePipeline()
         _ = model.handle(.letter(97, keyCode: 0, isRepeat: false))

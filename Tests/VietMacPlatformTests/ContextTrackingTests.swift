@@ -284,6 +284,44 @@ struct ContextPolicyTests {
         #expect(check(&session, caret: 13, length: 13, quietMilliseconds: 600))
         #expect(session.pipeline.state == .paused(.transportUncertain))
     }
+
+    /// Session 6 ordinary input: a click, `as` stays literal, then space `as` is replaced.
+    @Test func firstWordAfterAClickStaysLiteralUntilABoundary() {
+        var session = Session()
+        _ = session.key(.invalidate) // Mouse-down in the field.
+        session.observe(caret: 5, length: 11)
+        _ = session.key(a)
+        session.observe(caret: 6, length: 12)
+        #expect(session.key(s) == nil)
+        session.observe(caret: 7, length: 13)
+        _ = session.key(.boundary, keyCode: 49)
+        session.observe(caret: 8, length: 14)
+        _ = session.key(a)
+        session.observe(caret: 9, length: 15)
+        #expect(session.key(s) == "á")
+        #expect(session.counters.replacementsPosted == 1)
+        #expect(session.counters.unsettledTriggers == 0)
+    }
+
+    /// Session 6 Backspace case: `ok á`, Backspace removes only `á`, retyped `as` replaces again.
+    @Test func backspaceAfterAConfirmedReplacementThenRetypeReplacesAgain() {
+        var session = Session()
+        session.observe(caret: 9, length: 15) // After `LEFT  ok `.
+        _ = session.key(a)
+        session.observe(caret: 10, length: 16)
+        #expect(session.key(s) == "á")
+        #expect(!check(&session, caret: 10, length: 16, quietMilliseconds: 600))
+        #expect(session.field.isSettled && !session.field.replacementUnconfirmed)
+        _ = session.key(.backspace) // Predicts one UTF-16 unit for the tracked `á`.
+        session.observe(caret: 9, length: 15)
+        #expect(session.field.isSettled)
+        _ = session.key(a)
+        session.observe(caret: 10, length: 16)
+        #expect(session.key(s) == "á")
+        #expect(session.counters.replacementsPosted == 2)
+        #expect(session.counters.unexplainedFieldChanges == 0)
+        #expect(session.pipeline.state == .active)
+    }
 }
 
 struct ObservationTraceTests {

@@ -71,6 +71,16 @@ If the replacement is still unexplained after that quiet period, the host counts
 | Chrome text area, ABC, fast space + `as` five times | **Pass** | `LEFT  RIGHT á á á á á ` (U+00E1 each). `replacementsPosted` 5, `replacementsUnconfirmed` 0, `unsettledTriggers` 0, state still active |
 | Rollover on the first trigger | Pass | `a` keydown, Backspace, `keydown key="á" code=KeyS`, `insertText "á"`, then the physical `a` keyup about 120 ms later |
 
+| Chrome ordinary input, ABC: `as`, `as`, `Shift+A s` after a click | Pass | `LEFT as á Á RIGHT`, caret after `Á`; the first word after the click stayed literal by design (mouse-down holds literal until a boundary) |
+| Chrome ordinary input, ABC: `aa`, `aa`, `Shift+A Shift+A` after a click | Pass | `LEFT aa â Â RIGHT` (U+00E2, U+00C2), caret after `Â`; page log `keydown key="â" code=KeyA` |
+| Two further attempts | Not VietMac tests | Apple Vietnamese Simple Telex was active again; VietMac paused for the source with no replacements |
+
+| Chrome rich editing, ABC: click after the emoji, space `ok` space `as` space `aa` | Pass | `<strong>LEFT</strong>  RIGHT 👩🏽‍💻 ok á â`; emoji scalars `1f469 1f3fd 200d 1f4bb` intact, bold unchanged, new text not bold, caret at the end |
+
+| Chrome ordinary input, ABC: `ok as`, Backspace, `as` | Pass | `ok á`; Backspace removed only `á` (trace 10/16 → 9/15); retyping `as` produced `á` again |
+| Cmd+Z, then Cmd+Shift+Z | Pass (round trip) | One `historyUndo` removed the whole replaced word (`LEFT  ok  RIGHT`); one `historyRedo` restored `LEFT  ok á RIGHT` (U+00E1), caret 10. Chrome groups the typed `a`, generated Backspace, and `á` as one undo step |
+
+Across Chrome ordinary input, text area, and rich editing: 13 replacements posted, 13 correct, 0 unconfirmed, 0 data loss.
 This passes one Chrome text-area row only. It does not complete the Chrome, Edge, and Dia matrix in task 3.3.
 
 ## Local verification (session 1)
