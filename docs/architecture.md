@@ -97,7 +97,7 @@ The M0 host caches frontmost app, input source, focused-element identity, select
 `FieldContextTracker` predicts caret and length from tracked keys and generated events; `ContextPolicy` invalidates on unexplained metadata, focused-element changes, selections, and missing metadata.
 A replacement requires an unambiguous observation after every tracked key. Otherwise the trigger passes through literally. No document text is read or persisted.
 Same-length same-caret edits and changes after the last observation remain undetectable without a key-path AX read, which the callback does not perform.
-Task 2.2 remains pending until the corresponding native reproductions pass.
+Task 2.2 is complete: Chrome native reproductions of external edit, same-app focus switch, inline selection, and fast typing passed on 2026-10-14.
 App menus and diagnostics consume status outside the callback. Timing storage is a fixed 1,024-sample ring, with sorting/JSON export outside the callback.
 
 ## Reuse and extensions

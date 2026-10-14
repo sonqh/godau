@@ -25,7 +25,7 @@
 <div id="rich" contenteditable="true" spellcheck="false"><strong>LEFT</strong>  RIGHT 👩🏽‍💻</div>
 <button id="focus-change">Focus the second input after 2 seconds</button>
 <button id="external-edit">Change ordinary input after 2 seconds</button>
-<button id="selection">Select a synthetic completion</button>
+<button id="selection">Select a synthetic completion after 2 seconds</button>
 <button id="reset">Reset synthetic content</button>
 <p id="status" role="status"></p>
 <label for="event-log">Page event log (last 400 events in these fields, newest first)</label>
@@ -71,10 +71,14 @@
     }, 2000);
   };
   document.getElementById('selection').onclick = () => {
-    ordinary.value = 'acompletion';
-    ordinary.focus();
-    ordinary.setSelectionRange(1, ordinary.value.length);
-    status.textContent = 'Synthetic selection active. This does not replace real address-bar autocomplete testing.';
+    status.textContent = 'Return to ordinary input and type a. An inline completion appears in 2 seconds; then type s.';
+    setTimeout(() => {
+      // Inline autocomplete: insert a suffix after the caret and select it, without a key event.
+      const caret = ordinary.selectionStart;
+      ordinary.value = ordinary.value.slice(0, caret) + 'completion' + ordinary.value.slice(caret);
+      ordinary.setSelectionRange(caret, caret + 'completion'.length);
+      status.textContent = 'Synthetic completion selected. This does not replace real address-bar autocomplete testing.';
+    }, 2000);
   };
   document.getElementById('reset').onclick = () => {
     ordinary.value = 'LEFT  RIGHT'; other.value = 'OTHER  END';

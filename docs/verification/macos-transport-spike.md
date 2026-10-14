@@ -11,7 +11,7 @@ The implemented source milestone follows that commit; Git history identifies the
 
 ## Session 2 update on 2026-10-14
 
-Task 2.2 context handling is implemented at model level and still awaits native reproduction.
+Task 2.2 context handling is implemented and its Chrome native reproductions passed (sessions 6, 2026-10-14).
 
 | Command | Result | Scope |
 | --- | --- | --- |
@@ -80,7 +80,13 @@ If the replacement is still unexplained after that quiet period, the host counts
 | Chrome ordinary input, ABC: `ok as`, Backspace, `as` | Pass | `ok á`; Backspace removed only `á` (trace 10/16 → 9/15); retyping `as` produced `á` again |
 | Cmd+Z, then Cmd+Shift+Z | Pass (round trip) | One `historyUndo` removed the whole replaced word (`LEFT  ok  RIGHT`); one `historyRedo` restored `LEFT  ok á RIGHT` (U+00E1), caret 10. Chrome groups the typed `a`, generated Backspace, and `á` as one undo step |
 
-Across Chrome ordinary input, text area, and rich editing: 13 replacements posted, 13 correct, 0 unconfirmed, 0 data loss.
+| Task 2.2 same-caret external edit, Chrome ordinary input: space `a`, page replaces the value, then `s` | Pass | Trace 13/13 → 13/16 `mismatch`, `unexplainedFieldChanges` +1; `s` inserted literally with no Backspace; field `EXTERNAL CONTsENT`, caret 14; `replacementsPosted` unchanged |
+
+| Task 2.2 same-app focus switch, Chrome: space `a` in ordinary input, page focuses the second input, then `s` | Pass | Trace element `…822` 11 → 13, then element `…854` at 6/10 with `focusChanged`; `s` inserted literally (7/11) with no Backspace; fields `LEFT  RIGHT a` and `OTHER s END`; `replacementsPosted` unchanged |
+| Task 2.2 synthetic inline completion, Chrome: space `a`, page inserts a selected `completion` suffix, then `s` | Pass | Trace 11 → 13, then six `selection` readings (`selectionsObserved` increased) invalidating the word; `s` replaced the selection as ordinary input with no Backspace; field `LEFT  RIGHT as`, caret 14 |
+| Task 2.2 fast typing, Chrome text area: space `as` fifteen times | Pass | `LEFT  RIGHT` plus fifteen `á` (U+00E1), caret 42; page log 15 Backspace and 15 `á` insertions; 14 of 15 triggers had `a` still down; `replacementsUnconfirmed` 0, `unsettledTriggers` 0. The counter rose by 17: two earlier mistyped replacements in the same text area were discarded by Son reloading the page |
+
+Across Chrome ordinary input, text area, and rich editing after the fix: 28 replacements observed on the page, 28 correct, 0 unconfirmed, 0 data loss (plus two discarded by a page reload).
 This passes one Chrome text-area row only. It does not complete the Chrome, Edge, and Dia matrix in task 3.3.
 
 ## Local verification (session 1)
@@ -150,7 +156,7 @@ Remaining limits, documented rather than solved:
 - Fields without `AXNumberOfCharacters` or a selected range stay paused. Electron and browser fields may lack timely notifications; the 250 ms poll is the fallback, so fast typing may leave triggers literal.
 - Programmatic focus changes are detected only when the focused element or its notifications change.
 
-Task 2.2 stays pending until the native reproductions below confirm the counters and text outcomes.
+The native reproductions below passed in Chrome on 2026-10-14; see the session 6 table.
 `contextCounters` in the session snapshot counts focus changes, selections, unavailable fields, lagging observations, unexplained changes, unsettled triggers, stale/uncertain sends, and posted replacements. It contains no text.
 A successful void event-post call is not a client acknowledgement; delivery and undo/formatting behavior remain native questions.
 
@@ -202,9 +208,9 @@ Task 2.2 reproductions with [the synthetic fields](../../Fixtures/native-fields.
 | Case | Steps | Expected |
 | --- | --- | --- |
 | Baseline | Click after `LEFT `, type space, `as` | `á` replaces `a`; `replacementsPosted` +1 |
-| Same-caret external edit | Click Change ordinary input, return caret, type `a`, wait for the edit, type `s` | Content stays `EXTERNAL CONTENT` plus literal `as`; `unexplainedFieldChanges` +1; no deletion |
+| Same-caret external edit | Click Change ordinary input, return caret, type `a`, wait for the edit, type `s` | The page overwrites the typed `a`; `s` is inserted literally at the caret inside `EXTERNAL CONTENT`; `unexplainedFieldChanges` +1; no Backspace |
 | Same-app focus switch | Click Focus the second input, type `a` in the first field, wait, type `s` | Second field receives literal `s`; first field keeps `a`; `focusChanges` +1 |
-| Synthetic selection | Click Select a synthetic completion, type `s` | Selection replaced by `s` as ordinary input; `selectionsObserved` +1; no extra deletion |
+| Synthetic selection | Click Select a synthetic completion after 2 seconds, return to the field after a boundary, type `a`, wait for the selected `completion` suffix, type `s` | Selection replaced by `s` as ordinary input (`as`); `selectionsObserved` +1; no Backspace and no `á` |
 | Fast typing | Type `as` quickly ten times separated by spaces | Record each result; literal `as` with `unsettledTriggers` is a safe failure, not a pass |
 
 Task 2.3 workload: enable the prototype, type the ordinary-input workload for at least 1,000 key events, then send `SIGUSR1`. Record sample count, environment, and percentiles as callback own-work only.
@@ -218,14 +224,14 @@ Then repeat case 1b in Chrome and read `observationTrace` to confirm or reject t
 1. Give Son manual permission instructions for the locally signed `.artifacts/VietMac.app` at a stable path. Son enables Accessibility/Input Monitoring; confirm actual posting capability as well. Computer Use access is a separate prerequisite for automated UI checks.
 2. Use ABC or U.S. and one Vietnamese event-transforming app. Open synthetic documents/fields and enable the M0 prototype from its menu.
 3. Exercise `as`, `aa`, case, Backspace, held keys, focus/selection, and surrounding text. Record failures before adding a transport/context override.
-4. Resolve task 2.2 from concrete external-edit/selection reproductions and collect Release callback timing outside the callback.
+4. Collect Release callback timing outside the callback for task 2.3.
 5. Complete the remaining required apps, lifecycle checks, and matrix before declaring M0 complete or implementing `telex-input-mvp`.
 
 The agent must not grant permissions, install Edge, change system input sources, or accept developer licenses on Son's behalf.
 
 ## Handoff completion boundary
 
-The active change is `macos-transport-spike`, with tasks 1.1, 1.2, and 2.1 complete (3/11).
-Continue task 2.2 with focused external-edit/context reproductions, then collect actual Release callback evidence for task 2.3 and complete the native acceptance matrix.
+The active change is `macos-transport-spike`, with tasks 1.1, 1.2, 2.1, and 2.2 complete (4/11).
+Collect Release callback evidence for task 2.3, then complete the native acceptance matrix (3.1–3.6).
 Record failed and not-run cases as well as passes. If access remains blocked, complete independent source/model work and report the exact missing capability or app.
 The follow-on `telex-input-mvp` remains at 0/23 tasks. Do not begin its full reducer until the M0 native gate passes, and do not archive M0 while required native evidence is missing.
