@@ -77,3 +77,19 @@ public struct InputEnvironment: Equatable, Sendable {
         return nil
     }
 }
+
+/// Bounded counters for native reproductions. They contain no text or keystroke payloads.
+public struct ContextCounters: Encodable, Equatable, Sendable {
+    public var focusChanges: UInt64 = 0
+    public var selectionsObserved: UInt64 = 0
+    public var fieldUnavailable: UInt64 = 0
+    public var laggingObservations: UInt64 = 0
+    public var unexplainedFieldChanges: UInt64 = 0
+    public var unpredictableKeys: UInt64 = 0
+    public var unsettledTriggers: UInt64 = 0
+    public var staleBeforeSend: UInt64 = 0
+    public var uncertainAfterSend: UInt64 = 0
+    public var replacementsPosted: UInt64 = 0
+
+    public init() {}
+}

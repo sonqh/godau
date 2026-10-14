@@ -22,7 +22,10 @@ public final class InputHost {
     private var workspaceObservers: [NSObjectProtocol] = []
     private var sourceObserver: NSObjectProtocol?
     private let focus = FocusMonitor()
-    private var expectedCaret: Int?
+    private var field = FieldContextTracker()
+    public private(set) var counters = ContextCounters()
+    private var trace = ObservationTrace()
+    private var keysSinceObservation: UInt32 = 0
     private var pid: pid_t = 0
     private var sleeping = false
     private var uncertainSend = false
@@ -35,7 +38,7 @@ public final class InputHost {
 
     public func start() {
         guard timer == nil else { return }
-        focus.onNotification = { [weak self] in self?.refresh() }
+        focus.onNotification = { [weak self] in self?.observeField() }
         let center = NSWorkspace.shared.notificationCenter
         for name in [NSWorkspace.didActivateApplicationNotification, NSWorkspace.willSleepNotification,
                      NSWorkspace.didWakeNotification] {
@@ -44,8 +47,7 @@ public final class InputHost {
                 let isWaking = note.name == NSWorkspace.didWakeNotification
                 MainActor.assumeIsolated {
                     guard let self else { return }
-                    self.pipeline.invalidate()
-                    self.expectedCaret = nil
+                    self.invalidateContext()
                     if isSleeping {
                         self.sleeping = true
                         self.removeTap()
@@ -60,13 +62,12 @@ public final class InputHost {
             forName: NSNotification.Name(kTISNotifySelectedKeyboardInputSourceChanged as String),
             object: nil, queue: .main) { [weak self] _ in
                 MainActor.assumeIsolated {
-                    self?.pipeline.invalidate()
-                    self?.expectedCaret = nil
+                    self?.invalidateContext()
                     self?.refresh()
                 }
             }
         let poll = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refresh() }
+            MainActor.assumeIsolated { self?.refresh(source: "poll") }
         }
         timer = poll
         RunLoop.main.add(poll, forMode: .common)
@@ -88,7 +89,7 @@ public final class InputHost {
     public func setEnabled(_ value: Bool) {
         uncertainSend = false
         pipeline.setEnabled(value)
-        expectedCaret = nil
+        field.reset()
         refresh()
         // Explicit enable/resume starts fresh in the inspected context.
         pipeline.invalidate(holdUntilBoundary: false)
@@ -96,44 +97,54 @@ public final class InputHost {
         if value, pipeline.state == .active, let tap { CGEvent.tapEnable(tap: tap, enable: true) }
     }
 
-    public func refresh() {
+    public func refresh() { refresh(source: "refresh") }
+
+    private func refresh(source: String) {
         permissions = .current()
         let active = NSWorkspace.shared.frontmostApplication
         let nextPID = active?.processIdentifier ?? 0
         let nextBundle = active?.bundleIdentifier
         let nextSource = Self.currentInputSource()
-        if pid != nextPID || inputSource != nextSource {
-            pipeline.invalidate()
-            expectedCaret = nil
-        }
+        if pid != nextPID || inputSource != nextSource { invalidateContext() }
         pid = nextPID
         frontmostBundleID = nextBundle
         inputSource = nextSource
-        let supported = nextBundle.map { trialApps.contains($0) } ?? false
-        let inspected = focus.inspect(pid: pid, allowed: permissions.accessibility && supported && !sleeping)
-        if inspected.changed {
-            pipeline.invalidate()
-            expectedCaret = nil
-        }
-        if let range = inspected.selection, range.length == 0 {
-            if let expectedCaret, expectedCaret != range.location {
-                pipeline.invalidate()
-            }
-            expectedCaret = range.location
-        } else {
-            pipeline.invalidate()
-            expectedCaret = nil
-        }
+        let certain = observeFocus(source: source)
         let environment = InputEnvironment(permissions: permissions,
             secureInput: IsSecureEventInputEnabled(),
-            supportedApp: supported,
+            supportedApp: supportedApp,
             supportedSource: ["com.apple.keylayout.ABC", "com.apple.keylayout.US"].contains(inputSource),
-            certainContext: !sleeping && !uncertainSend && inspected.selection?.length == 0)
+            certainContext: !sleeping && !uncertainSend && certain)
         pipeline.updateEnvironment(environment)
         if !pipeline.enabled && !pipeline.hasConsumedKeys { removeTap() }
         if pipeline.enabled && !sleeping && environment.pauseReason == nil && tap == nil && pipeline.state == .active {
             createTap()
         }
+    }
+
+    private var supportedApp: Bool { frontmostBundleID.map { trialApps.contains($0) } ?? false }
+
+    /// AX notification path: field metadata only, without capability or app lookups.
+    private func observeField() {
+        let certain = observeFocus(source: "notification")
+        var environment = pipeline.environment
+        environment.certainContext = !sleeping && !uncertainSend && certain
+        pipeline.updateEnvironment(environment)
+    }
+
+    /// Compares observed caret/length with predicted key effects. Returns whether a caret is known.
+    private func observeFocus(source: String) -> Bool {
+        let inspected = focus.inspect(pid: pid, allowed: permissions.accessibility && supportedApp && !sleeping)
+        let observed = ContextPolicy.observe(focusChanged: inspected.changed, reading: inspected.field,
+                                             field: &field, pipeline: &pipeline, counters: &counters)
+        trace.append(source: source, inspection: inspected, result: observed.result,
+                     keysSincePrevious: keysSinceObservation, field: field)
+        keysSinceObservation = 0
+        return observed.certain
+    }
+
+    private func invalidateContext() {
+        ContextPolicy.invalidate(field: &field, pipeline: &pipeline)
     }
 
     /// Call from UI/export only; contains no text or keystroke payloads.
@@ -163,15 +174,17 @@ public final class InputHost {
             timings: timings.snapshot()))
     }
 
-    public func diagnosticJSON() throws -> Data {
+    /// `scope` distinguishes a direct invocation from the running app session.
+    public func diagnosticJSON(scope: String = "read-only-process-capability-snapshot") throws -> Data {
         struct AppInfo: Encodable {
             let bundleID: String
             let installed: Bool
             let version: String?
         }
         struct Report: Encodable {
-            let scope = "read-only-process-capability-snapshot"
+            let scope: String
             let nativeTypingVerified = false
+            let pid: Int32
             let bundleID: String?
             let executable: String?
             let os: String
@@ -181,7 +194,18 @@ public final class InputHost {
             let secureInput: Bool
             let inputSource: String
             let prototypeEnabled: Bool
+            let state: String
+            let tapInstalled: Bool
+            let frontmostBundleID: String?
+            let contextCounters: ContextCounters
+            let observationTrace: [ObservationRecord]
             let requiredApps: [AppInfo]
+        }
+        let stateText: String
+        switch state {
+        case .disabled: stateText = "disabled"
+        case .active: stateText = "active"
+        case .paused(let reason): stateText = "paused: \(reason.rawValue)"
         }
         let apps = trialApps.sorted().map { id in
             let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: id)
@@ -191,12 +215,14 @@ public final class InputHost {
         }
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        return try encoder.encode(Report(bundleID: Bundle.main.bundleIdentifier,
+        return try encoder.encode(Report(scope: scope, pid: ProcessInfo.processInfo.processIdentifier,
+            bundleID: Bundle.main.bundleIdentifier,
             executable: Bundle.main.executableURL?.path,
             os: ProcessInfo.processInfo.operatingSystemVersionString,
             accessibility: permissions.accessibility, eventListening: permissions.eventListening,
             eventPosting: permissions.eventPosting, secureInput: pipeline.environment.secureInput,
-            inputSource: inputSource, prototypeEnabled: enabled, requiredApps: apps))
+            inputSource: inputSource, prototypeEnabled: enabled, state: stateText, tapInstalled: tap != nil,
+            frontmostBundleID: frontmostBundleID, contextCounters: counters, observationTrace: trace.ordered, requiredApps: apps))
     }
 
     private func createTap() {
@@ -240,15 +266,15 @@ public final class InputHost {
             return original
         case .timeout:
             if pipeline.timeout(at: start), let tap { CGEvent.tapEnable(tap: tap, enable: true) }
-            expectedCaret = nil
+            field.reset()
             return original
         case .userDisabled:
             pipeline.pauseFor(.userDisabledTap)
-            expectedCaret = nil
+            field.reset()
             return original
         case .input(let input):
+            let code = event.getIntegerValueField(.keyboardEventKeycode)
             if type == .keyDown {
-                let code = event.getIntegerValueField(.keyboardEventKeycode)
                 if (0..<128).contains(code), pipeline.beginPhysicalPress(UInt16(code),
                     isRepeat: event.getIntegerValueField(.keyboardEventAutorepeat) != 0) {
                     return false
@@ -257,22 +283,16 @@ public final class InputHost {
             let before = pipeline.word
             switch pipeline.handle(input) {
             case .passThrough:
-                if pipeline.state == .active {
-                    switch input {
-                    case .letter:
-                        if let caret = expectedCaret, caret < Int.max { expectedCaret = caret + 1 }
-                    case .backspace:
-                        if let caret = expectedCaret { expectedCaret = max(0, caret - 1) }
-                    case .boundary, .invalidate:
-                        expectedCaret = nil
-                    case .keyUp:
-                        break
-                    }
-                }
+                expectPassThrough(input, keyCode: code, previous: before)
                 return original
             case .consume:
                 return false
             case .replace(let edit):
+                // Require an observation after every tracked key before deleting anything.
+                guard ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
+                    expectPassThrough(input, keyCode: code, previous: before)
+                    return original
+                }
                 do {
                     let plan = try ReplacementPlan.compute(previous: before, next: edit.next)
                     let prepared = try transport.prepare(plan)
@@ -283,25 +303,41 @@ public final class InputHost {
                     switch result {
                     case .posted:
                         guard pipeline.accept(edit) else {
-                            uncertainSend = true
-                            pipeline.consumeAfterUncertainSend(edit.keyCode)
+                            markUncertainSend(edit)
                             return false
                         }
+                        ContextPolicy.expectReplacement(previous: before, plan: plan, field: &field,
+                                                        pipeline: &pipeline, counters: &counters)
                         return false
                     case .staleBeforeSend:
+                        counters.staleBeforeSend &+= 1
                         pipeline.invalidate()
+                        expectPassThrough(input, keyCode: code, previous: before)
                         return original
                     case .uncertainAfterSend:
-                        uncertainSend = true
-                        pipeline.consumeAfterUncertainSend(edit.keyCode)
+                        markUncertainSend(edit)
                         return false
                     }
                 } catch {
                     pipeline.invalidate()
+                    expectPassThrough(input, keyCode: code, previous: before)
                     return original
                 }
             }
         }
+    }
+
+    private func markUncertainSend(_ edit: PendingReplacement) {
+        counters.uncertainAfterSend &+= 1
+        uncertainSend = true
+        field.reset()
+        pipeline.consumeAfterUncertainSend(edit.keyCode)
+    }
+
+    private func expectPassThrough(_ input: PrototypeInput, keyCode: Int64, previous: String) {
+        if case .keyUp = input {} else { keysSinceObservation &+= 1 }
+        ContextPolicy.expectPassThrough(input, keyCode: keyCode, previous: previous, field: &field,
+                                        pipeline: &pipeline, counters: &counters)
     }
 
     private static func currentInputSource() -> String {

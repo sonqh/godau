@@ -9,7 +9,39 @@ It is not the complete Telex engine. No required application field has native ty
 The specification commit was pushed as `215e810` before this implementation work.
 The implemented source milestone follows that commit; Git history identifies the final implementation commit.
 
-## Local verification
+## Session 2 update on 2026-10-14
+
+Task 2.2 context handling is implemented at model level and still awaits native reproduction.
+
+| Command | Result | Scope |
+| --- | --- | --- |
+| `make check` | Pass | Five strict OpenSpec items, five ledger tests, 35 platform/4 core Swift model tests, six replay fixtures |
+| `make test-sanitize` | Pass | The same 39 tests with AddressSanitizer |
+| `make app` | Pass | Release bundle, ad hoc signature, CDHash `39f8ee86b43a5d0ed9cfaabae5ce4da2b70c723c` |
+| `open .artifacts/VietMac.app --args --evidence-dir <abs>/.artifacts/native/session-1` | Pass | Launch Services session pid 97627 wrote `session-diagnostics.json` |
+
+The session snapshot reported `accessibility`, `eventListening`, and `eventPosting` all false, state `disabled`, no tap, ABC input source, and secure input off.
+This is the actual app session, not the terminal-invoked diagnostics process. Native typing remains blocked on Son granting Accessibility and Input Monitoring to this exact build.
+Ad hoc signing ties the grant to this CDHash. Any rebuild requires re-granting, so the build was frozen after this snapshot.
+
+### Native attempts in session 2
+
+| Step | Result | Evidence |
+| --- | --- | --- |
+| Son granted Input Monitoring, then Accessibility, to the ad hoc build | Pass | Session pid 98941: `accessibility`, `eventListening`, `eventPosting` all true; tap installed; prototype enabled from the menu |
+| Chrome 155 ordinary input, `LEFT ` + space + `as` (cases 1 and 1b) | **Fail (safe)** | Field showed `LEFT as RIGHT`, caret after `as`; no deletion; `replacementsPosted` 0 |
+| Counter delta for case 1b | Diagnostic | `focusChanges` +22, `unexplainedFieldChanges` +6, `laggingObservations` +5, `unsettledTriggers` 0 |
+| Rebuild signed with a self-signed `VietMac Local Signing` certificate (not trusted) | Built | Designated requirement: identifier plus certificate leaf `d53f4c1f…` |
+| Grant to the certificate-signed build after removing and re-adding entries | **Fail** | Sessions pid 1684 and 1841 reported all three capabilities false |
+
+Inferred cause of the Chrome failure: nearly every 250 ms poll reported a focused-element change, so the tracked word was invalidated before `s`. The ad hoc build lacked the metadata to confirm this.
+Inferred cause of the signing failure: TCC on this macOS build did not honor the untrusted self-signed certificate. `tccd` log details are redacted.
+Son stopped the session at this point. OpenKey's helper (`com.tuyenmai.OpenKeyHelper`) was running and must be quit before the next native session.
+
+The current build adds a bounded 64-entry observation trace to `session-diagnostics.json`: source (poll, notification, refresh), role, element hash, focus-change flag, reading or unavailable reason, caret, length, comparison result, keys since the previous observation, and pending/settled state. It contains no text or key identity.
+The app now ignores `SIGUSR1` when started without `--evidence-dir`; the earlier build terminated on a stray signal once in this session.
+
+## Local verification (session 1)
 
 | Command | Result | Scope |
 | --- | --- | --- |
@@ -55,10 +87,29 @@ Ordinary held-letter repeats pass through without applying the double-`a` rule.
 The callback handles tap-loss notifications before reading keyboard fields and collects only bounded timing samples.
 Menus, settings, capability checks, app/source lookup, AX inspection, and timing serialization occur outside the key callback.
 
-The host observes app/source changes, navigation, edit chords, click/drag, lifecycle loss, AX focus/selection notifications, and polled focus/selected-range metadata.
-It reads no document text and writes no typed-content records.
-Cached focus/caret metadata cannot prove that the field still contains the predicted suffix. In particular, same-caret programmatic edits and notifications that arrive after the next key remain unresolved.
-Task 2.2 is partially implemented and stays pending for external-edit handling and its focused/native reproductions.
+The host observes app/source changes, navigation, edit chords, click/drag, lifecycle loss, AX focus/window/selection/value notifications, and polled focus metadata.
+It reads the selected range and `AXNumberOfCharacters` only. It reads no document text and writes no typed-content records.
+
+`FieldContextTracker` predicts the field's UTF-16 caret and length after each pass-through key, generated Backspace, and generated insertion.
+`ContextPolicy` applies observations on the owning run loop:
+
+- A caret/length that no prediction explains (for example, a same-caret script edit that changes the length, or a caret move at the same length) invalidates the tracked word.
+- A focused-element change invalidates even when the new field's metadata matches the prediction, so an unchanged PID is never treated as field ownership.
+- A non-empty selection (including inline autocomplete) or missing caret/length pauses with `uncertainContext` and invalidates.
+- A replacement requires a settled tracker: an unambiguous observation after every tracked key matched the prediction. Otherwise the trigger key passes through literally and the word stays literal until a boundary.
+- An observation that matches several predictions (a revisited state such as net-zero `a` → `á`, or a letter and Backspace) assumes the earliest match and does not settle.
+- Return, Tab, Enter, navigation, edit chords, and untracked Backspace clear the baseline; the next observation re-establishes it.
+
+Remaining limits, documented rather than solved:
+
+- A same-length, same-caret external edit is indistinguishable from the predicted state by metadata.
+- A change after the last observation and before the trigger key cannot be detected without an AX read in the key path. The callback does no AX reads.
+- A key processed after a reset but before the re-baselining observation can make that observation look settled. Event order still places generated events after it.
+- Fields without `AXNumberOfCharacters` or a selected range stay paused. Electron and browser fields may lack timely notifications; the 250 ms poll is the fallback, so fast typing may leave triggers literal.
+- Programmatic focus changes are detected only when the focused element or its notifications change.
+
+Task 2.2 stays pending until the native reproductions below confirm the counters and text outcomes.
+`contextCounters` in the session snapshot counts focus changes, selections, unavailable fields, lagging observations, unexplained changes, unsettled triggers, stale/uncertain sends, and posted replacements. It contains no text.
 A successful void event-post call is not a client acknowledgement; delivery and undo/formatting behavior remain native questions.
 
 No real callback timing was captured. Task 2.3 stays pending; bounded-ring tests and model durations are not Release callback performance evidence.
@@ -94,7 +145,33 @@ Use [the local synthetic browser fields](../../Fixtures/native-fields.html) for 
 Browser address bars and real selected autocomplete suggestions need independent tests; the page fixture does not substitute for them.
 The prototype's two rules are not full-engine acceptance evidence.
 
+## Native session procedure
+
+The app accepts `--evidence-dir <absolute path>`. It writes `session-diagnostics.json` and `callback-timings.json` at launch and whenever it receives `SIGUSR1`.
+The write runs on the main queue outside the key callback. Send the signal between cases, not while typing.
+
+```sh
+open .artifacts/VietMac.app --args --evidence-dir "$PWD/.artifacts/native/session-1"
+kill -USR1 "$(pgrep -f 'VietMac.app/Contents/MacOS/VietMac')"
+```
+
+Task 2.2 reproductions with [the synthetic fields](../../Fixtures/native-fields.html), one browser at a time:
+
+| Case | Steps | Expected |
+| --- | --- | --- |
+| Baseline | Click after `LEFT `, type space, `as` | `á` replaces `a`; `replacementsPosted` +1 |
+| Same-caret external edit | Click Change ordinary input, return caret, type `a`, wait for the edit, type `s` | Content stays `EXTERNAL CONTENT` plus literal `as`; `unexplainedFieldChanges` +1; no deletion |
+| Same-app focus switch | Click Focus the second input, type `a` in the first field, wait, type `s` | Second field receives literal `s`; first field keeps `a`; `focusChanges` +1 |
+| Synthetic selection | Click Select a synthetic completion, type `s` | Selection replaced by `s` as ordinary input; `selectionsObserved` +1; no extra deletion |
+| Fast typing | Type `as` quickly ten times separated by spaces | Record each result; literal `as` with `unsettledTriggers` is a safe failure, not a pass |
+
+Task 2.3 workload: enable the prototype, type the ordinary-input workload for at least 1,000 key events, then send `SIGUSR1`. Record sample count, environment, and percentiles as callback own-work only.
+
 ## Next native session
+
+Decide the signing path first: trust the local certificate for code signing (Son's keychain decision) or rebuild ad hoc and re-grant after each rebuild.
+Then repeat case 1b in Chrome and read `observationTrace` to confirm or reject the element-identity hypothesis before changing the focus comparison.
+
 
 1. Give Son manual permission instructions for the locally signed `.artifacts/VietMac.app` at a stable path. Son enables Accessibility/Input Monitoring; confirm actual posting capability as well. Computer Use access is a separate prerequisite for automated UI checks.
 2. Use ABC or U.S. and one Vietnamese event-transforming app. Open synthetic documents/fields and enable the M0 prototype from its menu.

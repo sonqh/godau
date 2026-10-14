@@ -93,10 +93,11 @@ The initial trial uses tested apps and ABC or U.S. input sources.
 Pass through unsupported contexts, secure input, unknown layouts, and non-ASCII input conservatively.
 Programmatic focus changes can remain unobserved. Do not claim a PID check solves that uncertainty.
 
-The M0 host currently caches frontmost app, input source, focused-element identity, and selected UTF-16 range on its main run loop outside the key callback.
-Accessibility focus/selection notifications and periodic inspection invalidate detected mismatches; no document text is read or persisted.
-These observations do not guarantee detection of a programmatic edit that leaves the same caret or of a focus change before its notification arrives.
-Task 2.2 remains pending until external-edit handling and the corresponding native reproductions are resolved.
+The M0 host caches frontmost app, input source, focused-element identity, selected UTF-16 range, and character count on its main run loop outside the key callback.
+`FieldContextTracker` predicts caret and length from tracked keys and generated events; `ContextPolicy` invalidates on unexplained metadata, focused-element changes, selections, and missing metadata.
+A replacement requires an unambiguous observation after every tracked key. Otherwise the trigger passes through literally. No document text is read or persisted.
+Same-length same-caret edits and changes after the last observation remain undetectable without a key-path AX read, which the callback does not perform.
+Task 2.2 remains pending until the corresponding native reproductions pass.
 App menus and diagnostics consume status outside the callback. Timing storage is a fixed 1,024-sample ring, with sorting/JSON export outside the callback.
 
 ## Reuse and extensions

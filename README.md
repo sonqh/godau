@@ -25,6 +25,7 @@ make app
 `make app` builds and locally signs `.artifacts/VietMac.app` without launching or installing it.
 Signing defaults to ad hoc; set `VIETMAC_SIGNING_IDENTITY` explicitly to use a chosen local identity.
 Run `.artifacts/VietMac.app/Contents/MacOS/VietMac --diagnostics` for a read-only capability snapshot without creating an event tap.
+Launch with `open .artifacts/VietMac.app --args --evidence-dir <absolute path>` to record the running session's capabilities, context counters, and callback timings (refreshed on `SIGUSR1`).
 See [M0 verification and pending native checks](docs/verification/macos-transport-spike.md) before enabling the prototype.
 `scripts/swift.sh` uses the installed Command Line Tools when available without changing global developer settings.
 Set `VIETMAC_SWIFT_BIN` to an explicit Swift executable to use another toolchain.

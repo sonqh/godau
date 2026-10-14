@@ -1,7 +1,30 @@
 import ApplicationServices
 import Foundation
 
-/// Reads identity and selected range only, never document or typed text.
+enum FieldUnavailableReason: String, Equatable {
+    case notInspected
+    case noFocusedElement
+    case unsupportedRole
+    case secureField
+    case noSelectedRange
+    case noCharacterCount
+}
+
+enum FieldReading: Equatable {
+    case caret(FieldSnapshot)
+    case selection
+    case unavailable(FieldUnavailableReason)
+}
+
+/// Metadata for the diagnostic trace. Contains no document text.
+struct FocusInspection {
+    let changed: Bool
+    let field: FieldReading
+    var role: String? = nil
+    var elementHash: UInt? = nil
+}
+
+/// Reads identity, selected range, and character count only, never document or typed text.
 /// Called on the owning run loop outside the keyboard callback.
 @MainActor
 final class FocusMonitor {
@@ -21,11 +44,11 @@ final class FocusMonitor {
         pid = 0
     }
 
-    func inspect(pid nextPID: pid_t, allowed: Bool) -> (changed: Bool, selection: CFRange?) {
+    func inspect(pid nextPID: pid_t, allowed: Bool) -> FocusInspection {
         guard allowed, nextPID > 0 else {
             let changed = element != nil
             stop()
-            return (changed, nil)
+            return FocusInspection(changed: changed, field: .unavailable(.notInspected))
         }
         if pid != nextPID {
             stop()
@@ -44,40 +67,60 @@ final class FocusMonitor {
                 observer = created
                 let pointer = Unmanaged.passUnretained(self).toOpaque()
                 AXObserverAddNotification(created, application!, kAXFocusedUIElementChangedNotification as CFString, pointer)
+                AXObserverAddNotification(created, application!, kAXFocusedWindowChangedNotification as CFString, pointer)
                 CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(created), .commonModes)
             }
         }
-        guard let application else { return (false, nil) }
+        guard let application else { return FocusInspection(changed: false, field: .unavailable(.noFocusedElement)) }
         var raw: CFTypeRef?
         guard AXUIElementCopyAttributeValue(application, kAXFocusedUIElementAttribute as CFString, &raw) == .success,
-              let raw, CFGetTypeID(raw) == AXUIElementGetTypeID() else { return (true, nil) }
+              let raw, CFGetTypeID(raw) == AXUIElementGetTypeID() else {
+            return FocusInspection(changed: true, field: .unavailable(.noFocusedElement))
+        }
         let focused = raw as! AXUIElement
         let changed = element.map { !CFEqual($0, focused) } ?? true
         if changed {
             if let observer, let element {
-                AXObserverRemoveNotification(observer, element, kAXSelectedTextChangedNotification as CFString)
+                for name in Self.elementNotifications { AXObserverRemoveNotification(observer, element, name) }
             }
             element = focused
             AXUIElementSetMessagingTimeout(focused, 0.05)
             if let observer {
-                AXObserverAddNotification(observer, focused, kAXSelectedTextChangedNotification as CFString,
-                                          Unmanaged.passUnretained(self).toOpaque())
+                // Value changes can be external edits that keep the same caret.
+                for name in Self.elementNotifications {
+                    AXObserverAddNotification(observer, focused, name, Unmanaged.passUnretained(self).toOpaque())
+                }
             }
         }
         var role: CFTypeRef?
         var subrole: CFTypeRef?
         AXUIElementCopyAttributeValue(focused, kAXRoleAttribute as CFString, &role)
         AXUIElementCopyAttributeValue(focused, kAXSubroleAttribute as CFString, &subrole)
-        guard let role = role as? String,
-              [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(role),
-              subrole as? String != kAXSecureTextFieldSubrole else { return (changed, nil) }
+        let roleName = role as? String
+        func result(_ field: FieldReading) -> FocusInspection {
+            FocusInspection(changed: changed, field: field, role: roleName, elementHash: CFHash(focused))
+        }
+        guard let roleName, [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(roleName) else {
+            return result(.unavailable(.unsupportedRole))
+        }
+        guard subrole as? String != kAXSecureTextFieldSubrole else { return result(.unavailable(.secureField)) }
         var rangeValue: CFTypeRef?
         guard AXUIElementCopyAttributeValue(focused, kAXSelectedTextRangeAttribute as CFString, &rangeValue) == .success,
-              let rangeValue, CFGetTypeID(rangeValue) == AXValueGetTypeID() else { return (changed, nil) }
+              let rangeValue, CFGetTypeID(rangeValue) == AXValueGetTypeID() else {
+            return result(.unavailable(.noSelectedRange))
+        }
         let value = rangeValue as! AXValue
         var range = CFRange()
         guard AXValueGetType(value) == .cfRange, AXValueGetValue(value, .cfRange, &range),
-              range.location >= 0, range.length >= 0 else { return (changed, nil) }
-        return (changed, range)
+              range.location >= 0, range.length >= 0 else { return result(.unavailable(.noSelectedRange)) }
+        guard range.length == 0 else { return result(.selection) }
+        // A count, not content. Without it a same-caret external edit is unobservable.
+        var count: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(focused, kAXNumberOfCharactersAttribute as CFString, &count) == .success,
+              let length = count as? Int, length >= range.location else { return result(.unavailable(.noCharacterCount)) }
+        return result(.caret(FieldSnapshot(caret: range.location, length: length)))
     }
+
+    private static let elementNotifications = [kAXSelectedTextChangedNotification as CFString,
+                                               kAXValueChangedNotification as CFString]
 }

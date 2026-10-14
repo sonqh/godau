@@ -9,6 +9,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
     private let toggleItem = NSMenuItem(title: "Enable M0 prototype", action: nil, keyEquivalent: "")
     private let resumeItem = NSMenuItem(title: "Resume after pause", action: nil, keyEquivalent: "")
     private let capabilitiesItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private var evidenceSignal: DispatchSourceSignal?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let status = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -40,6 +41,36 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         item = status
         host.start()
         updateMenu()
+        startEvidenceExport()
+    }
+
+    /// `--evidence-dir <absolute path>` writes session snapshots at launch and on SIGUSR1.
+    /// Writes run on the main queue outside the key callback and contain no typed text.
+    private func startEvidenceExport() {
+        signal(SIGUSR1, SIG_IGN) // A stray export request must not terminate a session without evidence export.
+        let arguments = CommandLine.arguments
+        guard let index = arguments.firstIndex(of: "--evidence-dir"), index + 1 < arguments.count else { return }
+        let directory = URL(fileURLWithPath: arguments[index + 1], isDirectory: true)
+        guard directory.path.hasPrefix("/") else { return }
+        writeEvidence(to: directory)
+        let source = DispatchSource.makeSignalSource(signal: SIGUSR1, queue: .main)
+        source.setEventHandler { [weak self] in
+            MainActor.assumeIsolated { self?.writeEvidence(to: directory) }
+        }
+        source.resume()
+        evidenceSignal = source
+    }
+
+    private func writeEvidence(to directory: URL) {
+        do {
+            host.refresh()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            try host.diagnosticJSON(scope: "launch-services-session-snapshot")
+                .write(to: directory.appendingPathComponent("session-diagnostics.json"), options: .atomic)
+            try host.timingJSON().write(to: directory.appendingPathComponent("callback-timings.json"), options: .atomic)
+        } catch {
+            FileHandle.standardError.write(Data("Evidence export failed: \(error)\n".utf8))
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) { host.stop() }
