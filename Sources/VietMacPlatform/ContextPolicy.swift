@@ -91,6 +91,26 @@ enum ContextPolicy {
         }
         expect(deleting: 0, inserting: plan.insertion.utf16.count, field: &field, pipeline: &pipeline,
                counters: &counters)
+        field.markReplacement()
+    }
+
+    /// Quiet time after the last tracked key before a still-lagging replacement counts as lost.
+    static let replacementSettleNanoseconds: UInt64 = 500_000_000
+
+    /// Applies quiet time to a lagging observation. A field at the final prediction settles; a
+    /// replacement still unexplained (for example deletion landed and insertion was dropped)
+    /// pauses instead of waiting forever. Returns true when it paused.
+    @discardableResult
+    static func checkReplacementDelivery(result: FieldObservation, reading: FieldReading, quietNanoseconds: UInt64,
+                                         field: inout FieldContextTracker, pipeline: inout PrototypePipeline,
+                                         counters: inout ContextCounters) -> Bool {
+        guard result == .lagging, quietNanoseconds >= replacementSettleNanoseconds,
+              case .caret(let snapshot) = reading else { return false }
+        if field.settleIfFinal(snapshot) || !field.replacementUnconfirmed { return false }
+        counters.replacementsUnconfirmed &+= 1
+        pipeline.pauseFor(.transportUncertain)
+        field.reset()
+        return true
     }
 
     private static func expect(deleting: Int, inserting: Int, field: inout FieldContextTracker,

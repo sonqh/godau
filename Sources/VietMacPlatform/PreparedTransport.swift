@@ -28,7 +28,10 @@ public final class PreparedTransport {
         self.factory = factory ?? { CGEvent(keyboardEventSource: source, virtualKey: $0, keyDown: $1) }
     }
 
-    public func prepare(_ plan: ReplacementPlan) throws -> PreparedReplacement {
+    /// `insertionKeyCode` must be a key the client cannot see as held. The host passes the consumed
+    /// trigger key: reusing another physical key (for example `kVK_ANSI_A` while A is down) lets the
+    /// client drop the insertion after the deletion has already landed.
+    public func prepare(_ plan: ReplacementPlan, insertionKeyCode: CGKeyCode) throws -> PreparedReplacement {
         let units = Array(plan.insertion.utf16)
         guard (0...64).contains(plan.deleteCount), units.count <= 128 else {
             throw TransportError.invalidPlan
@@ -47,7 +50,7 @@ public final class PreparedTransport {
         }
         if !units.isEmpty {
             for down in [true, false] {
-                let event = try make(0, down: down)
+                let event = try make(insertionKeyCode, down: down)
                 units.withUnsafeBufferPointer {
                     event.keyboardSetUnicodeString(stringLength: $0.count, unicodeString: $0.baseAddress!)
                 }

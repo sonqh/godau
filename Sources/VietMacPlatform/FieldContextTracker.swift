@@ -26,6 +26,8 @@ public enum FieldObservation: Equatable, Sendable {
 public struct FieldContextTracker {
     public static let capacity = 80
     public private(set) var baseline: FieldSnapshot?
+    /// A posted replacement whose insertion no observation has settled yet.
+    public private(set) var replacementUnconfirmed = false
     private var pending: [FieldSnapshot] = []
 
     public init() {
@@ -39,7 +41,24 @@ public struct FieldContextTracker {
 
     public mutating func reset() {
         baseline = nil
+        replacementUnconfirmed = false
         pending.removeAll(keepingCapacity: true)
+    }
+
+    /// Resolves the revisited-state ambiguity once input is quiet: generated events land within
+    /// milliseconds, so a quiet field at the final prediction means every effect arrived.
+    @discardableResult
+    public mutating func settleIfFinal(_ snapshot: FieldSnapshot) -> Bool {
+        guard !pending.isEmpty, snapshot == pending.last else { return false }
+        baseline = snapshot
+        pending.removeAll(keepingCapacity: true)
+        replacementUnconfirmed = false
+        return true
+    }
+
+    /// Call after predicting a posted replacement. A settled observation confirms it.
+    public mutating func markReplacement() {
+        replacementUnconfirmed = baseline != nil
     }
 
     public mutating func observe(_ snapshot: FieldSnapshot?) -> FieldObservation {
@@ -57,6 +76,7 @@ public struct FieldContextTracker {
         if let index = pending.firstIndex(of: snapshot) {
             baseline = snapshot
             pending.removeFirst(index + 1)
+            if pending.isEmpty { replacementUnconfirmed = false }
             return pending.isEmpty ? .consistent : .lagging
         }
         // The new state becomes the baseline; the caller invalidates the tracked word.

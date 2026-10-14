@@ -10,6 +10,8 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
     private let resumeItem = NSMenuItem(title: "Resume after pause", action: nil, keyEquivalent: "")
     private let capabilitiesItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private var evidenceSignal: DispatchSourceSignal?
+    private var evidenceDirectory: URL?
+    private var disableSnapshots = 0
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let status = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -52,6 +54,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         guard let index = arguments.firstIndex(of: "--evidence-dir"), index + 1 < arguments.count else { return }
         let directory = URL(fileURLWithPath: arguments[index + 1], isDirectory: true)
         guard directory.path.hasPrefix("/") else { return }
+        evidenceDirectory = directory
         writeEvidence(to: directory)
         let source = DispatchSource.makeSignalSource(signal: SIGUSR1, queue: .main)
         source.setEventHandler { [weak self] in
@@ -61,13 +64,13 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         evidenceSignal = source
     }
 
-    private func writeEvidence(to directory: URL) {
+    private func writeEvidence(to directory: URL, prefix: String = "") {
         do {
             host.refresh()
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try host.diagnosticJSON(scope: "launch-services-session-snapshot")
-                .write(to: directory.appendingPathComponent("session-diagnostics.json"), options: .atomic)
-            try host.timingJSON().write(to: directory.appendingPathComponent("callback-timings.json"), options: .atomic)
+                .write(to: directory.appendingPathComponent(prefix + "session-diagnostics.json"), options: .atomic)
+            try host.timingJSON().write(to: directory.appendingPathComponent(prefix + "callback-timings.json"), options: .atomic)
         } catch {
             FileHandle.standardError.write(Data("Evidence export failed: \(error)\n".utf8))
         }
@@ -96,7 +99,15 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         item?.button?.toolTip = stateItem.title
     }
 
-    @objc private func toggle() { host.setEnabled(!host.enabled); updateMenu() }
+    @objc private func toggle() {
+        // Snapshot before disabling so the trace still covers the trial just typed.
+        if host.enabled, let directory = evidenceDirectory {
+            disableSnapshots += 1
+            writeEvidence(to: directory, prefix: "disable-\(disableSnapshots)-")
+        }
+        host.setEnabled(!host.enabled)
+        updateMenu()
+    }
     @objc private func resume() { host.setEnabled(true); updateMenu() }
     @objc private func openAccessibility() {
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {

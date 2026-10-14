@@ -28,6 +28,30 @@
 <button id="selection">Select a synthetic completion</button>
 <button id="reset">Reset synthetic content</button>
 <p id="status" role="status"></p>
+<label for="event-log">Page event log (last 400 events in these fields, newest first)</label>
+<pre id="event-log" style="min-height: 8em; padding: 12px; border: 1px solid #888; border-radius: 6px; font: 13px/1.4 ui-monospace, monospace; white-space: pre-wrap;"></pre>
+<button id="clear-log">Clear event log</button>
+<script>
+  const log = document.getElementById('event-log');
+  const lines = [];
+  const show = (value) => value === undefined || value === null ? '-' : JSON.stringify(value);
+  const record = (event) => {
+    const keyed = event.type.startsWith('key');
+    const detail = keyed
+      ? `key=${show(event.key)} code=${event.code || '-'} keyCode=${event.keyCode} repeat=${event.repeat}`
+      : `inputType=${event.inputType || '-'} data=${show(event.data)}`;
+    const t = (performance.now() / 1000).toFixed(3);
+    lines.unshift(`${t} ${event.target.id || 'rich'} ${event.type} ${detail} composing=${event.isComposing}`);
+    lines.length = Math.min(lines.length, 400);
+    log.textContent = lines.join('\n');
+  };
+  for (const id of ['ordinary', 'other', 'area', 'rich']) {
+    for (const type of ['keydown', 'keyup', 'beforeinput', 'input']) {
+      document.getElementById(id).addEventListener(type, record);
+    }
+  }
+  document.getElementById('clear-log').onclick = () => { lines.length = 0; log.textContent = ''; };
+</script>
 <script>
   const ordinary = document.getElementById('ordinary');
   const other = document.getElementById('other');

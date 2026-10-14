@@ -41,6 +41,38 @@ Son stopped the session at this point. OpenKey's helper (`com.tuyenmai.OpenKeyHe
 The current build adds a bounded 64-entry observation trace to `session-diagnostics.json`: source (poll, notification, refresh), role, element hash, focus-change flag, reading or unavailable reason, caret, length, comparison result, keys since the previous observation, and pending/settled state. It contains no text or key identity.
 The app now ignores `SIGUSR1` when started without `--evidence-dir`; the earlier build terminated on a stray signal once in this session.
 
+### Native attempts in sessions 3–5 (2026-10-14)
+
+Son trusted `VietMac Local Signing` for code signing. Rebuilt binaries keep Accessibility, listening, and posting without a new grant.
+OpenKey was quit. Its login-item helper stays alive under launchd but has no event tap (`CGGetEventTapList`).
+Chrome tests used `Fixtures/native-fields.html` served from `127.0.0.1`, with a page event log of key and input events.
+
+| Step | Result | Evidence |
+| --- | --- | --- |
+| Chrome ordinary input, space + `as`, `a` released before `s` (session 4) | Pass | Field `LEFT  á RIGHT` (U+00E1), caret 7; page log: Backspace, `keydown key="á" code=KeyA`, `insertText "á"` |
+| Chrome `as`, two attempts (session 3) | **Fail (data loss)** | `as` removed, no `á`; `replacementsPosted` 2 |
+| Chrome text area, space + `as` five times (sessions 4 and 5) | **Fail (data loss) once per run** | First trigger: `as` removed, no `á`; the other four stayed literal with `unsettledTriggers` +4 |
+
+Session 5 page log for the failed trigger: `a` keydown, Backspace keydown/keyup, then one `a` keyup. Chrome received no keydown for the generated `á`.
+The physical `a` was still down when `s` was pressed (key rollover). In the passing case, `a` was released before `s`.
+Inferred cause: the generated insertion uses virtual key 0 (`kVK_ANSI_A`). While the physical `A` key is held, the system or Chrome drops that keydown, and the generated keyup releases `A`.
+The transport therefore deletes and never inserts. The tracker kept the insertion pending (`lagging`) for every later observation, which blocked later triggers but did not pause or report the loss.
+The app now writes `disable-<n>-session-diagnostics.json` when the prototype is disabled from the menu, so the trace covers the trial just typed.
+
+Fix: the generated insertion now uses the consumed trigger key's virtual keycode (for `as`, `kVK_ANSI_S`). The client never saw that key go down.
+After a replacement, the tracker settles a quiet field (500 ms after the last tracked key) at its final prediction. This resolves the `a` → `á` same-length ambiguity.
+If the replacement is still unexplained after that quiet period, the host counts `replacementsUnconfirmed` and pauses with `transportUncertain`.
+
+### Native attempts in session 6 (2026-10-14)
+
+| Step | Result | Evidence |
+| --- | --- | --- |
+| Chrome text area with Apple Vietnamese Simple Telex active | Not a VietMac test | Text came from Apple's IME (`insertCompositionText`, `composing=true`); VietMac paused for the unsupported source with `replacementsPosted` 0 |
+| Chrome text area, ABC, fast space + `as` five times | **Pass** | `LEFT  RIGHT á á á á á ` (U+00E1 each). `replacementsPosted` 5, `replacementsUnconfirmed` 0, `unsettledTriggers` 0, state still active |
+| Rollover on the first trigger | Pass | `a` keydown, Backspace, `keydown key="á" code=KeyS`, `insertText "á"`, then the physical `a` keyup about 120 ms later |
+
+This passes one Chrome text-area row only. It does not complete the Chrome, Edge, and Dia matrix in task 3.3.
+
 ## Local verification (session 1)
 
 | Command | Result | Scope |

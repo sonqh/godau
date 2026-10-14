@@ -231,6 +231,59 @@ struct ContextPolicyTests {
         _ = session.key(a)
         #expect(session.field.baseline == nil)
     }
+
+    /// Session 5 text area: space, `a`, settled, then `s` replaced `a`.
+    private func replacedInTextArea() -> Session {
+        var session = Session()
+        session.observe(caret: 11, length: 11)
+        _ = session.key(.boundary, keyCode: 49)
+        _ = session.key(a)
+        session.observe(caret: 13, length: 13)
+        #expect(session.key(s) == "á")
+        #expect(session.field.replacementUnconfirmed)
+        return session
+    }
+
+    private func check(_ session: inout Session, caret: Int, length: Int, quietMilliseconds: UInt64) -> Bool {
+        let snapshot = FieldSnapshot(caret: caret, length: length)
+        let result = session.field.observe(snapshot)
+        return ContextPolicy.checkReplacementDelivery(result: result, reading: .caret(snapshot),
+                                                      quietNanoseconds: quietMilliseconds * 1_000_000,
+                                                      field: &session.field, pipeline: &session.pipeline,
+                                                      counters: &session.counters)
+    }
+
+    @Test func deliveredReplacementIsConfirmedOnlyOnceInputIsQuiet() {
+        var session = replacedInTextArea()
+        // `a` -> `á` keeps the length, so the delivered state equals the pre-replacement state.
+        #expect(!check(&session, caret: 13, length: 13, quietMilliseconds: 100))
+        #expect(session.field.replacementUnconfirmed)
+        #expect(!session.field.isSettled)
+        #expect(!check(&session, caret: 13, length: 13, quietMilliseconds: 600))
+        #expect(session.field.isSettled)
+        #expect(!session.field.replacementUnconfirmed)
+        #expect(session.pipeline.state == .active)
+        #expect(session.counters.replacementsUnconfirmed == 0)
+    }
+
+    @Test func droppedInsertionPausesAfterInputGoesQuiet() {
+        var session = replacedInTextArea()
+        // Deletion landed, insertion did not: the field stays one unit short.
+        #expect(!check(&session, caret: 12, length: 12, quietMilliseconds: 100))
+        #expect(session.pipeline.state == .active)
+        #expect(check(&session, caret: 12, length: 12, quietMilliseconds: 600))
+        #expect(session.pipeline.state == .paused(.transportUncertain))
+        #expect(session.counters.replacementsUnconfirmed == 1)
+        #expect(session.field.baseline == nil)
+    }
+
+    @Test func droppedInsertionHiddenByLaterKeyStillPauses() {
+        var session = replacedInTextArea()
+        _ = session.key(.boundary, keyCode: 49) // The next space can match the missing insertion's length.
+        #expect(session.field.observe(FieldSnapshot(caret: 13, length: 13)) == .lagging)
+        #expect(check(&session, caret: 13, length: 13, quietMilliseconds: 600))
+        #expect(session.pipeline.state == .paused(.transportUncertain))
+    }
 }
 
 struct ObservationTraceTests {

@@ -90,6 +90,8 @@ public struct ContextCounters: Encodable, Equatable, Sendable {
     public var staleBeforeSend: UInt64 = 0
     public var uncertainAfterSend: UInt64 = 0
     public var replacementsPosted: UInt64 = 0
+    /// Replacements whose predicted field effect never settled; the host paused after each.
+    public var replacementsUnconfirmed: UInt64 = 0
 
     public init() {}
 }

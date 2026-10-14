@@ -21,7 +21,7 @@ struct PreparedTransportTests {
             return CGEvent(keyboardEventSource: nil, virtualKey: code, keyDown: down)
         })
         let plan = try ReplacementPlan.compute(previous: "tieng", next: "tiêng")
-        let prepared = try transport.prepare(plan)
+        let prepared = try transport.prepare(plan, insertionKeyCode: 1)
         #expect(created == 8)
         var posted: [CGEvent] = []
         let result = transport.send(prepared, isCurrent: { true }, post: {
@@ -32,9 +32,18 @@ struct PreparedTransportTests {
         #expect(result == .posted)
         #expect(posted.map(\.type) == [.keyDown, .keyUp, .keyDown, .keyUp, .keyDown, .keyUp, .keyDown, .keyUp])
         #expect(posted.prefix(6).allSatisfy { $0.getIntegerValueField(.keyboardEventKeycode) == 51 })
+        #expect(posted.suffix(2).allSatisfy { $0.getIntegerValueField(.keyboardEventKeycode) == 1 })
         #expect(payload(posted[6]) == "êng")
         #expect(payload(posted[7]) == "êng")
         #expect(posted.allSatisfy { $0.getIntegerValueField(.eventSourceUserData) == 1234 && $0.flags.isEmpty })
+    }
+
+    /// Session 5: `a` still held when `s` triggered; Chrome dropped an insertion sent as kVK_ANSI_A.
+    @Test func insertionUsesTheConsumedTriggerKeyNotTheHeldPreviousKey() throws {
+        let transport = PreparedTransport(marker: 11)
+        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: "á"), insertionKeyCode: 1)
+        #expect(prepared.events.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [51, 51, 1, 1])
+        #expect(!prepared.events.contains { $0.getIntegerValueField(.keyboardEventKeycode) == 0 })
     }
 
     @Test func failureAfterPreparingDeletionStillPostsNothing() throws {
@@ -45,14 +54,14 @@ struct PreparedTransportTests {
                 return created == failureAt ? nil : CGEvent(keyboardEventSource: nil, virtualKey: code, keyDown: down)
             })
             let plan = try ReplacementPlan.compute(previous: "a", next: "á")
-            #expect(throws: TransportError.preparationFailed) { try transport.prepare(plan) }
+            #expect(throws: TransportError.preparationFailed) { try transport.prepare(plan, insertionKeyCode: 1) }
             #expect(created == failureAt)
         }
     }
 
     @Test func staleGenerationPostsNothingAndCannotCommit() throws {
         let transport = PreparedTransport(marker: 9)
-        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: "á"))
+        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: "á"), insertionKeyCode: 1)
         var posts = 0
         #expect(transport.send(prepared, isCurrent: { false }, post: { _ in posts += 1; return true }) == .staleBeforeSend)
         #expect(posts == 0)
@@ -60,7 +69,7 @@ struct PreparedTransportTests {
 
     @Test func partialSendStopsWithoutRollbackAndConsumesItsTrigger() throws {
         let transport = PreparedTransport(marker: 9)
-        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: "á"))
+        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: "á"), insertionKeyCode: 1)
         var posts = 0
         let result = transport.send(prepared, isCurrent: { posts < 1 }, post: { _ in posts += 1; return true })
         #expect(result == .uncertainAfterSend)
@@ -75,7 +84,8 @@ struct PreparedTransportTests {
 
     @Test func maximumPayloadIsPreparedWithoutUTF16DeletionConfusion() throws {
         let transport = PreparedTransport(marker: 10)
-        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: String(repeating: "ế", count: 64)))
+        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "a", next: String(repeating: "ế", count: 64)),
+                                             insertionKeyCode: 1)
         #expect(prepared.events.count == 4)
         #expect(payload(prepared.events[2]) == String(repeating: "ế", count: 64))
     }

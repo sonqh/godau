@@ -26,6 +26,7 @@ public final class InputHost {
     public private(set) var counters = ContextCounters()
     private var trace = ObservationTrace()
     private var keysSinceObservation: UInt32 = 0
+    private var lastTrackedKeyNanos: UInt64 = 0
     private var pid: pid_t = 0
     private var sleeping = false
     private var uncertainSend = false
@@ -140,6 +141,12 @@ public final class InputHost {
         trace.append(source: source, inspection: inspected, result: observed.result,
                      keysSincePrevious: keysSinceObservation, field: field)
         keysSinceObservation = 0
+        let quiet = DispatchTime.now().uptimeNanoseconds &- lastTrackedKeyNanos
+        if ContextPolicy.checkReplacementDelivery(result: observed.result, reading: inspected.field,
+                                                  quietNanoseconds: quiet,
+                                                  field: &field, pipeline: &pipeline, counters: &counters) {
+            return false
+        }
         return observed.certain
     }
 
@@ -295,7 +302,7 @@ public final class InputHost {
                 }
                 do {
                     let plan = try ReplacementPlan.compute(previous: before, next: edit.next)
-                    let prepared = try transport.prepare(plan)
+                    let prepared = try transport.prepare(plan, insertionKeyCode: CGKeyCode(edit.keyCode))
                     let result = transport.send(prepared, isCurrent: { pipeline.isCurrent(edit) }, post: {
                         $0.tapPostEvent(proxy)
                         return true // A void OS post is not client acknowledgement.
@@ -308,6 +315,7 @@ public final class InputHost {
                         }
                         ContextPolicy.expectReplacement(previous: before, plan: plan, field: &field,
                                                         pipeline: &pipeline, counters: &counters)
+                        lastTrackedKeyNanos = start
                         return false
                     case .staleBeforeSend:
                         counters.staleBeforeSend &+= 1
@@ -335,7 +343,10 @@ public final class InputHost {
     }
 
     private func expectPassThrough(_ input: PrototypeInput, keyCode: Int64, previous: String) {
-        if case .keyUp = input {} else { keysSinceObservation &+= 1 }
+        if case .keyUp = input {} else {
+            keysSinceObservation &+= 1
+            lastTrackedKeyNanos = DispatchTime.now().uptimeNanoseconds
+        }
         ContextPolicy.expectPassThrough(input, keyCode: keyCode, previous: previous, field: &field,
                                         pipeline: &pipeline, counters: &counters)
     }
