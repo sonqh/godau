@@ -1,0 +1,44 @@
+{
+  "scope": "event-tap-callback-own-work",
+  "notPlannerOrNativeLatency": "Callback own-work only; planner benchmark and visible native latency are separate scopes.",
+  "recordedAt": "2026-10-15",
+  "commit": "77aa3f3 + uncommitted runner scenarios",
+  "command": "python3 scripts/native_run.py timing-workload",
+  "build": "release",
+  "architecture": "arm64",
+  "os": "Version 27.0.1 (Build 26A434)",
+  "compiler": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+  "inputSourceDuringWorkload": "com.apple.keylayout.ABC",
+  "inputSourceAtExport": "com.apple.inputmethod.VietnameseIM.VietnameseSimpleTelex (restored by the driver before export)",
+  "frontmostApp": "com.google.Chrome 155.0.8059.40",
+  "field": "Fixtures/native-fields.html text area (automation mode, 127.0.0.1)",
+  "workload": {
+    "input": "VietMacDriver synthetic HID-level key events, not physical typing",
+    "characters": 684,
+    "driverKeyEvents": 1368,
+    "intervalMilliseconds": 45,
+    "holdMilliseconds": 30,
+    "words": "as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad (x9, leading space)",
+    "replacements": 36
+  },
+  "result": {
+    "pass": true,
+    "replacementsUnconfirmed": 0
+  },
+  "timings": {
+    "acknowledgement": "Event posting does not acknowledge client insertion",
+    "capacity": 1024,
+    "maximumNanoseconds": 102375,
+    "medianNanoseconds": 4917,
+    "p95Nanoseconds": 17458,
+    "p99Nanoseconds": 47500,
+    "retainedSamples": 1024,
+    "scope": "event-tap-callback-own-work",
+    "totalSamples": 1368
+  },
+  "notes": [
+    "totalSamples counts every tap callback in the session; percentiles use the retained ring of the newest 1,024 samples.",
+    "Generated replacement events are posted after this tap and are not callback samples.",
+    "Collection is a fixed ring written in the callback; sorting and JSON export run on the main queue on SIGUSR1."
+  ]
+}

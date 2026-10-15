@@ -102,6 +102,21 @@ This is synthetic HID-level input, recorded as native automation, not physical t
 | `spike-area-as`: Chrome text area, space `as` | Pass | `LEFT  RIGHT á`, caret 13, 1 page Backspace, `replacementsPosted` +1 |
 | `spike-area-rollover`: space `as` ×5, 70 ms interval, 110 ms hold | Pass | `LEFT  RIGHT á á á á á`, caret 21; 5 of 5 triggers with `a` still held; 5 Backspace; `replacementsUnconfirmed` 0 |
 
+### Native automation scenarios (2026-10-15)
+
+Each row is `python3 scripts/native_run.py <scenario>` in Chrome 155 with the fixture in automation mode; the page triggers context changes after the given key input.
+
+| Scenario | Result | Evidence |
+| --- | --- | --- |
+| `ctx-external-edit` | Pass | `EXTERNAL CONTsENT`, caret 14; `unexplainedFieldChanges` +1; 0 replacements, 0 Backspace |
+| `ctx-focus-switch` | Pass | `LEFT  RIGHT a` and `OTHER s END`, focus in the second input; `focusChanges` +1; 0 Backspace |
+| `ctx-selection` | Pass | `LEFT  RIGHT as`, caret 14; `selectionsObserved` +7; 0 Backspace |
+| `ctx-fast-typing` | Pass | Ten `á` with rollover (70 ms interval, 110 ms hold); 10 replacements, 10 Backspace |
+| `timing-workload` | Pass | 684 characters, 1,368 driver key events in 30.8 s; full text matched; 36 of 36 replacements, 0 unconfirmed |
+
+Task 2.3 callback own-work from `timing-workload` (Release, arm64, macOS 27.0.1, ABC during the run): 1,368 samples; over the newest 1,024, median 4.9 µs, p95 17.5 µs, p99 47.5 µs, max 102 µs.
+This is callback own-work only, below the provisional 2 ms p99 budget. It is not planner cost or visible native latency. Baseline: `benchmarks/baselines/2026-10-15-callback-own-work-arm64.json`.
+
 ## Local verification (session 1)
 
 | Command | Result | Scope |
@@ -237,14 +252,14 @@ Then repeat case 1b in Chrome and read `observationTrace` to confirm or reject t
 1. Give Son manual permission instructions for the locally signed `.artifacts/VietMac.app` at a stable path. Son enables Accessibility/Input Monitoring; confirm actual posting capability as well. Computer Use access is a separate prerequisite for automated UI checks.
 2. Use ABC or U.S. and one Vietnamese event-transforming app. Open synthetic documents/fields and enable the M0 prototype from its menu.
 3. Exercise `as`, `aa`, case, Backspace, held keys, focus/selection, and surrounding text. Record failures before adding a transport/context override.
-4. Collect Release callback timing outside the callback for task 2.3.
+4. Extend native automation scenarios to the remaining apps and fields.
 5. Complete the remaining required apps, lifecycle checks, and matrix before declaring M0 complete or implementing `telex-input-mvp`.
 
 The agent must not grant permissions, install Edge, change system input sources, or accept developer licenses on Son's behalf.
 
 ## Handoff completion boundary
 
-The active change is `macos-transport-spike`, with tasks 1.1, 1.2, 2.1, and 2.2 complete (4/11).
-Collect Release callback evidence for task 2.3, then complete the native acceptance matrix (3.1–3.6).
+The active change is `macos-transport-spike`, with tasks 1.1–2.3 complete (5/11).
+Complete the native acceptance matrix (3.1–3.6) with automated scenarios plus physical typing spot checks per app.
 Record failed and not-run cases as well as passes. If access remains blocked, complete independent source/model work and report the exact missing capability or app.
 The follow-on `telex-input-mvp` remains at 0/23 tasks. Do not begin its full reducer until the M0 native gate passes, and do not archive M0 while required native evidence is missing.

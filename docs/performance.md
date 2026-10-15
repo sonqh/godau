@@ -24,7 +24,7 @@ Its benchmark establishes the cost of that implementation, not the cost of a com
 | --- | --- | --- |
 | Replacement planner | `make bench`, release build, synthetic small and 64-character cases | Implemented |
 | Complete composition reducer | Replay real synthetic event sequences and record per-event durations | Pending M1 |
-| Callback own work | Bounded timings around normalization, prototype reduction, planning, preparation, and posting; menu export | Collection implemented for M0; native Release capture pending |
+| Callback own work | Bounded timings around normalization, prototype reduction, planning, preparation, and posting; menu or `SIGUSR1` export | M0 Release baseline: p99 47.5 µs, 1,368 samples ([JSON](../benchmarks/baselines/2026-10-15-callback-own-work-arm64.json)) |
 | Native visible input | Required apps and fields with controlled sequences | Pending |
 | Memory and allocations | Instruments or scoped allocation measurements on the release host | Pending |
 

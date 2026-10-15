@@ -42,6 +42,14 @@ Instrument callback own-work with bounded counters and timing samples.
 Publish snapshots outside the callback. No disk or ledger writes belong in that path.
 Compare this scope with the planner baseline without combining their numbers.
 
+### Native automation
+
+`VietMacDriver.app` is a test-only app that posts scripted key events at the HID tap, so the session tap handles them like keyboard input.
+`scripts/native_run.py` drives a browser fixture in automation mode, runs the driver, and compares field values, the page event log, and VietMac counters.
+The driver types only while the expected app is frontmost with an ABC or U.S. source, and it releases held keys on every exit.
+Record this evidence as native automation, separate from physical typing. It reproduces rollover, context changes, and long workloads repeatably.
+Acceptance tasks 3.2–3.5 still require physical typing spot checks for each required app, recorded beside the automated rows.
+
 ## Risks / Trade-offs
 
 - An event post has no document acknowledgement. A successful call is not insertion evidence.

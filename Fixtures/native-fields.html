@@ -34,6 +34,7 @@
 <script>
   const log = document.getElementById('event-log');
   const lines = [];
+  let logLimit = 400; // Automation runs raise this; the visible log always shows the newest 400.
   const show = (value) => value === undefined || value === null ? '-' : JSON.stringify(value);
   const record = (event) => {
     const keyed = event.type.startsWith('key');
@@ -42,8 +43,8 @@
       : `inputType=${event.inputType || '-'} data=${show(event.data)}`;
     const t = (performance.now() / 1000).toFixed(3);
     lines.unshift(`${t} ${event.target.id || 'rich'} ${event.type} ${detail} composing=${event.isComposing}`);
-    lines.length = Math.min(lines.length, 400);
-    log.textContent = lines.join('\n');
+    lines.length = Math.min(lines.length, logLimit);
+    log.textContent = lines.slice(0, 400).join('\n');
   };
   for (const id of ['ordinary', 'other', 'area', 'rich']) {
     for (const type of ['keydown', 'keyup', 'beforeinput', 'input']) {
@@ -56,29 +57,39 @@
   const ordinary = document.getElementById('ordinary');
   const other = document.getElementById('other');
   const status = document.getElementById('status');
-  document.getElementById('focus-change').onclick = () => {
-    status.textContent = 'Return to the first field and type a. Focus will move in 2 seconds; then type s.';
-    setTimeout(() => { other.focus(); other.setSelectionRange(6, 6); status.textContent = 'Focus moved. Old tracked text must not be edited.'; }, 2000);
-  };
-  document.getElementById('external-edit').onclick = () => {
-    status.textContent = 'Return to ordinary input. Its content will change in 2 seconds without a key event.';
-    setTimeout(() => {
+  // Context changes without a key event; buttons run them after 2 seconds, automation after input.
+  const contextEvents = {
+    focus() {
+      other.focus();
+      other.setSelectionRange(6, 6);
+      status.textContent = 'Focus moved. Old tracked text must not be edited.';
+    },
+    external() {
       const caret = ordinary.selectionStart;
       ordinary.value = 'EXTERNAL CONTENT';
       ordinary.setSelectionRange(Math.min(caret, ordinary.value.length), Math.min(caret, ordinary.value.length));
       ordinary.dispatchEvent(new Event('input', { bubbles: true }));
       status.textContent = 'External edit applied. Record whether later modifiers preserve this context.';
-    }, 2000);
-  };
-  document.getElementById('selection').onclick = () => {
-    status.textContent = 'Return to ordinary input and type a. An inline completion appears in 2 seconds; then type s.';
-    setTimeout(() => {
+    },
+    selection() {
       // Inline autocomplete: insert a suffix after the caret and select it, without a key event.
       const caret = ordinary.selectionStart;
       ordinary.value = ordinary.value.slice(0, caret) + 'completion' + ordinary.value.slice(caret);
       ordinary.setSelectionRange(caret, caret + 'completion'.length);
       status.textContent = 'Synthetic completion selected. This does not replace real address-bar autocomplete testing.';
-    }, 2000);
+    },
+  };
+  document.getElementById('focus-change').onclick = () => {
+    status.textContent = 'Return to the first field and type a. Focus will move in 2 seconds; then type s.';
+    setTimeout(contextEvents.focus, 2000);
+  };
+  document.getElementById('external-edit').onclick = () => {
+    status.textContent = 'Return to ordinary input. Its content will change in 2 seconds without a key event.';
+    setTimeout(contextEvents.external, 2000);
+  };
+  document.getElementById('selection').onclick = () => {
+    status.textContent = 'Return to ordinary input and type a. An inline completion appears in 2 seconds; then type s.';
+    setTimeout(contextEvents.selection, 2000);
   };
   document.getElementById('reset').onclick = () => {
     ordinary.value = 'LEFT  RIGHT'; other.value = 'OTHER  END';
@@ -90,6 +101,8 @@
 <script>
   // Native automation mode: ?auto=<field id>&run=<run id>. Focuses the field with the caret at the
   // end and posts field values and the page event log to the local fixture server after each input.
+  // Optional &event=<focus|external|selection>&after=<n>&delay=<ms> runs that context change
+  // <delay> ms after the <n>th key-originated input.
   // Manual use (no query) is unchanged. The page contacts only its own 127.0.0.1 origin.
   const params = new URLSearchParams(location.search);
   const autoField = document.getElementById(params.get('auto') || '');
@@ -107,9 +120,17 @@
       fetch('/report?run=' + runID, { method: 'POST', headers: { 'Content-Type': 'application/json' },
                                        body: JSON.stringify(body) }).catch(() => {});
     };
+    logLimit = 10000;
+    const contextEvent = contextEvents[params.get('event')];
+    const after = Number(params.get('after') || 0);
+    const delay = Number(params.get('delay') || 300);
+    let keyInputs = 0;
     let pending = null;
     for (const id of ['ordinary', 'other', 'area', 'rich']) {
-      document.getElementById(id).addEventListener('input', () => {
+      document.getElementById(id).addEventListener('input', (event) => {
+        if (event.isTrusted && ++keyInputs === after && contextEvent) {
+          setTimeout(() => { contextEvent(); report('event'); }, delay);
+        }
         clearTimeout(pending);
         pending = setTimeout(() => report('input'), 150);
       });

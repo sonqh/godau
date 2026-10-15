@@ -12,6 +12,7 @@ struct Options {
     var keys = ""
     var intervalMilliseconds = 80.0
     var holdMilliseconds = 50.0
+    var pauseMilliseconds = 1000.0
     var startDelayMilliseconds = 300.0
     var maximumSeconds = 120.0
     var expectedBundleID = ""
@@ -54,6 +55,7 @@ private func parse(_ arguments: [String]) -> Options? {
         case "--keys": options.keys = value
         case "--interval-ms": options.intervalMilliseconds = Double(value) ?? -1
         case "--hold-ms": options.holdMilliseconds = Double(value) ?? -1
+        case "--pause-ms": options.pauseMilliseconds = Double(value) ?? -1
         case "--start-delay-ms": options.startDelayMilliseconds = Double(value) ?? -1
         case "--max-seconds": options.maximumSeconds = Double(value) ?? -1
         case "--expect-bundle": options.expectedBundleID = value
@@ -63,7 +65,7 @@ private func parse(_ arguments: [String]) -> Options? {
         index += 2
     }
     guard index == arguments.count, !options.keys.isEmpty, !options.expectedBundleID.isEmpty,
-          options.output.hasPrefix("/"), options.intervalMilliseconds > 0, options.holdMilliseconds > 0,
+          options.output.hasPrefix("/"), options.intervalMilliseconds > 0, options.holdMilliseconds > 0, options.pauseMilliseconds >= 0,
           options.startDelayMilliseconds >= 0, options.maximumSeconds > 0 else { return nil }
     return options
 }
@@ -103,8 +105,8 @@ private struct Step {
 private func run() -> Int32 {
     guard let options = parse(CommandLine.arguments) else {
         FileHandle.standardError.write(Data("""
-            usage: VietMacDriver --keys <a-z, A-Z, space> --expect-bundle <id> --out <absolute path>
-                   [--interval-ms 80] [--hold-ms 50] [--start-delay-ms 300] [--max-seconds 120] [--select-abc]
+            usage: VietMacDriver --keys <a-z, A-Z, space, | = pause> --expect-bundle <id> --out <absolute path>
+                   [--interval-ms 80] [--hold-ms 50] [--start-delay-ms 300] [--max-seconds 120] [--pause-ms 1000] [--select-abc]
             hold > interval produces key rollover. --select-abc selects ABC for the run and restores
             the previous input source on exit.\n
             """.utf8))
@@ -127,16 +129,21 @@ private func run() -> Int32 {
     }
     // Schedule every press and release; overlapping times reproduce rollover.
     var steps: [Step] = []
-    for (index, character) in options.keys.enumerated() {
+    var start = 0.0
+    for character in options.keys {
+        if character == "|" {
+            start += options.pauseMilliseconds // Lets the page change context between keys.
+            continue
+        }
         guard let code = keyCodes[Character(character.lowercased())] else {
             return finish("unsupportedCharacter")
         }
-        let start = Double(index) * options.intervalMilliseconds
+        defer { start += options.intervalMilliseconds }
+        result.characters += 1
         steps.append(Step(offset: start, character: character, code: code, down: true))
         steps.append(Step(offset: start + options.holdMilliseconds, character: character, code: code, down: false))
     }
     steps.sort { $0.offset == $1.offset ? $0.down && !$1.down : $0.offset < $1.offset }
-    result.characters = options.keys.count
 
     wait(until: Date().addingTimeInterval(options.startDelayMilliseconds / 1000))
     if options.selectABC, let current = currentInputSource(), !allowedSources.contains(current) {

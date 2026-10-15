@@ -9,7 +9,7 @@
 
 - [x] 2.1 Prepare all output before deletion and send the planner result for `as` and `aa` in serialized order; verify zero deletions on preparation failure or stale context, multi-character insertion, no blind rollback after partial send, and no event interleaving through a synthetic transport harness.
 - [x] 2.2 Reset state on observed app, field, caret, source, navigation, selection, edit shortcuts, and lifecycle changes; verify same-app switches and external-edit notifications with focused tests, and document unobserved focus/selection limits.
-- [ ] 2.3 Measure callback own-work in Release and keep collection and export outside the callback; save a report with sample count, workload, environment, and percentiles distinct from planner and native latency.
+- [x] 2.3 Measure callback own-work in Release and keep collection and export outside the callback; save a report with sample count, workload, environment, and percentiles distinct from planner and native latency.
 
 ## 3. Native acceptance and handoff
 
