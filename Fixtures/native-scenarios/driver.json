@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "family": "driver",
+  "scenarios": [
+    {
+      "id": "probe-command-chord",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "script": {
+        "steps": [
+          {
+            "key": "a",
+            "modifiers": [
+              "command"
+            ]
+          },
+          {
+            "text": "x"
+          }
+        ]
+      },
+      "expect": {
+        "area": "x"
+      },
+      "replacements": 0
+    }
+  ]
+}

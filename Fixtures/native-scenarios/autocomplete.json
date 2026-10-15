@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "family": "autocomplete",
+  "scenarios": [
+    {
+      "id": "address-inline-completion",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "surface": "address",
+      "seed": [
+        "127.0.0.1:8765/aaron-test.html"
+      ],
+      "script": {
+        "steps": [
+          {
+            "key": "l",
+            "modifiers": [
+              "command"
+            ]
+          },
+          {
+            "pause": 300
+          },
+          {
+            "text": "127.0.0.1:8765/a",
+            "interval": 60,
+            "hold": 30
+          },
+          {
+            "checkpoint": "completion",
+            "settle": 800
+          },
+          {
+            "text": "s"
+          },
+          {
+            "checkpoint": "final",
+            "settle": 800
+          },
+          {
+            "key": "escape"
+          },
+          {
+            "key": "escape"
+          }
+        ]
+      },
+      "checkpoints": {
+        "completion": {
+          "selected": true,
+          "prefix": "127.0.0.1:8765/a"
+        },
+        "final": {
+          "value": "127.0.0.1:8765/as"
+        }
+      },
+      "replacements": 0,
+      "minimum": {
+        "selectionsObserved": 1
+      },
+      "withoutInlineCompletion": {
+        "final": {
+          "value": "127.0.0.1:8765/á"
+        },
+        "replacements": 1
+      }
+    }
+  ]
+}

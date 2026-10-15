@@ -47,7 +47,7 @@
     log.textContent = lines.slice(0, 400).join('\n');
   };
   for (const id of ['ordinary', 'other', 'area', 'rich']) {
-    for (const type of ['keydown', 'keyup', 'beforeinput', 'input']) {
+    for (const type of ['keydown', 'keyup', 'beforeinput', 'input', 'compositionstart']) {
       document.getElementById(id).addEventListener(type, record);
     }
   }

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "family": "context",
+  "scenarios": [
+    {
+      "id": "ctx-external-edit",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "ordinary",
+      "keys": " a|s",
+      "interval": 120,
+      "hold": 60,
+      "pause": 1200,
+      "event": "external",
+      "after": 2,
+      "expect": {
+        "ordinary": "EXTERNAL CONTsENT"
+      },
+      "replacements": 0,
+      "minimum": {
+        "unexplainedFieldChanges": 1
+      }
+    },
+    {
+      "id": "ctx-focus-switch",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "ordinary",
+      "keys": " a|s",
+      "interval": 120,
+      "hold": 60,
+      "pause": 1200,
+      "event": "focus",
+      "after": 2,
+      "expect": {
+        "ordinary": "LEFT  RIGHT a",
+        "other": "OTHER s END"
+      },
+      "replacements": 0,
+      "minimum": {
+        "focusChanges": 1
+      }
+    },
+    {
+      "id": "ctx-selection",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "ordinary",
+      "keys": " a|s",
+      "interval": 120,
+      "hold": 60,
+      "pause": 1200,
+      "event": "selection",
+      "after": 2,
+      "expect": {
+        "ordinary": "LEFT  RIGHT as"
+      },
+      "replacements": 0,
+      "minimum": {
+        "selectionsObserved": 1
+      }
+    }
+  ]
+}

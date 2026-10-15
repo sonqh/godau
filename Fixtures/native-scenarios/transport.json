@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "family": "transport",
+  "scenarios": [
+    {
+      "id": "spike-area-as",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " as",
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT á"
+      },
+      "replacements": 1
+    },
+    {
+      "id": "spike-area-rollover",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " as as as as as",
+      "interval": 70,
+      "hold": 110,
+      "expect": {
+        "area": "LEFT  RIGHT á á á á á"
+      },
+      "replacements": 5
+    },
+    {
+      "id": "ctx-fast-typing",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " as as as as as as as as as as",
+      "interval": 70,
+      "hold": 110,
+      "expect": {
+        "area": "LEFT  RIGHT á á á á á á á á á á"
+      },
+      "replacements": 10
+    },
+    {
+      "id": "driver-steps",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "interval": 80,
+      "hold": 50,
+      "script": {
+        "steps": [
+          {
+            "text": " as",
+            "interval": 70,
+            "hold": 110
+          },
+          {
+            "hold": "o",
+            "repeat": 3
+          },
+          {
+            "key": "left",
+            "modifiers": [
+              "shift"
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "area": "LEFT  RIGHT áoooo"
+      },
+      "replacements": 1
+    },
+    {
+      "id": "timing-workload",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad as aa ok the quick brown fox jumps over the lazy dog asking aaron has a sad",
+      "interval": 45,
+      "hold": 30,
+      "timing": true,
+      "expect": {
+        "area": "LEFT  RIGHT á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad á â ok the quick brown fox jumps over the lazy dog áking âron has a sad"
+      },
+      "replacements": 36
+    }
+  ]
+}

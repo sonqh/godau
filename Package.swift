@@ -22,10 +22,13 @@ let package = Package(
             exclude: ["Info.plist", "README.md"]
         ),
         // Test-only native key driver; it must not depend on VietMac modules.
-        .executableTarget(name: "VietMacDriver", path: "Apps/VietMacDriver", exclude: ["Info.plist"]),
+        .target(name: "VietMacDriverKit"),
+        .executableTarget(name: "VietMacDriver", dependencies: ["VietMacDriverKit"],
+                          path: "Apps/VietMacDriver", exclude: ["Info.plist"]),
         .executableTarget(name: "VietMacReplay", dependencies: ["VietMacCore"]),
         .executableTarget(name: "VietMacBench", dependencies: ["VietMacCore"]),
         .testTarget(name: "VietMacCoreTests", dependencies: ["VietMacCore"]),
         .testTarget(name: "VietMacPlatformTests", dependencies: ["VietMacPlatform"]),
+        .testTarget(name: "VietMacDriverKitTests", dependencies: ["VietMacDriverKit"]),
     ]
 )
