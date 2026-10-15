@@ -15,7 +15,7 @@ After the native transport gate passes, Son needs a predictable Telex engine, ex
 - Add per-event replay, selected legacy regressions, deterministic randomized model checks, and complete native acceptance for the full engine.
 - Measure the complete reducer and callback separately from the existing planner benchmark and native visible latency.
 
-Required application surfaces remain VS Code editor, Find, and quick input; address/search, ordinary input, text area, and rich editing in Chrome, Edge, and Dia independently; and Apple Notes title and body.
+Required application surfaces remain VS Code editor, Find, and quick input; address/search, ordinary input, text area, and rich editing in Chrome, Dia, and Safari independently; and Apple Notes title and body.
 
 VNI, macros, dictionary-based correction, automatic language detection, invalid-word restoration, re-composition of committed words, alternate tone-placement settings, terminal transformation, additional layouts, legacy encodings, public distribution, and an updater are excluded.
 English text that resembles Telex requires explicit English mode; this MVP does not promise automatic bilingual inference.

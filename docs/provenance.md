@@ -8,6 +8,7 @@ VietMac's requirements come from Son's instructions on 2026-10-13:
 - VS Code, Chrome, Edge, Dia, and Notes as required apps.
 - Reusable boundaries, extension paths, a development ledger, and measured performance.
 
+On 2026-10-15 Son removed Edge from the required apps (not installed; another Chromium browser beside Chrome and Dia) and added Safari to cover WebKit.
 Notes currently means Apple Notes. macOS 13 is the selected deployment floor.
 Son approved the name VietMac on 2026-10-13. The original scaffold was named SonKey.
 

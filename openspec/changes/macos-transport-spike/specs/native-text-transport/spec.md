@@ -94,7 +94,7 @@ The prototype SHALL expose active, disabled, and paused status with the reason f
 - **THEN** the old word is invalidated before transformation resumes
 
 ### Requirement: Explicit native acceptance evidence
-The prototype SHALL establish real field behavior in VS Code, Chrome, Edge, Dia, and Apple Notes before native completion.
+The prototype SHALL establish real field behavior in VS Code, Chrome, Dia, Safari, and Apple Notes before native completion.
 
 #### Scenario: Required browser field includes selected suggestions
 - **WHEN** native acceptance checks address/search bars in each browser
@@ -102,7 +102,7 @@ The prototype SHALL establish real field behavior in VS Code, Chrome, Edge, Dia,
 
 #### Scenario: Required field matrix is evaluated
 - **WHEN** the prototype is evaluated for native completion
-- **THEN** evidence covers VS Code editor, Find, and quick input; address/search, ordinary input, text area, and rich editing in each of Chrome, Edge, and Dia; and Apple Notes title and body
+- **THEN** evidence covers VS Code editor, Find, and quick input; address/search, ordinary input, text area, and rich editing in each of Chrome, Dia, and Safari; and Apple Notes title and body
 - **AND** each field includes exact text, caret/selection, case, Backspace, shortcuts, undo/redo, and surrounding-text preservation results
 - **AND** records identify OS, app version, input source, profile, and relevant autocomplete settings using synthetic text
 

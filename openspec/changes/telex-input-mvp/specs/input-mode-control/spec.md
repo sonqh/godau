@@ -45,7 +45,7 @@ The app SHALL offer an optional shortcut containing a non-modifier key and at le
 Transformation SHALL be enabled only in the tested application and field scope, with ABC or U.S. input sources. A user exclusion SHALL override support. Unsupported or unidentifiable contexts, password fields, and terminal surfaces SHALL preserve ordinary input and invalidate composition.
 
 #### Scenario: A required supported field is active
-- **WHEN** Vietnamese mode is selected and an accepted field in VS Code, Chrome, Edge, Dia, or Apple Notes has the required capabilities
+- **WHEN** Vietnamese mode is selected and an accepted field in VS Code, Chrome, Dia, Safari, or Apple Notes has the required capabilities
 - **THEN** transformation can become active using that field's accepted transport profile
 
 #### Scenario: Renderer or helper receives the key event

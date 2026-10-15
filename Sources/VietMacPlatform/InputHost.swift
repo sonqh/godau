@@ -30,7 +30,7 @@ public final class InputHost {
     private var pid: pid_t = 0
     private var sleeping = false
     private var uncertainSend = false
-    private let trialApps: Set<String> = ["com.microsoft.VSCode", "com.google.Chrome", "com.microsoft.edgemac",
+    private let trialApps: Set<String> = ["com.microsoft.VSCode", "com.google.Chrome", "com.apple.Safari",
                                          "company.thebrowser.dia", "com.apple.Notes"]
 
     public init() {

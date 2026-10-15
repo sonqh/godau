@@ -11,7 +11,7 @@ Prove the no-underline replacement path in Son's required apps before implementi
 - Add ordered replacement for synthetic `as` → `á` and `aa` → `â` examples.
 - Add context invalidation, permission status, pause, and bounded lifecycle recovery.
 - Prevent replacement when field ownership or the tracked suffix is uncertain; do not attempt blind rollback after a partial send.
-- Check native behavior in VS Code, Chrome, Edge, Dia, and Apple Notes, including browser suggestions.
+- Check native behavior in VS Code, Chrome, Dia, Safari, and Apple Notes, including browser suggestions.
 - Record callback own-work timing separately from planner timings.
 
 The prototype keeps composition bounded to its small example rules.

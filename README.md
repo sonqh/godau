@@ -4,7 +4,7 @@ Vietnamese input for macOS. Private repository: [sonqh/vietmac](https://github.c
 
 VietMac is the foundation for Son's personal macOS Vietnamese input app.
 The product uses Telex, precomposed Unicode, and event-based replacement without marked text.
-Required applications are VS Code, Chrome, Edge, Dia, and Apple Notes.
+Required applications are VS Code, Chrome, Dia, Safari, and Apple Notes.
 
 **Current status:** an M0 event-tap prototype, prepared Unicode replacement, bounded example composition,
 permission/pause controls, and tested core/platform models. The prototype starts disabled and implements only `as` → `á` and `aa` → `â`.

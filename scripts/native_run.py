@@ -31,6 +31,7 @@ BROWSERS = {
     "chrome": ("Google Chrome", "com.google.Chrome", False),
     # Dia keeps OS focus on its web area or tab strip after page focus(); click the field.
     "dia": ("Dia", "company.thebrowser.dia", True),
+    "safari": ("Safari", "com.apple.Safari", True),
 }
 
 # M0 rule for expected text: a word that starts with `as` or `aa` gets `á` or `â`; other words stay.

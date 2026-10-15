@@ -57,7 +57,7 @@ The suite SHALL exercise deterministic randomized semantic sequences against an 
 - **AND** sanitizer success is reported as model/address-safety evidence only
 
 ### Requirement: Full-engine native field matrix
-The complete engine SHALL pass independently in all required fields: VS Code editor, Find, quick input; four field families in each of Chrome, Edge, and Dia; Apple Notes title and body. M0 prototype evidence SHALL not count as full-engine acceptance.
+The complete engine SHALL pass independently in all required fields: VS Code editor, Find, quick input; four field families in each of Chrome, Dia, and Safari; Apple Notes title and body. M0 prototype evidence SHALL not count as full-engine acceptance.
 
 #### Scenario: Required field families are enumerated
 - **WHEN** native MVP acceptance is recorded

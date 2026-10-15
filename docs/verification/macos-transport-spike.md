@@ -87,7 +87,7 @@ If the replacement is still unexplained after that quiet period, the host counts
 | Task 2.2 fast typing, Chrome text area: space `as` fifteen times | Pass | `LEFT  RIGHT` plus fifteen `á` (U+00E1), caret 42; page log 15 Backspace and 15 `á` insertions; 14 of 15 triggers had `a` still down; `replacementsUnconfirmed` 0, `unsettledTriggers` 0. The counter rose by 17: two earlier mistyped replacements in the same text area were discarded by Son reloading the page |
 
 Across Chrome ordinary input, text area, and rich editing after the fix: 28 replacements observed on the page, 28 correct, 0 unconfirmed, 0 data loss (plus two discarded by a page reload).
-This passes one Chrome text-area row only. It does not complete the Chrome, Edge, and Dia matrix in task 3.3.
+This passes one Chrome text-area row only. It does not complete the Chrome, Dia, and Safari matrix in task 3.3.
 
 ### Native automation spike (2026-10-15)
 
@@ -116,6 +116,9 @@ Each row is `python3 scripts/native_run.py <scenario>` in Chrome 155 with the fi
 
 Dia 1.52.0 (`--browser dia`) keeps OS focus on its web area or tab strip after page `focus()`, so the driver first clicks the field at a point the page reports. All seven scenarios pass in Dia: `spike-area-as`, `spike-area-rollover` (5 of 5), `ctx-external-edit`, `ctx-focus-switch`, `ctx-selection` (`selectionsObserved` +6), `ctx-fast-typing` (10 of 10), and `timing-workload` (36 of 36, full text match; `unexplainedFieldChanges` +2 without a missed replacement; callback p99 62.2 µs over 1,369 samples).
 A Chrome `ctx-fast-typing` rerun after the click-focus change still passes.
+
+Safari 27.0.1 (`--browser safari`, click focus) passes all seven scenarios: `spike-area-as`, `spike-area-rollover` (5 of 5), `ctx-external-edit`, `ctx-focus-switch`, `ctx-selection` (`selectionsObserved` +8), `ctx-fast-typing` (10 of 10), and `timing-workload` (36 of 36, full text match; callback p99 57.9 µs over 1,369 samples).
+WebKit's Accessibility metadata lags more than Chromium's: `laggingObservations` +234 in the workload versus about 70 in Chrome and Dia, with no unconfirmed or missed replacement.
 
 Task 2.3 callback own-work from `timing-workload` (Release, arm64, macOS 27.0.1, ABC during the run): 1,368 samples; over the newest 1,024, median 4.9 µs, p95 17.5 µs, p99 47.5 µs, max 102 µs.
 This is callback own-work only, below the provisional 2 ms p99 budget. It is not planner cost or visible native latency. Baseline: `benchmarks/baselines/2026-10-15-callback-own-work-arm64.json`.
@@ -196,7 +199,7 @@ The timing export retains at most 1,024 durations and separately reports total o
 
 ## Native field matrix
 
-Every row below is `not-run`. M0 completion requires exact text, caret/selection, surrounding-content preservation, case, Backspace, shortcuts, undo/redo, and context/autocomplete results in the actual field.
+`partial` means some required checks passed and others remain; see the session tables above. M0 completion requires exact text, caret/selection, surrounding-content preservation, case, Backspace, shortcuts, undo/redo, and context/autocomplete results in the actual field.
 
 | App | Field | Status |
 | --- | --- | --- |
@@ -204,16 +207,16 @@ Every row below is `not-run`. M0 completion requires exact text, caret/selection
 | VS Code | Find | not-run |
 | VS Code | Quick input | not-run |
 | Chrome | Address/search | not-run |
-| Chrome | Ordinary input | not-run |
-| Chrome | Text area | not-run |
-| Chrome | Rich editing | not-run |
-| Edge | Address/search | not-run |
-| Edge | Ordinary input | not-run |
-| Edge | Text area | not-run |
-| Edge | Rich editing | not-run |
+| Chrome | Ordinary input | partial: manual `as`/`aa`/case, Backspace, undo/redo; automated context cases. Shortcuts and clipboard not run |
+| Chrome | Text area | partial: manual and automated rollover, fast typing, 1,368-event workload. Undo/redo and clipboard not run |
+| Chrome | Rich editing | partial: manual emoji adjacency and bold preservation. Undo/redo and clipboard not run |
+| Safari | Address/search | not-run |
+| Safari | Ordinary input | partial: automated context cases only; physical spot check not run |
+| Safari | Text area | partial: automated rollover, fast typing, workload only; physical spot check not run |
+| Safari | Rich editing | not-run |
 | Dia | Address/search | not-run |
-| Dia | Ordinary input | not-run |
-| Dia | Text area | not-run |
+| Dia | Ordinary input | partial: automated context cases only; physical spot check not run |
+| Dia | Text area | partial: automated rollover, fast typing, workload only; physical spot check not run |
 | Dia | Rich editing | not-run |
 | Apple Notes | Title | not-run |
 | Apple Notes | Body | not-run |
@@ -258,7 +261,7 @@ Then repeat case 1b in Chrome and read `observationTrace` to confirm or reject t
 4. Extend native automation scenarios to the remaining apps and fields.
 5. Complete the remaining required apps, lifecycle checks, and matrix before declaring M0 complete or implementing `telex-input-mvp`.
 
-The agent must not grant permissions, install Edge, change system input sources, or accept developer licenses on Son's behalf.
+The agent must not grant permissions, install apps, change system input sources, or accept developer licenses on Son's behalf.
 
 ## Handoff completion boundary
 
