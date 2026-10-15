@@ -114,6 +114,9 @@ Each row is `python3 scripts/native_run.py <scenario>` in Chrome 155 with the fi
 | `ctx-fast-typing` | Pass | Ten `á` with rollover (70 ms interval, 110 ms hold); 10 replacements, 10 Backspace |
 | `timing-workload` | Pass | 684 characters, 1,368 driver key events in 30.8 s; full text matched; 36 of 36 replacements, 0 unconfirmed |
 
+Dia 1.52.0 (`--browser dia`) keeps OS focus on its web area or tab strip after page `focus()`, so the driver first clicks the field at a point the page reports. All seven scenarios pass in Dia: `spike-area-as`, `spike-area-rollover` (5 of 5), `ctx-external-edit`, `ctx-focus-switch`, `ctx-selection` (`selectionsObserved` +6), `ctx-fast-typing` (10 of 10), and `timing-workload` (36 of 36, full text match; `unexplainedFieldChanges` +2 without a missed replacement; callback p99 62.2 µs over 1,369 samples).
+A Chrome `ctx-fast-typing` rerun after the click-focus change still passes.
+
 Task 2.3 callback own-work from `timing-workload` (Release, arm64, macOS 27.0.1, ABC during the run): 1,368 samples; over the newest 1,024, median 4.9 µs, p95 17.5 µs, p99 47.5 µs, max 102 µs.
 This is callback own-work only, below the provisional 2 ms p99 budget. It is not planner cost or visible native latency. Baseline: `benchmarks/baselines/2026-10-15-callback-own-work-arm64.json`.
 

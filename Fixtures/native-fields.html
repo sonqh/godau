@@ -115,6 +115,12 @@
         values: Object.fromEntries(['ordinary', 'other', 'area'].map(id => [id, document.getElementById(id).value])),
         rich: document.getElementById('rich').innerHTML,
         caret: active && 'selectionStart' in active ? [active.selectionStart, active.selectionEnd] : null,
+        // Screen point inside the field, assuming browser chrome sits above and left of the viewport.
+        clickPoint: (() => {
+          const r = autoField.getBoundingClientRect();
+          return [Math.round(screenX + outerWidth - innerWidth + r.right - 24),
+                  Math.round(screenY + outerHeight - innerHeight + r.top + r.height / 2)];
+        })(),
         log: lines.slice().reverse(),
       };
       fetch('/report?run=' + runID, { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -135,6 +141,10 @@
         pending = setTimeout(() => report('input'), 150);
       });
     }
+    // A driver click focuses the field at the click point; keep the scenario's caret at the end.
+    autoField.addEventListener('mouseup', () => {
+      if ('setSelectionRange' in autoField) autoField.setSelectionRange(autoField.value.length, autoField.value.length);
+    });
     window.addEventListener('load', () => {
       autoField.focus();
       if ('setSelectionRange' in autoField) autoField.setSelectionRange(autoField.value.length, autoField.value.length);

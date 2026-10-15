@@ -18,6 +18,7 @@ struct Options {
     var expectedBundleID = ""
     var output = ""
     var selectABC = false
+    var click: CGPoint?
 }
 
 struct Result: Encodable {
@@ -60,6 +61,10 @@ private func parse(_ arguments: [String]) -> Options? {
         case "--max-seconds": options.maximumSeconds = Double(value) ?? -1
         case "--expect-bundle": options.expectedBundleID = value
         case "--out": options.output = value
+        case "--click":
+            let parts = value.split(separator: ",").compactMap { Double($0) }
+            guard parts.count == 2 else { return nil }
+            options.click = CGPoint(x: parts[0], y: parts[1])
         default: return nil
         }
         index += 2
@@ -106,9 +111,10 @@ private func run() -> Int32 {
     guard let options = parse(CommandLine.arguments) else {
         FileHandle.standardError.write(Data("""
             usage: VietMacDriver --keys <a-z, A-Z, space, | = pause> --expect-bundle <id> --out <absolute path>
-                   [--interval-ms 80] [--hold-ms 50] [--start-delay-ms 300] [--max-seconds 120] [--pause-ms 1000] [--select-abc]
+                   [--interval-ms 80] [--hold-ms 50] [--start-delay-ms 300] [--max-seconds 120] [--pause-ms 1000] [--select-abc] [--click x,y]
             hold > interval produces key rollover. --select-abc selects ABC for the run and restores
-            the previous input source on exit.\n
+            the previous input source on exit. --click focuses the field with one left click in global
+            display points before typing.\n
             """.utf8))
         return 64
     }
@@ -162,6 +168,17 @@ private func run() -> Int32 {
         return finish("unsupportedInputSource")
     }
     let source = CGEventSource(stateID: .hidSystemState)
+    if let point = options.click {
+        guard NSWorkspace.shared.frontmostApplication?.bundleIdentifier == options.expectedBundleID else {
+            return finish("frontmostChanged")
+        }
+        for type in [CGEventType.leftMouseDown, .leftMouseUp] {
+            CGEvent(mouseEventSource: source, mouseType: type, mouseCursorPosition: point, mouseButton: .left)?
+                .post(tap: .cghidEventTap)
+            wait(until: Date().addingTimeInterval(0.05))
+        }
+        wait(until: Date().addingTimeInterval(0.6)) // The app moves focus; VietMac observes the field.
+    }
     var pressed: Set<CGKeyCode> = []
     var characterForCode: [CGKeyCode: Character] = [:]
     func post(_ code: CGKeyCode, _ character: Character, down: Bool) -> Bool {

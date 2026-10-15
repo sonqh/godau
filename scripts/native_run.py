@@ -28,7 +28,9 @@ DRIVER = ROOT / ".artifacts/VietMacDriver.app"
 PORT = 8765
 
 BROWSERS = {
-    "chrome": ("Google Chrome", "com.google.Chrome"),
+    "chrome": ("Google Chrome", "com.google.Chrome", False),
+    # Dia keeps OS focus on its web area or tab strip after page focus(); click the field.
+    "dia": ("Dia", "company.thebrowser.dia", True),
 }
 
 # M0 rule for expected text: a word that starts with `as` or `aa` gets `á` or `â`; other words stay.
@@ -142,7 +144,7 @@ def main():
     parser.add_argument("--browser", choices=sorted(BROWSERS), default="chrome")
     args = parser.parse_args()
     scenario = SCENARIOS[args.scenario]
-    app_name, bundle_id = BROWSERS[args.browser]
+    app_name, bundle_id, needs_click = BROWSERS[args.browser]
     for bundle in (APP, DRIVER):
         if not bundle.exists():
             raise SystemExit(f"missing {bundle}; run make app and make driver")
@@ -182,6 +184,7 @@ def main():
         subprocess.run(["open", "-g", "-W", "-n", str(DRIVER), "--args", "--keys", scenario["keys"],
                         "--interval-ms", str(scenario["interval"]), "--hold-ms", str(scenario["hold"]),
                         "--pause-ms", str(scenario.get("pause", 1000)),
+                        *(["--click", ",".join(map(str, REPORTS[run_id][0]["clickPoint"]))] if needs_click else []),
                         "--expect-bundle", bundle_id, "--out", str(driver_out), "--select-abc"], check=True)
         driver = json.loads(driver_out.read_text())
         time.sleep(1.0)  # Quiet period: VietMac settles or pauses; the page reports its last input.
