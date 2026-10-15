@@ -10,6 +10,7 @@ let package = Package(
         .executable(name: "VietMacApp", targets: ["VietMacApp"]),
         .executable(name: "vietmac-replay", targets: ["VietMacReplay"]),
         .executable(name: "vietmac-bench", targets: ["VietMacBench"]),
+        .executable(name: "VietMacDriver", targets: ["VietMacDriver"]),
     ],
     targets: [
         .target(name: "VietMacCore"),
@@ -20,6 +21,8 @@ let package = Package(
             path: "Apps/VietMac",
             exclude: ["Info.plist", "README.md"]
         ),
+        // Test-only native key driver; it must not depend on VietMac modules.
+        .executableTarget(name: "VietMacDriver", path: "Apps/VietMacDriver", exclude: ["Info.plist"]),
         .executableTarget(name: "VietMacReplay", dependencies: ["VietMacCore"]),
         .executableTarget(name: "VietMacBench", dependencies: ["VietMacCore"]),
         .testTarget(name: "VietMacCoreTests", dependencies: ["VietMacCore"]),

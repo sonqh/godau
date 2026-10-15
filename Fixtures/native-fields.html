@@ -87,4 +87,39 @@
     status.textContent = 'Synthetic fields reset. Reset invalidates any prior tracked word.';
   };
 </script>
+<script>
+  // Native automation mode: ?auto=<field id>&run=<run id>. Focuses the field with the caret at the
+  // end and posts field values and the page event log to the local fixture server after each input.
+  // Manual use (no query) is unchanged. The page contacts only its own 127.0.0.1 origin.
+  const params = new URLSearchParams(location.search);
+  const autoField = document.getElementById(params.get('auto') || '');
+  const runID = params.get('run') || '';
+  if (autoField && /^[A-Za-z0-9_-]{1,64}$/.test(runID)) {
+    const report = (phase) => {
+      const active = document.activeElement;
+      const body = {
+        run: runID, phase, field: autoField.id, activeElement: active ? active.id : null,
+        values: Object.fromEntries(['ordinary', 'other', 'area'].map(id => [id, document.getElementById(id).value])),
+        rich: document.getElementById('rich').innerHTML,
+        caret: active && 'selectionStart' in active ? [active.selectionStart, active.selectionEnd] : null,
+        log: lines.slice().reverse(),
+      };
+      fetch('/report?run=' + runID, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                       body: JSON.stringify(body) }).catch(() => {});
+    };
+    let pending = null;
+    for (const id of ['ordinary', 'other', 'area', 'rich']) {
+      document.getElementById(id).addEventListener('input', () => {
+        clearTimeout(pending);
+        pending = setTimeout(() => report('input'), 150);
+      });
+    }
+    window.addEventListener('load', () => {
+      autoField.focus();
+      if ('setSelectionRange' in autoField) autoField.setSelectionRange(autoField.value.length, autoField.value.length);
+      status.textContent = 'Automation run ' + runID + ': do not type or click in this window.';
+      report('ready');
+    });
+  }
+</script>
 </html>

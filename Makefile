@@ -1,4 +1,4 @@
-.PHONY: setup check test test-sanitize replay bench app specs ledger
+.PHONY: setup check test test-sanitize replay bench app driver specs ledger
 
 setup:
 	npm ci --ignore-scripts --no-audit --no-fund
@@ -26,3 +26,6 @@ bench:
 
 app:
 	./scripts/build-app.sh
+
+driver:
+	./scripts/build-driver.sh

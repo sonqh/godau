@@ -42,6 +42,8 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         status.menu = menu
         item = status
         host.start()
+        // Native automation starts with the prototype on; ordinary launches stay disabled.
+        if CommandLine.arguments.contains("--enable-prototype") { host.setEnabled(true) }
         updateMenu()
         startEvidenceExport()
     }

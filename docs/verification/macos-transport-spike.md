@@ -89,6 +89,19 @@ If the replacement is still unexplained after that quiet period, the host counts
 Across Chrome ordinary input, text area, and rich editing after the fix: 28 replacements observed on the page, 28 correct, 0 unconfirmed, 0 data loss (plus two discarded by a page reload).
 This passes one Chrome text-area row only. It does not complete the Chrome, Edge, and Dia matrix in task 3.3.
 
+### Native automation spike (2026-10-15)
+
+`VietMacDriver.app` (test-only, `make driver`, Accessibility granted by Son) posts scripted key events at the HID tap, so VietMac's session tap sees them.
+`scripts/native_run.py <scenario>` serves `Fixtures/` on 127.0.0.1, relaunches VietMac with `--enable-prototype` and an evidence directory, opens the fixture in automation mode (`?auto=<field>&run=<id>`), runs the driver, and compares the page report with VietMac counters. It quits VietMac at the end.
+The driver aborts before any key if the expected app is not frontmost or the source is not ABC/U.S. With `--select-abc` it selects ABC for the run and restores the previous source.
+This is synthetic HID-level input, recorded as native automation, not physical typing.
+
+| Scenario | Result | Evidence |
+| --- | --- | --- |
+| First run, Apple Vietnamese Simple Telex active | Aborted safely | `unsupportedInputSource`, 0 key events posted |
+| `spike-area-as`: Chrome text area, space `as` | Pass | `LEFT  RIGHT á`, caret 13, 1 page Backspace, `replacementsPosted` +1 |
+| `spike-area-rollover`: space `as` ×5, 70 ms interval, 110 ms hold | Pass | `LEFT  RIGHT á á á á á`, caret 21; 5 of 5 triggers with `a` still held; 5 Backspace; `replacementsUnconfirmed` 0 |
+
 ## Local verification (session 1)
 
 | Command | Result | Scope |
