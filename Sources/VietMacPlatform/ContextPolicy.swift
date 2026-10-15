@@ -15,13 +15,21 @@ enum ContextPolicy {
         }
         switch reading {
         case .caret(let snapshot):
+            let replacementPending = field.replacementUnconfirmed
             let result = field.observe(snapshot)
             switch result {
             case .consistent, .unavailable: break
             case .lagging: counters.laggingObservations &+= 1
             case .mismatch:
                 counters.unexplainedFieldChanges &+= 1
-                pipeline.invalidate()
+                if replacementPending {
+                    // The field disagrees with an unconfirmed replacement, for example a dropped
+                    // Backspace that left `aá`. Report it as a delivery failure instead of continuing.
+                    counters.replacementsUnconfirmed &+= 1
+                    pipeline.pauseFor(.transportUncertain)
+                } else {
+                    pipeline.invalidate()
+                }
             }
             return (true, result)
         case .selection:

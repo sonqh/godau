@@ -36,6 +36,8 @@ Implement in order: M0 gate → M1 core → M2 integration → M3 native/persona
 - [ ] 4.6 Verify fast typing, held keys, configured toggle, mode changes, app/field switching, capability loss, secure input, bounded timeout recovery, sleep/wake, and relaunch; save synthetic native results showing ordinary-input preservation, correct status, and fresh composition after resets.
 - [ ] 4.7 Verify the stable personal bundle's single-instance and opt-in login-startup behavior in an authorized native session; record actual registration/relaunch states without automatically granting permissions, installing apps, or changing global developer settings.
 
+- [ ] 4.8 Verify the daily-use failure families in Chrome, Dia, and Safari with native automation and physical spot checks: rollover without lost text, a dropped or misdirected deletion detected and paused, and tone placement/NFC for Son's reported examples.
+
 ## 5. Integrated MVP acceptance and handoff
 
 - [ ] 5.1 Save Release reducer and callback-own-work measurements on the native acceptance machine; verify reducer p99 < 1 ms and callback p99 < 2 ms, required report metadata, no sanitizers/profilers, and a separate native visible-latency method/limitation record.

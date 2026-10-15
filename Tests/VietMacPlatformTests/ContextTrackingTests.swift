@@ -285,6 +285,24 @@ struct ContextPolicyTests {
         #expect(session.pipeline.state == .paused(.transportUncertain))
     }
 
+    /// A dropped Backspace leaves `aá`: the field grows by one unit instead of keeping its length.
+    @Test func duplicatedTextAfterReplacementPausesAsDeliveryFailure() {
+        var session = replacedInTextArea()
+        session.observe(caret: 14, length: 14)
+        #expect(session.pipeline.state == .paused(.transportUncertain))
+        #expect(session.counters.replacementsUnconfirmed == 1)
+        #expect(session.counters.unexplainedFieldChanges == 1)
+    }
+
+    @Test func externalEditWithoutPendingReplacementOnlyInvalidates() {
+        var session = Session()
+        session.observe(caret: 5, length: 11)
+        _ = session.key(a)
+        session.observe(caret: 6, length: 15)
+        #expect(session.pipeline.state == .active)
+        #expect(session.counters.replacementsUnconfirmed == 0)
+    }
+
     /// Session 6 ordinary input: a click, `as` stays literal, then space `as` is replaced.
     @Test func firstWordAfterAClickStaysLiteralUntilABoundary() {
         var session = Session()

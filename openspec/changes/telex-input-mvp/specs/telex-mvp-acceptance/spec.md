@@ -43,6 +43,21 @@ The model suite SHALL cover applicable failure families from the reviewed OpenKe
 - **WHEN** a fixture crosses a boundary, deletes backward, and then applies a modifier
 - **THEN** no replacement uses a committed word or raw history that the current context does not own
 
+### Requirement: Daily-use failure families
+The MVP SHALL prevent or detect the three failures Son reports with OpenKey in every required browser field: lost text, duplicated text, and tone marks outside the selected form. See `docs/research/openkey-comparison.md`.
+
+#### Scenario: Key rollover does not lose text
+- **WHEN** a trigger key is pressed while the previous letter key is still down
+- **THEN** the replacement deletes and inserts exactly the planned text, and no trigger loses its insertion
+
+#### Scenario: A misdirected deletion is not followed silently
+- **WHEN** a field observation after a replacement shows the previous text was not removed as predicted
+- **THEN** the replacement counts as unconfirmed, the input path pauses with a delivery reason, and no repair deletion is sent
+
+#### Scenario: Tone placement follows the selected convention
+- **WHEN** Son's reported examples and the `hoaf`, `khoer`, `thuys`, and `hoafn` sequences are typed natively
+- **THEN** each field contains the selected NFC form with no decomposed marks
+
 ### Requirement: Randomized model and safety checks
 The suite SHALL exercise deterministic randomized semantic sequences against an independent simulated text buffer. It SHALL verify NFC output, bounded state, no replacement outside owned text, consistent pass-through, and reset isolation; such checks SHALL not be labeled native verification.
 
