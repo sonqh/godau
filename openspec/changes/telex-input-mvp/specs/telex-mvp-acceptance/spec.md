@@ -7,12 +7,29 @@ Define the evidence required to accept VietMac as Son's personal Vietnamese inpu
 ## ADDED Requirements
 
 ### Requirement: Native transport prerequisite
-The full-engine implementation SHALL follow the successful native gate of `macos-transport-spike`. Planning can exist before that gate, but unresolved or missing M0 field evidence SHALL prevent proceeding as if transport were established.
+Platform integration of the full engine SHALL follow the successful native gate of `macos-transport-spike`. Pure `VietMacCore` reducer, replay, randomized-check, and benchmark work MAY proceed before that gate. Unresolved or missing M0 field evidence SHALL prevent integration from proceeding as if transport were established.
+
+#### Scenario: Core work before the gate
+- **WHEN** M0 native tasks are still pending
+- **THEN** reducer, fixture, replay, and benchmark tasks can be implemented and checked
+- **AND** no task replaces the prototype pipeline or posts reducer output to a native field
 
 #### Scenario: M0 has an untested required browser
 - **WHEN** M0 lacks a Dia field result or has an unresolved selected-suggestion failure
-- **THEN** full-engine implementation does not bypass the gate
+- **THEN** integration of the full engine does not bypass the gate
 - **AND** the missing or failed native task stays pending
+
+### Requirement: Dogfood build with accepted profiles only
+A build for daily use before the full matrix passes SHALL enable only field profiles whose full-engine rows passed by native automation and a physical spot check for every matrix group the profile covers. M0 prototype rows SHALL NOT accept a profile. The build SHALL require a recorded safe result for granting and revoking capabilities with the tap installed (U-3).
+
+#### Scenario: Browser page fields accepted first
+- **WHEN** only the three `*.webText` profiles have passing full-engine rows
+- **THEN** the dogfood build transforms only in browser page fields
+- **AND** address bars, VS Code, and Notes show Standby with an unsupported reason
+
+#### Scenario: Revoke stalls the keyboard
+- **WHEN** U-3 records that a revoke with the tap installed stalls input after the mitigations
+- **THEN** no dogfood build is produced and the result goes to Son
 
 ### Requirement: Expected behavior after every semantic event
 Composition fixtures SHALL state expected visible text and action after each event, including mode, context boundaries, and invalidation. Expected text SHALL come from explicit behavior fixtures rather than using the production reducer as its own oracle.

@@ -63,6 +63,8 @@ VietMac/
 ## Design and next work
 
 Start with [architecture](docs/architecture.md), [development workflow](docs/development.md), and [performance policy](docs/performance.md).
+The proposed [architecture specification](docs/architecture-spec.md), [UX specification](docs/ux-spec.md), and [product roadmap](docs/product-roadmap.md) describe the target app and delivery order.
+They are not delivered behavior; final-gate decisions FG-1 to FG-5 await Son.
 The [bootstrap evidence](docs/verification/bootstrap.md) distinguishes tested scaffolding from pending native behavior.
 
 The active OpenSpec change is [macos-transport-spike](openspec/changes/macos-transport-spike/proposal.md).

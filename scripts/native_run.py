@@ -363,6 +363,15 @@ def main():
     backspaces = sum('keydown key="Backspace"' in line for line in report["log"])
     checked = {k: values.get(k) for k in {*scenario["expect"], scenario["field"]}}
     preservation = preservation_failures(checked, report["log"], driver)
+    if scenario.get("expectDriverAbort"):
+        # Safety probe: only the driver's own stop reason and cleanup matter.
+        checks = {"driverAbort": driver.get("reason") == scenario["expectDriverAbort"],
+                  "keysReleased": driver.get("heldFlagsAfter") == 0, "preservation": not preservation}
+        summary = {"run": run_id, "scenario": args.scenario, "browser": bundle_id, "pass": all(checks.values()),
+                   "checks": checks, "driver": driver, "preservationFailures": preservation}
+        (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        return 0 if summary["pass"] else 1
     checks = {
         "driver": driver["status"] == "pass",
         "preservation": not preservation,

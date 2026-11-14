@@ -36,13 +36,23 @@ The app SHALL offer an optional shortcut containing a non-modifier key and at le
 - **THEN** mode changes exactly once and no shortcut text reaches the field
 - **AND** the old composition is invalidated
 
+#### Scenario: Shortcut not armed
+- **WHEN** a shortcut is configured and a capability is missing, secure input is on, or a sticky pause is active
+- **THEN** `shortcutArmed` is false and the chord reaches the app as an ordinary key press
+- **AND** the menu mode control still works
+
 #### Scenario: Keep unrelated shortcuts unchanged
 - **WHEN** a Command, Control, or Option chord does not match the configured toggle
 - **THEN** its original events pass through and composition is invalidated
 - **AND** modifier-release sequences alone do not toggle mode
 
 ### Requirement: Tested-context gating and exclusions
-Transformation SHALL be enabled only in the tested application and field scope, with ABC or U.S. input sources. A user exclusion SHALL override support. Unsupported or unidentifiable contexts, password fields, and terminal surfaces SHALL preserve ordinary input and invalidate composition.
+Transformation SHALL be enabled only in a field that resolves to an accepted compiled field profile, with ABC or U.S. input sources. Resolution SHALL run once per focused-element change outside the key callback and SHALL NOT read a field value, selected text, title, or URL. A user exclusion SHALL override support. Unsupported or unidentifiable contexts, password fields, and terminal surfaces SHALL preserve ordinary input and invalidate composition.
+
+#### Scenario: Profile is not accepted
+- **WHEN** the focused field resolves to `notes.text` and that profile is not accepted
+- **THEN** ordinary input passes through and the status is Standby `unsupportedField`
+- **AND** only a native test launch argument can enable it, and diagnostics then report `testSession`
 
 #### Scenario: A required supported field is active
 - **WHEN** Vietnamese mode is selected and an accepted field in VS Code, Chrome, Dia, Safari, or Apple Notes has the required capabilities
@@ -63,7 +73,16 @@ Transformation SHALL be enabled only in the tested application and field scope, 
 - **AND** VietMac does not switch the system input source automatically
 
 ### Requirement: Visible runtime status
-The menu SHALL distinguish active Vietnamese mode, user-selected English mode, and paused Vietnamese mode. Paused status SHALL identify a missing capability, secure input, unsupported context, uncertain context, or recovery failure rather than reporting the app as active.
+The platform SHALL publish one `RuntimeStatus` with availability `off`, `active`, `standby(reason)`, or `blocked(reason)`, reporting only the first failing gate in the order of architecture-spec section 6.1. `active` SHALL equal the gate the key callback uses. Word-level literal holds SHALL NOT change the status. The status SHALL be published from a run-loop observer at most once per pass, never from the callback.
+
+#### Scenario: Selection is a word-level hold
+- **WHEN** the user selects text in an accepted field in Vietnamese mode
+- **THEN** the tracked word is invalidated
+- **AND** the published availability stays `active`
+
+#### Scenario: Gate combinations
+- **WHEN** a unit test enumerates every combination of gate inputs
+- **THEN** `availability == .active` is true exactly when the callback gate would transform
 
 #### Scenario: User intent differs from runtime availability
 - **WHEN** Vietnamese mode is selected but event posting is unavailable
@@ -74,6 +93,18 @@ The menu SHALL distinguish active Vietnamese mode, user-selected English mode, a
 - **WHEN** the missing capability or secure-input condition clears and the selected mode permits transformation
 - **THEN** the app reevaluates supported context before becoming active
 - **AND** old composition is not restored
+
+### Requirement: No observation in English mode and safe tap lifetime
+English mode SHALL perform no Accessibility field observation and SHALL install no event tap unless a shortcut is configured. A capability loss SHALL remove the tap at once. On an Accessibility trust-change notification the host SHALL remove the tap before re-reading capabilities, and SHALL recreate it only when every required read is true.
+
+#### Scenario: English mode without a shortcut
+- **WHEN** the mode is English and no shortcut is configured
+- **THEN** no event tap exists and no focused element is inspected
+- **AND** capabilities, input source, and secure input are still refreshed for the status
+
+#### Scenario: Accessibility revoked while typing
+- **WHEN** the Accessibility read turns false or the trust-change notification arrives
+- **THEN** the tap is removed before the next refresh and the status is Blocked `accessibility`
 
 ### Requirement: Persistent preferences with fresh composition
 The app SHALL persist selected mode, shortcut, exclusions, and login-startup preference in its own settings domain. First launch SHALL use English mode with no shortcut and login startup off. Relaunch SHALL restore preferences while starting with no tracked word or document content.
@@ -88,7 +119,7 @@ The app SHALL offer login startup only as an explicit user preference, disabled 
 
 #### Scenario: User enables startup explicitly
 - **WHEN** the user enables login startup in settings
-- **THEN** the app requests the startup registration and shows whether it succeeded or requires user action
+- **THEN** the app requests the startup registration through `SMAppService.mainApp` and shows the state the system reports, including `requiresApproval`
 - **AND** input capability requirements remain unchanged
 
 #### Scenario: User disables startup
@@ -103,6 +134,11 @@ The app SHALL allow at most one VietMac event-transforming instance in a logged-
 - **WHEN** VietMac is running and the same user launches another copy
 - **THEN** a physical `as` sequence is transformed once rather than by two VietMac pipelines
 - **AND** the second launch does not establish another transforming tap
+
+#### Scenario: Second process fails to take the lock
+- **WHEN** a second process cannot take the per-user instance lock
+- **THEN** it posts the reopen notification and exits without creating `InputHost`
+- **AND** the running instance opens its Settings window
 
 ### Requirement: Local operation without typed-content records
 The app SHALL work offline and SHALL not persist or transmit typed words, raw keystroke history, clipboard contents, or document text. Development evidence and performance captures SHALL use synthetic input or content-free measurements outside the key callback.

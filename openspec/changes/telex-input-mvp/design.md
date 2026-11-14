@@ -9,7 +9,8 @@ See [proposal.md](proposal.md) for the outcome and exclusions.
 
 Son selected `hòa`, `khỏe`, and `thúy` on 2026-10-13.
 Other detailed escape and editing scenarios are proposed product behavior, not claims about a running implementation.
-The `macos-transport-spike` gate must pass before this implementation begins.
+Son accepted FG-2, FG-3, and FG-4 on 2026-11-12. M1 core work may start before the `macos-transport-spike` gate closes; M2 integration may not.
+The target architecture is in [architecture-spec.md](../../../docs/architecture-spec.md); decisions AD-10 to AD-18 below are taken from it.
 
 ## Goals / Non-Goals
 
@@ -160,6 +161,48 @@ The proposed MVP gates are reducer p99 < 1 ms and callback own-work p99 < 2 ms o
 Measure Release without sanitizers/profilers and save workload, compiler, environment, sample count, percentiles, and maximum.
 Keep native visible-latency method/resolution and allocation evidence distinct; do not infer them from a fast planner.
 
+### 8. Field profiles replace the trial app set (AD-10, AD-11)
+
+`FieldProfile` holds an ID, bundle ID, field kind, assurance, transport, a compile-time `accepted` flag, and the evidence artifact that justifies it (architecture-spec section 6.4).
+Seventeen matrix groups map to ten profiles: `vscode.editor`, `vscode.find`, `vscode.quickInput`, three `*.addressBar`, three `*.webText`, and `notes.text`.
+The resolver runs once per focused-element change, outside the callback, with a bounded ancestor walk. It reads role, subrole, identifier, control description, and ancestor roles only; never a value, selected text, title, or URL.
+No match, an unaccepted profile, or an exclusion gives no transformation. A launch argument may enable unaccepted profiles for native test sessions and reports `testSession` in diagnostics.
+`observed` is the only assurance level built. `eventOnly` is built only if Son selects it under FG-1.
+Address bars stay `observed`; words stay literal while an inline completion is shown; no `selectionAware` transport in v0.1.
+Benefit: fields graduate one at a time, which the dogfood build needs. Trade-off: every profile needs an identifying attribute beyond role, and some depend on UI language (**inferred**).
+
+### 9. One status value, published by a run-loop observer (AD-12, AD-13, AD-15)
+
+The platform exposes `RuntimeStatus` and five calls (`start`, `setMode`, `apply`, `resume`, `diagnostics`) as in architecture-spec section 7.2. The `ux-shell` change adds the value types; this change produces them and removes `M0StatusAdapter`.
+Availability classes: Active, Standby (clears by itself), Blocked (Son must act; four sticky reasons need `resume`). Gate order: mode, capabilities, sticky pause, secure input, input source, conflicting tool, exclusion, field profile, field readability. The status reports the first failing gate.
+Word-level literal holds (first word after a click, selection, lagging observation, escape, overflow) are counters, not status. M0's `uncertainContext` pause for a selection is dropped; the invalidation stays.
+The platform owns the live mode because the shortcut changes it in the callback; the shell persists it. `Configuration` holds only the shortcut and exclusions.
+Any mutation sets one dirty flag. One `CFRunLoopObserver` builds the status before the loop waits and publishes at most once per pass when it differs. The callback never publishes.
+A unit test enumerates gate combinations and asserts that `availability == .active` equals the callback gate.
+
+### 10. Tap lifetime, shortcut, and English mode (AD-14, AD-17)
+
+The shortcut is matched inside the tap, so the tap stays installed in English mode only while a shortcut is configured; every other key passes through. `shortcutArmed` is the cached gate the callback checks before matching.
+English mode performs no AX observation. The refresh still reads capabilities, secure input, frontmost app, input source, and the conflicting-tool check in every mode.
+A capability loss removes the tap at once. On `com.apple.accessibility.api` the host removes the tap first and recreates it only after every read is true. Each refresh reads `CGEvent.tapIsEnabled`.
+Trade-off: a trust change in any app costs one refresh interval of literal typing. That is the safe direction while U-3 is open.
+
+### 11. Single instance and login startup (AD-16)
+
+`InstanceLock` takes a non-blocking `flock` on `~/Library/Application Support/VietMac/instance.lock` before `InputHost` exists. A second process posts `local.sonquach.vietmac.reopen` and exits; the first instance opens Settings.
+Login startup uses `SMAppService.mainApp`. The system status is the truth; the stored preference is only the last request.
+Trade-off: registration after a rebuild in place or with ad hoc signing is **unknown** (U-7); M3 fixes a stable bundle location first.
+
+### 12. Word start at a settled caret at offset 0 (AD-18)
+
+After a reset, a settled observation that shows a collapsed caret at offset 0 starts a new word, because no unowned text precedes it. This applies only after U-14 passes in each profile; until then only a boundary key seen in the field starts a word.
+VietMac never reads the character before the caret.
+
+### 13. Dogfood build (FG-4)
+
+After M2, a build may enable only profiles whose full-engine rows passed, by native automation and a physical spot check, for every group the profile covers. M0 two-rule rows do not qualify. The build needs a recorded safe U-3 result and ships the `ux-shell` UI, not the M0 developer menu.
+Other profiles show Standby `unsupportedField` or `unsupportedApp`. Son keeps a content-free log and exports a diagnostic report weekly.
+
 ## Risks / Trade-offs
 
 - Unobserved document changes can invalidate the predicted suffix → use tested profiles, conservative resets, targeted native reproductions, and an unresolved-field completion block.
@@ -172,10 +215,12 @@ Keep native visible-latency method/resolution and allocation evidence distinct; 
 
 ## Migration Plan
 
-1. Complete and review M0 native evidence before beginning engine implementation.
-2. Land M1 reducer, semantic replay, fixtures, and scoped benchmark with focused model/sanitizer checks and usage documentation.
-3. Land M2 integration, tested-context gating, controls, and synthetic adapter checks; remove prototype language rules.
-4. Complete M3 stable personal build, native field matrix, lifecycle/startup tests, and performance evidence before claiming MVP completion.
+1. Land M1 in parallel with the M0 native gate (FG-2). Run U-4 and U-5 natively early, because they can change the Core contract.
+2. Complete and review M0 native evidence before beginning M2 integration.
+3. Land M1 reducer, semantic replay, fixtures, and scoped benchmark with focused model/sanitizer checks and usage documentation.
+4. Land M2 integration, tested-context gating, controls, and synthetic adapter checks; remove prototype language rules.
+5. Ship the dogfood build with accepted profiles only, after U-3 is safe (FG-4).
+6. Complete M3 stable personal build, native field matrix, lifecycle/startup tests, and performance evidence before claiming MVP completion.
 
 These stages are outcomes inside one change, not a mandatory PR per component.
 Review or merge in that order when separate PRs are useful; merging requires Son's authorization.

@@ -13,8 +13,9 @@
 
 ## 3. Native acceptance and handoff
 
+- [ ] 3.0 Run U-3 first: with the tap installed, toggle each grant while running; record capability reads at 250 ms resolution, the `com.apple.accessibility.api` arrival time, and key delivery in a fixture field. Keep a second way to quit the app ready. Also record U-2: turn Input Monitoring off, keep Accessibility, relaunch, and record tap creation and one replacement.
 - [ ] 3.1 Establish a stable local app identity and native evidence template; record OS, app versions, enabled capabilities, input source, and competing input apps with Son's authorization for the native session.
-- [ ] 3.2 Verify VS Code editor, Find, and quick input with case, Backspace, shortcuts, selection, undo/redo, autocomplete, and same-app focus changes; record exact text and caret/selection results for each field.
+- [ ] 3.2 Verify VS Code editor, Find, and quick input with case, Backspace, shortcuts, selection, undo/redo, autocomplete, and same-app focus changes; record exact text and caret/selection results for each field. Record U-1 with the observation trace and `--describe-focused` (role, subrole, identifier, range, count, whether they follow typing) for the editor, Find, quick input, and integrated terminal, once in default mode and once in screen-reader mode; Son decides FG-1 from this record.
 - [ ] 3.3 Verify address/search, ordinary input, text area, and rich editing in Chrome, Dia, and Safari independently; record selected-suggestion and external-edit cases with actual autocomplete settings for every field.
 - [ ] 3.4 Verify Apple Notes title and body, formatting, emoji adjacency, selection, and undo/redo; record text, caret, and formatting preservation for both fields.
 - [ ] 3.5 Verify fast typing, autorepeat, app/field switching, permission loss, secure input, sleep/wake, and explicit resume; record clipboard preservation, no invisible characters, no underline, and fresh composition after each reset.

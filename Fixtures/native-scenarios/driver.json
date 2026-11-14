@@ -29,6 +29,22 @@
         "area": "x"
       },
       "replacements": 0
+    },
+    {
+      "id": "interference-probe",
+      "version": 1,
+      "rules": "m0",
+      "apps": [
+        "chrome"
+      ],
+      "field": "area",
+      "keys": " the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog",
+      "interval": 120,
+      "hold": 60,
+      "expectDriverAbort": "userInterference",
+      "note": "Son moves the mouse during the run; the driver must stop with userInterference.",
+      "expect": {},
+      "replacements": 0
     }
   ]
 }

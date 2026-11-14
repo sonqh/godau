@@ -59,6 +59,26 @@
             "target": "vietmac-bench",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release vietmac-bench"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Debug VietMacDriver",
+            "target": "VietMacDriver",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug VietMacDriver"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:VietMac}",
+            "name": "Release VietMacDriver",
+            "target": "VietMacDriver",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release VietMacDriver"
         }
     ]
 }

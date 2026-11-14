@@ -1,11 +1,12 @@
 # Telex input MVP tasks
 
 All tasks are pending. Planning completion is not implementation or native acceptance.
-Implement in order: M0 gate → M1 core → M2 integration → M3 native/personal acceptance.
+M1 core runs in parallel with the M0 native gate (FG-2, accepted 2026-11-12). M2 integration and M3 acceptance wait for the gate.
 
 ## 1. Establish the native prerequisite
 
-- [ ] 1.1 Verify `macos-transport-spike` has passed every required native field and preservation check; link its matrix and callback evidence in the MVP handoff, and stop engine implementation if a required row remains failed or not-run.
+- [ ] 1.1 Before starting task group 3, verify `macos-transport-spike` has passed every required native field and preservation check; link its matrix and callback evidence in the MVP handoff, and stop integration if a required row remains failed or not-run. Task group 2 does not wait for this task.
+- [ ] 1.2 Run U-4 (native multi-character insertion at 2, 8, 20, and 21 UTF-16 units in the three browsers and Notes) and U-5 (insertion keycode when the trigger is Backspace, with rollover) early in M1; record the results and amend the Core contract or transport limit before task 2.4 if either fails.
 
 ## 2. M1 — Semantic composition and replay
 
@@ -21,10 +22,13 @@ Implement in order: M0 gate → M1 core → M2 integration → M3 native/persona
 ## 3. M2 — Platform integration and user controls
 
 - [ ] 3.1 Replace M0's prototype language rules with the core transition contract and existing planner/transport; verify ordered events, generated-event bypass, candidate-state acceptance, stale/preparation-failure pass-through, and partial-send pause without rollback using synthetic platform traces.
-- [ ] 3.2 Add actual-text case normalization and accepted app/field/source policy with exclusions and uncertain-context reset; verify Shift/Caps Lock combinations, renderer/helper identity relationships, same-app switches, non-ASCII/paste, unsupported terminal/password contexts, and no per-key I/O or async task creation.
-- [ ] 3.3 Add menu Vietnamese/English mode, distinct pause reasons, and optional configurable key-down shortcut; verify default-unset behavior, one toggle per held press, key pairing, unrelated shortcuts, fresh-state mode changes, and literal identifiers in focused controller/platform tests.
-- [ ] 3.4 Add isolated preference persistence, first-launch English defaults, single transforming-instance handling, and user-driven login registration; verify configuration round trips without typed content, mocked startup success/failure states, and second-instance refusal without creating a second pipeline.
+- [ ] 3.2 Add actual-text case normalization, the compiled `FieldProfile` table and resolver replacing `trialApps` (design 8), source policy, exclusions, and uncertain-context reset; verify resolution reads no value, title, or URL and runs once per focus change, the test-session launch argument, and that the profile table marks only evidenced profiles accepted; verify Shift/Caps Lock combinations, renderer/helper identity relationships, same-app switches, non-ASCII/paste, unsupported terminal/password contexts, and no per-key I/O or async task creation.
+- [ ] 3.3 Produce `RuntimeStatus` with Active, Standby, and Blocked classes, gate order, run-loop observer publication, platform-owned mode, `shortcutArmed`, no AX observation in English mode, and tap removal on capability loss and on the trust-change notification (design 9 and 10), replacing `M0StatusAdapter` from `ux-shell`; verify the gate-combination test, one publication per pass, and that selections no longer pause; then add the optional configurable key-down shortcut; verify default-unset behavior, one toggle per held press, key pairing, unrelated shortcuts, fresh-state mode changes, and literal identifiers in focused controller/platform tests.
+- [ ] 3.4 Add isolated preference persistence, first-launch English defaults, the `flock` instance lock with reopen notification, and `SMAppService.mainApp` login registration with the system state as truth (design 11); verify configuration round trips without typed content, mocked startup success/failure states, and second-instance refusal without creating a second pipeline.
 - [ ] 3.5 Update app/control/context documentation and prepare the full-engine native matrix with all 17 field groups; run focused platform checks, `make check`, and `make app`, and verify the build/result report still marks unperformed native checks as pending.
+
+- [ ] 3.6 Build the dogfood bundle (FG-4): enable only profiles whose full-engine rows passed by automation and a physical spot check, ship the `ux-shell` UI, and confirm U-3 has a recorded safe result first; record the enabled profiles and their evidence in the ledger. If U-3 is not safe, stop and report to Son.
+- [ ] 3.7 Add the offset-0 word start (design 12) per profile only after U-14 passes for that profile; verify with an empty-field scenario and a field whose content a script replaces at the same moment.
 
 ## 4. M3 — Native field and personal lifecycle acceptance
 

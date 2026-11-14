@@ -143,6 +143,11 @@ The composer SHALL associate its state with one context generation and edit only
 - **WHEN** `as`, a comma, and a space arrive in order
 - **THEN** the text is `á, ` and the earlier word is no longer owned
 
+#### Scenario: Start a word at the beginning of an empty field
+- **WHEN** U-14 has passed for the active profile and, after a reset, a settled observation shows a collapsed caret at offset 0
+- **THEN** the next letters start a new owned word without a boundary key
+- **AND** without that observation the word stays literal until a boundary
+
 #### Scenario: Keep independent instances independent
 - **WHEN** one composer tracks `a` and another composer receives `s` in its own fresh context
 - **THEN** the second composer cannot modify the first composer's state or text

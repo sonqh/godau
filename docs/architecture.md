@@ -2,6 +2,7 @@
 
 The runtime consists of a reusable Swift core, a macOS adapter, and a small menu bar app.
 Development replay, benchmarks, OpenSpec, and the ledger remain outside the runtime dependency graph.
+This file summarizes delivered boundaries. The proposed target design is in [architecture-spec.md](architecture-spec.md).
 
 ```mermaid
 flowchart LR
