@@ -18,7 +18,7 @@ enum ContextPolicy {
             let replacementPending = field.replacementUnconfirmed
             let result = field.observe(snapshot)
             switch result {
-            case .consistent, .unavailable: break
+            case .consistent, .unavailable, .suspect: break
             case .lagging: counters.laggingObservations &+= 1
             case .mismatch:
                 counters.unexplainedFieldChanges &+= 1
@@ -53,7 +53,7 @@ enum ContextPolicy {
     /// before this key, and a later mismatch or the quiet-time check still pauses with `transportUncertain`.
     static func admitsReplacement(field: FieldContextTracker, pipeline: inout PrototypePipeline,
                                   counters: inout ContextCounters) -> Bool {
-        guard field.isSettled || field.unsettledByReplacementOnly else {
+        guard field.suspect == nil, field.isSettled || field.unsettledByReplacementOnly else {
             counters.unsettledTriggers &+= 1
             pipeline.invalidate()
             return false

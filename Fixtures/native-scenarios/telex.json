@@ -61,6 +61,67 @@
       "replacements": 5,
       "backspaces": 5,
       "note": "Repeated-modifier escape keeps the key literally; leading w stays literal."
+    },
+    {
+      "id": "telex-timing-workload",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam",
+      "interval": 45,
+      "hold": 30,
+      "timing": true,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam tiếng Việt là ngôn ngữ của người Việt Nam"
+      },
+      "replacements": 168,
+      "backspaces": 252,
+      "note": "660 keys at 45 ms; Release callback own-work timings are saved with the run (telex-input-mvp task 5.1 gate: p99 < 2 ms)."
+    },
+    {
+      "id": "telex-fast-phrase",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam",
+      "interval": 45,
+      "hold": 30,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng Việt là ngôn ngữ của người Việt Nam"
+      },
+      "replacements": 14,
+      "backspaces": 21,
+      "note": "One sentence at 45 ms per key; short enough that the 64-entry observation trace keeps a pause."
+    },
+    {
+      "id": "telex-fast-word",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " tieengs",
+      "interval": 45,
+      "hold": 30,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "One word at 45 ms per key; the observation trace keeps every event of both replacements."
     }
   ]
 }

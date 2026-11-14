@@ -87,11 +87,25 @@ struct FieldContextTrackerTests {
         _ = field.observe(FieldSnapshot(caret: 5, length: 11))
         field.expect(deleting: 0, inserting: 1)
         // A script inserts after the caret: the caret matches the prediction, the length does not.
+        #expect(field.observe(FieldSnapshot(caret: 6, length: 17)) == .suspect)
+        #expect(!field.isSettled)
         #expect(field.observe(FieldSnapshot(caret: 6, length: 17)) == .mismatch)
         #expect(field.baseline == FieldSnapshot(caret: 6, length: 17))
         #expect(field.isSettled) // Future keys start from the observed state; the caller drops the word.
         // A programmatic caret move keeps the length.
+        #expect(field.observe(FieldSnapshot(caret: 2, length: 17)) == .suspect)
         #expect(field.observe(FieldSnapshot(caret: 2, length: 17)) == .mismatch)
+    }
+
+    /// Safari, 2026-11-14: one notification reported caret 42 with length 44, then 44/44 again.
+    @Test func staleCaretForOneObservationIsNotAMismatch() {
+        var field = FieldContextTracker()
+        _ = field.observe(FieldSnapshot(caret: 44, length: 44))
+        #expect(field.observe(FieldSnapshot(caret: 42, length: 44)) == .suspect)
+        #expect(!field.isSettled)
+        #expect(field.observe(FieldSnapshot(caret: 44, length: 44)) == .consistent)
+        #expect(field.isSettled)
+        #expect(field.baseline == FieldSnapshot(caret: 44, length: 44))
     }
 
     @Test func sameCaretSameLengthEditRemainsUndetectable() {
@@ -157,6 +171,8 @@ struct ContextPolicyTests {
         session.observe(caret: 6, length: 12)
         // The synthetic page replaces its content and restores the same caret.
         session.observe(caret: 6, length: 16)
+        #expect(session.key(s) == nil) // No deletion while the observation is unconfirmed.
+        session.observe(caret: 6, length: 16)
         #expect(session.counters.unexplainedFieldChanges == 1)
         #expect(session.key(s) == nil)
         #expect(session.pipeline.word.isEmpty)
@@ -167,6 +183,7 @@ struct ContextPolicyTests {
         session.observe(caret: 5, length: 11)
         _ = session.key(a)
         session.observe(caret: 5, length: 20) // Script edit observed before a.
+        session.observe(caret: 6, length: 21) // a arrives after the edit; still unexplained.
         #expect(session.counters.unexplainedFieldChanges == 1)
         #expect(session.key(s) == nil)
     }
@@ -317,6 +334,8 @@ struct ContextPolicyTests {
     /// A dropped Backspace leaves `aá`: the field grows by one unit instead of keeping its length.
     @Test func duplicatedTextAfterReplacementPausesAsDeliveryFailure() {
         var session = replacedInTextArea()
+        session.observe(caret: 14, length: 14)
+        #expect(session.pipeline.state == .active) // One observation is held as suspect.
         session.observe(caret: 14, length: 14)
         #expect(session.pipeline.state == .paused(.transportUncertain))
         #expect(session.counters.replacementsUnconfirmed == 1)

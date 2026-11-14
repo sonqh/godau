@@ -155,6 +155,14 @@ struct TelexScenarioCountTests {
         return (replacements, backspaces)
     }
 
+    static let workloadPhrase = " tieengs Vieetj laf ngoon nguwx cuar nguowif Vieetj Nam"
+    static var workload: String { String(repeating: workloadPhrase, count: 12) }
+
+    @Test func workloadExpectation() throws {
+        #expect(final(Self.workloadPhrase) == " tiếng Việt là ngôn ngữ của người Việt Nam")
+        #expect(try counts(Self.workload) == (168, 252))
+    }
+
     @Test func scenarioExpectationsMatchTheComposer() throws {
         #expect(try counts(" tieengs Vieetj") == (4, 7))
         #expect(try counts(" dduowngf nguowif hoafn khuyur thuowr quys gif") == (14, 22))

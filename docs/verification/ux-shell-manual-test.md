@@ -7,7 +7,7 @@ Record each result in the table at the end. A model test or a snapshot is not na
 ## What the build can and cannot do
 
 - Typing uses the full Telex composer (`VietMacCore/TelexComposer`) in VS Code, Chrome, Dia, Safari, and Notes, inside the M0 host and its field checks. Son's goal of 2026-11-14 asked for a testable MVP, so the composer was integrated before the M0 native gate closed (FG-2 deferred integration until then).
-  Native automation on 2026-11-14 (synthetic HID key events, not physical typing) passed `tieengs Vieetj`, `dduowngf nguowif hoafn khuyur thuowr quys gif`, escapes, rollover, and fast typing in Chrome, Dia, and Safari. One of five Safari runs of `tieengs Vieetj` paused with `transportUncertain` while the text was correct (WebKit metadata lag); a pause is the safe outcome.
+  Native automation on 2026-11-14 (synthetic HID key events, not physical typing): 39 of 39 runs passed in Chrome, Dia, and Safari, covering the Telex scenarios, a 660-key workload at 45 ms per key, rollover, fast typing, selection, focus switch, external edit, Command chords, and address-bar completion. Release callback own-work p99 was 74 to 103 µs. Repeated Safari runs passed 10 of 10 typed runs.
   The first word after a click into existing text stays as typed until a space. This is by design.
 - No field profile is accepted, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.
 - The mode shortcut is a system hot key while M0 has no shortcut matching in the key callback. It is registered only while `shortcutArmed` is true.

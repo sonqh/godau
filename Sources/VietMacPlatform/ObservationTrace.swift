@@ -16,7 +16,7 @@ public struct ObservationRecord: Encodable, Sendable {
 
 /// Fixed-capacity ring filled on the owning run loop outside the key callback.
 public struct ObservationTrace {
-    public static let capacity = 64
+    public static let capacity = 512
     private var records: [ObservationRecord] = []
     private var next = 0
     private var sequence: UInt64 = 0

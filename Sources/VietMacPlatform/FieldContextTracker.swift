@@ -14,8 +14,12 @@ public enum FieldObservation: Equatable, Sendable {
     case consistent
     /// The observation matches an earlier prediction; later keys are still in flight.
     case lagging
-    /// The field changed in a way the tracked keys do not explain.
+    /// The field changed in a way the tracked keys do not explain, confirmed by a second observation.
     case mismatch
+    /// One observation disagrees with every prediction. WebKit can report a stale caret for one
+    /// notification (for example caret 42 with length 44, then 44/44). Nothing is deleted until the
+    /// next observation confirms or clears it.
+    case suspect
     /// No caret/length is available, or a selection is active.
     case unavailable
 }
@@ -33,18 +37,21 @@ public struct FieldContextTracker {
     /// applies them before any later physical key.
     public private(set) var unsettledByReplacementOnly = false
     private var pending: [FieldSnapshot] = []
+    /// An unexplained observation waiting for confirmation.
+    public private(set) var suspect: FieldSnapshot?
 
     public init() {
         pending.reserveCapacity(Self.capacity)
     }
 
     /// True only when an observation after every tracked key matched its prediction.
-    public var isSettled: Bool { baseline != nil && pending.isEmpty }
+    public var isSettled: Bool { baseline != nil && pending.isEmpty && suspect == nil }
     public var pendingCount: Int { pending.count }
     var predicted: FieldSnapshot? { pending.last ?? baseline }
 
     public mutating func reset() {
         baseline = nil
+        suspect = nil
         replacementUnconfirmed = false
         unsettledByReplacementOnly = false
         pending.removeAll(keepingCapacity: true)
@@ -77,6 +84,8 @@ public struct FieldContextTracker {
             baseline = snapshot
             return .consistent
         }
+        let wasSuspect = suspect != nil
+        suspect = nil
         // A revisited state (for example `a` -> `á`, or a letter and Backspace) is ambiguous.
         // Assume the earliest matching state; settle only on an unambiguous final match.
         if snapshot == baseline { return pending.isEmpty ? .consistent : .lagging }
@@ -88,6 +97,11 @@ public struct FieldContextTracker {
                 unsettledByReplacementOnly = false
             }
             return pending.isEmpty ? .consistent : .lagging
+        }
+        // A first unexplained observation is held; a second one confirms the change.
+        guard wasSuspect else {
+            suspect = snapshot
+            return .suspect
         }
         // The new state becomes the baseline; the caller invalidates the tracked word.
         reset()
