@@ -23,6 +23,9 @@ Settings has General (shortcut recorder, login startup), Apps (the profile table
 The optional mode shortcut is a system hot key registered only while it is armed; a shortcut change shows the mode HUD.
 `make app-debug` builds `VietMac Debug.app` with a `Simulator (Debug)` submenu. `make snapshots` renders every screen to `.artifacts/ux-snapshots`. `make app` builds Release, which has neither.
 See [the manual test guide](../../docs/verification/ux-shell-manual-test.md).
+
+UX criteria that stay with `telex-input-mvp` (they need the full M2 runtime or native acceptance): UX-6 (try-it typing), UX-7 mode part, UX-9 to UX-11 (title timing in real apps, word-level holds, shortcut press with VoiceOver and focus), UX-14 (`transportUncertain` in the field), UX-15 (exclusion in real typing), UX-16 (login registration states), UX-19 (single instance), UX-21 (report contents after typing), UX-23 (login-item launch), and UX-24 (profile table after acceptance).
+Native ux-shell checks still open: UX-2 (task 3.2), UX-3 and UX-12 (task 3.3), UX-13 (task 3.4), and UX-17, UX-18, UX-20, UX-25 (task 5.1).
 Opening settings does not grant permissions. Son must enable Accessibility and Input Monitoring for this bundle manually.
 Do not run another Vietnamese event-transforming app during native acceptance; keep the input source at ABC or U.S.
 

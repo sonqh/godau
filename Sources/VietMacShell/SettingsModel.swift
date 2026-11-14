@@ -98,6 +98,12 @@ public enum ModeHUDRule {
         return previous.mode != next.mode && next.modeSource == .shortcut
     }
 
+    /// Fade time in seconds. With Reduce Motion on, the HUD appears and disappears without a fade.
+    public static func fadeDuration(reduceMotion: Bool) -> Double { reduceMotion ? 0 : 0.15 }
+
+    /// How long the HUD stays visible.
+    public static let displaySeconds = 0.8
+
     public static func text(for mode: InputMode) -> LocalizedText {
         LocalizedText(mode == .vietnamese ? "hud.vietnamese" : "hud.english")
     }

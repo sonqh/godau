@@ -55,6 +55,12 @@ struct ShortcutChordTests {
         #expect(!ModeHUDRule.shouldShow(previous: byShortcut, next: byShortcut))
         #expect(!ModeHUDRule.shouldShow(previous: nil, next: byShortcut))
         #expect(vi(ModeHUDRule.text(for: .vietnamese)) == "Tiếng Việt")
+        #expect(ModeHUDRule.fadeDuration(reduceMotion: true) == 0)
+        #expect(ModeHUDRule.fadeDuration(reduceMotion: false) == 0.15)
+        #expect(ModeHUDRule.displaySeconds == 0.8)
+        // Setup's mode switch and the menu both send `menu`; neither shows the HUD.
+        let fromSetup = makeStatus(source: .menu, availability: .active(.observed))
+        #expect(!ModeHUDRule.shouldShow(previous: english, next: fromSetup))
     }
 }
 

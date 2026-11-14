@@ -75,6 +75,7 @@ enum Snapshots {
         let settings = SettingsWindowController(status: { current }, counters: { [("replacementsPosted", "0")] },
                                                 preferences: preferences)
         settings.strings = strings
+        settings.isAdHoc = { true } // Stub diagnostics value: signature == adHoc.
         preferences.shortcut = .suggested
         preferences.excluded = ["com.apple.Safari"]
         for (tab, view) in settings.snapshots() {
@@ -82,9 +83,23 @@ enum Snapshots {
         }
         preferences.shortcut = nil
         preferences.excluded = []
+        for mode in [InputMode.vietnamese, .english] {
+            let hud = ModeHUD() // The snapshot takes the panel's content view, so each mode needs its own HUD.
+            hud.show(mode: mode, strings: strings, reduceMotion: true)
+            if let view = hud.contentView {
+                write(view, to: directory.appendingPathComponent("hud-\(mode.rawValue)-\(suffix).png"))
+            }
+        }
     }
 
     private static func write(_ view: NSView, to url: URL) {
+        // Fixed-frame views (the HUD panel content) have no fitting size.
+        let size = view.fittingSize.width > 0 && view.fittingSize.height > 0 ? view.fittingSize : view.frame.size
+        if view.fittingSize.width == 0 {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+        }
         // A filled window background, so light and dark snapshots both show their real contrast.
         let background = NSBox()
         background.boxType = .custom

@@ -168,7 +168,11 @@ final class ModeHUD {
         panel.setAccessibilityElement(false)
     }
 
-    func show(mode: InputMode, strings: Strings) {
+    /// The panel's content, for Debug snapshots.
+    var contentView: NSView? { panel.contentView }
+
+    func show(mode: InputMode, strings: Strings,
+              reduceMotion: Bool = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion) {
         glyph.stringValue = mode == .vietnamese ? " VI " : " EN "
         label.stringValue = strings(ModeHUDRule.text(for: mode))
         let screen = NSApp.keyWindow?.screen ?? NSScreen.main
@@ -176,17 +180,17 @@ final class ModeHUD {
             panel.setFrameOrigin(NSPoint(x: frame.midX - panel.frame.width / 2,
                                          y: frame.minY + frame.height / 3 - panel.frame.height / 2))
         }
-        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-        panel.alphaValue = reduceMotion ? 1 : 0
+        let fade = ModeHUDRule.fadeDuration(reduceMotion: reduceMotion)
+        panel.alphaValue = fade == 0 ? 1 : 0
         panel.orderFrontRegardless()
-        if !reduceMotion {
-            NSAnimationContext.runAnimationGroup { $0.duration = 0.15; panel.animator().alphaValue = 1 }
+        if fade > 0 {
+            NSAnimationContext.runAnimationGroup { $0.duration = fade; panel.animator().alphaValue = 1 }
         }
         NSAccessibility.post(element: NSApp as Any, notification: .announcementRequested,
                              userInfo: [.announcement: label.stringValue,
                                         .priority: NSAccessibilityPriorityLevel.high.rawValue])
         hideTimer?.invalidate()
-        let timer = Timer(timeInterval: 0.8, repeats: false) { [weak self] _ in
+        let timer = Timer(timeInterval: ModeHUDRule.displaySeconds, repeats: false) { [weak self] _ in
             MainActor.assumeIsolated { self?.hide(reduceMotion: reduceMotion) }
         }
         RunLoop.main.add(timer, forMode: .common)
@@ -194,8 +198,9 @@ final class ModeHUD {
     }
 
     private func hide(reduceMotion: Bool) {
-        guard !reduceMotion else { panel.orderOut(nil); return }
-        NSAnimationContext.runAnimationGroup({ $0.duration = 0.15; panel.animator().alphaValue = 0 },
+        let fade = ModeHUDRule.fadeDuration(reduceMotion: reduceMotion)
+        guard fade > 0 else { panel.orderOut(nil); return }
+        NSAnimationContext.runAnimationGroup({ $0.duration = fade; panel.animator().alphaValue = 0 },
                                              completionHandler: { [panel] in
                                                  MainActor.assumeIsolated { panel.orderOut(nil) }
                                              })

@@ -15,6 +15,8 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     var strings = Strings()
     var features = SetupFeatures.current
     var catalog = ProfileCatalog.stub
+    /// The signature kind from diagnostics; a stub value can replace it (task 4.1).
+    var isAdHoc: () -> Bool = { BuildInfo.isAdHoc }
 
     private let tabs = SettingsTabs()
     private var notArmedLabel: NSTextField?
@@ -246,7 +248,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             grid.addRow(with: [makeLabel(strings(row.label), width: 160), value, action])
         }
         var version = BuildInfo.version
-        if BuildInfo.isAdHoc { version += "\n" + strings("settings.status.adHoc") }
+        if isAdHoc() { version += "\n" + strings("settings.status.adHoc") }
         grid.addRow(with: [makeLabel(strings("settings.status.version"), width: 160),
                            makeLabel(version, width: 300), NSView()])
         grid.column(at: 0).xPlacement = .leading
