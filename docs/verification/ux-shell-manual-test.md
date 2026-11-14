@@ -8,7 +8,10 @@ Record each result in the table at the end. A model test or a snapshot is not na
 
 - Typing uses the full Telex composer (`VietMacCore/TelexComposer`) in VS Code, Chrome, Dia, Safari, and Notes, inside the M0 host and its field checks. Son's goal of 2026-11-14 asked for a testable MVP, so the composer was integrated before the M0 native gate closed (FG-2 deferred integration until then).
   Native automation on 2026-11-14 (synthetic HID key events, not physical typing): 39 of 39 runs passed in Chrome, Dia, and Safari, covering the Telex scenarios, a 660-key workload at 45 ms per key, rollover, fast typing, selection, focus switch, external edit, Command chords, and address-bar completion. Release callback own-work p99 was 74 to 103 µs. Repeated Safari runs passed 10 of 10 typed runs.
+  Notes (body and title) passed with `scripts/native_notes.py` on 2026-11-14. Notes capitalizes the first word of a new line; if a replacement deletes that letter (for example `as` at the start of a line), VietMac reinserts it in lowercase.
   The first word after a click into existing text stays as typed until a space. This is by design.
+- Select the ABC keyboard before testing. VietMac pauses under Apple's Vietnamese Telex input source, which this Mac uses by default.
+- FG-1 (Son, 2026-11-14): option C. The VS Code editor and Quick Open stay literal in v0.1.
 - No field profile is accepted, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.
 - The mode shortcut is a system hot key while M0 has no shortcut matching in the key callback. It is registered only while `shortcutArmed` is true.
 - `⌃⌥V` is a candidate. Its conflicts in the five apps are unknown (PD-1).
