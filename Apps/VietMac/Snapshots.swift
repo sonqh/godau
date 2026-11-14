@@ -22,6 +22,7 @@ enum Snapshots {
         }
         for language in UILanguage.allCases {
             writeMenuText(language: language, to: directory.appendingPathComponent("menu-\(language.rawValue).txt"))
+            writeRealMenus(language: language, to: directory.appendingPathComponent("nsmenu-\(language.rawValue).txt"))
         }
         return true
     }
@@ -100,6 +101,28 @@ enum Snapshots {
         guard let rep = background.bitmapImageRepForCachingDisplay(in: background.bounds) else { return }
         background.cacheDisplay(in: background.bounds, to: rep)
         try? rep.representation(using: .png, properties: [:])?.write(to: url)
+    }
+
+    /// The real `NSMenu` built by `StatusItemController` for every availability, through the simulator.
+    private static func writeRealMenus(language: UILanguage, to url: URL) {
+        var statuses: [RuntimeStatus] = [status(caps: .all), status(), status(.active(.observed), caps: .all),
+                                          status(.active(.eventOnly), caps: .all)]
+        statuses += BlockReason.allCases.map { status(.blocked($0), caps: .all,
+                                                      source: "com.apple.inputmethod.VietnameseIM.VietnameseTelex") }
+        statuses += StandbyReason.allCases.map { status(.standby($0), caps: .all) }
+        let simulator = StatusSimulator(from: statuses[0])
+        let controller = StatusItemController(source: simulator)
+        controller.strings = Strings(language: language)
+        var text = ""
+        for value in statuses {
+            simulator.update(mode: value.mode, availability: value.availability, capabilities: value.capabilities,
+                             inputSourceID: value.inputSourceID)
+            controller.refresh()
+            // A Standby badge applies after its 500 ms debounce; let the timer fire before reading the title.
+            RunLoop.main.run(until: Date().addingTimeInterval(0.6))
+            text += "== \(value.availability)\n" + controller.snapshotText() + "\n"
+        }
+        try? text.write(to: url, atomically: true, encoding: .utf8)
     }
 
     /// The status menu for every reason as text: title, badge, accessibility label, and menu lines.

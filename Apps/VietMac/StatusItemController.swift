@@ -126,6 +126,24 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return ceil(text) + 14 + (badge ? 14 : 0)
     }
 
+    #if DEBUG
+    /// The real menu and title for the current status, as text, for Debug snapshots (UX-8).
+    func snapshotText() -> String {
+        menuNeedsUpdate(menu)
+        var lines = ["title=\(item.button?.title ?? "") badge=\(item.button?.image == nil ? "none" : "symbol") a11y=\(item.button?.accessibilityLabel() ?? "")"]
+        for entry in menu.items {
+            if entry.isSeparatorItem { lines.append(" ---"); continue }
+            var flags: [String] = []
+            if entry.state == .on { flags.append("checked") }
+            if !entry.isEnabled { flags.append("disabled") }
+            if entry.isAlternate { flags.append("alternate") }
+            if !entry.keyEquivalent.isEmpty { flags.append("key=\(entry.keyEquivalent)") }
+            lines.append(" \(entry.title) [\(flags.joined(separator: ","))]")
+        }
+        return lines.joined(separator: "\n")
+    }
+    #endif
+
     // MARK: Menu
 
     func menuNeedsUpdate(_ menu: NSMenu) {

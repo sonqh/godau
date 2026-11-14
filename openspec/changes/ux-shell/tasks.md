@@ -13,7 +13,7 @@ All tasks are pending. A simulator render is model evidence, not native evidence
 ## 2. Status source and menu
 
 - [x] 2.1 Add `M0StatusAdapter` and read-only `InputHost` accessors for input source and frontmost bundle ID, publishing from a run-loop observer at most once per pass; verify by tests the M0 reason mapping table in design D2 and that equal statuses do not republish.
-- [ ] 2.2 Replace the M0 menu with `StatusItemController`: template `VI` / `EN` title, badges, 500 ms Standby debounce, menu order, one action, resume rules, exclusion item, Option-revealed report item; verify UX-8 for every reason in both languages with the simulator.
+- [x] 2.2 Replace the M0 menu with `StatusItemController`: template `VI` / `EN` title, badges, 500 ms Standby debounce, menu order, one action, resume rules, exclusion item, Option-revealed report item; verify UX-8 for every reason in both languages with the simulator.
 - [x] 2.3 Add the Debug status simulator menu that renders any status in the menu, setup, settings, and HUD without calling `InputHost`; verify the Release bundle from `make app` contains no simulator code path.
 
 ## 3. Setup and Help
