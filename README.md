@@ -6,9 +6,10 @@ VietMac is the foundation for Son's personal macOS Vietnamese input app.
 The product uses Telex, precomposed Unicode, and event-based replacement without marked text.
 Required applications are VS Code, Chrome, Dia, Safari, and Apple Notes.
 
-**Current status:** an M0 event-tap prototype, prepared Unicode replacement, bounded example composition,
-permission/pause controls, and tested core/platform models. The prototype starts disabled and implements only `as` → `á` and `aa` → `â`.
-The complete Telex engine is not implemented. Native typing, app compatibility, and callback performance remain unverified.
+**Current status:** the M0 event-tap host with prepared Unicode replacement now runs the complete Telex composer
+(`VietMacCore/TelexComposer`), behind the `ux-shell` menu, Setup, Help, Settings, and mode HUD. It starts in English mode.
+Native automation passed Telex scenarios in Chrome, Dia, and Safari on 2026-11-14; physical typing, Notes, VS Code, and callback performance are not yet accepted.
+See [the manual test guide](docs/verification/ux-shell-manual-test.md).
 
 ## Quick start
 

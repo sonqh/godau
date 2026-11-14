@@ -5,16 +5,16 @@ All tasks are pending. A simulator render is model evidence, not native evidence
 
 ## 1. Status types and shell logic
 
-- [ ] 1.1 Add the architecture-spec 7.2 status value types to `VietMacPlatform` as data with a public memberwise initializer, and remove the unused `RuntimeStatus` namespace; verify `make test` passes and no callback or transport file changed.
-- [ ] 1.2 Add the `VietMacShell` library and `VietMacShellTests` targets with `StatusPresentation`; verify by tests that every `BlockReason` and `StandbyReason` maps to the title, badge, accessibility label, status line, detail line, and action in ux-spec sections 5.1 and 5.4, and that quiet reasons leave the title unbadged.
-- [ ] 1.3 Add `Localizable.xcstrings` with Vietnamese and English for every surface, and a copy-rule test; verify both languages have the same keys, Vietnamese strings are NFC, and English strings contain no dash, semicolon, contraction, "error", or "failed".
-- [ ] 1.4 Add `SetupPlan` and `SetupFeatures` flags; verify by tests the derived step list, the step count, completion from capabilities, input source, and conflicting tool only, and the first missing item in gate order on reopen.
+- [x] 1.1 Add the architecture-spec 7.2 status value types to `VietMacPlatform` as data with a public memberwise initializer, and remove the unused `RuntimeStatus` namespace; verify `make test` passes and no callback or transport file changed.
+- [x] 1.2 Add the `VietMacShell` library and `VietMacShellTests` targets with `StatusPresentation`; verify by tests that every `BlockReason` and `StandbyReason` maps to the title, badge, accessibility label, status line, detail line, and action in ux-spec sections 5.1 and 5.4, and that quiet reasons leave the title unbadged.
+- [x] 1.3 Add `Localizable.xcstrings` with Vietnamese and English for every surface, and a copy-rule test; verify both languages have the same keys, Vietnamese strings are NFC, and English strings contain no dash, semicolon, contraction, "error", or "failed".
+- [x] 1.4 Add `SetupPlan` and `SetupFeatures` flags; verify by tests the derived step list, the step count, completion from capabilities, input source, and conflicting tool only, and the first missing item in gate order on reopen.
 
 ## 2. Status source and menu
 
-- [ ] 2.1 Add `M0StatusAdapter` and read-only `InputHost` accessors for input source and frontmost bundle ID, publishing from a run-loop observer at most once per pass; verify by tests the M0 reason mapping table in design D2 and that equal statuses do not republish.
+- [x] 2.1 Add `M0StatusAdapter` and read-only `InputHost` accessors for input source and frontmost bundle ID, publishing from a run-loop observer at most once per pass; verify by tests the M0 reason mapping table in design D2 and that equal statuses do not republish.
 - [ ] 2.2 Replace the M0 menu with `StatusItemController`: template `VI` / `EN` title, badges, 500 ms Standby debounce, menu order, one action, resume rules, exclusion item, Option-revealed report item; verify UX-8 for every reason in both languages with the simulator.
-- [ ] 2.3 Add the Debug status simulator menu that renders any status in the menu, setup, settings, and HUD without calling `InputHost`; verify the Release bundle from `make app` contains no simulator code path.
+- [x] 2.3 Add the Debug status simulator menu that renders any status in the menu, setup, settings, and HUD without calling `InputHost`; verify the Release bundle from `make app` contains no simulator code path.
 
 ## 3. Setup and Help
 
@@ -22,7 +22,7 @@ All tasks are pending. A simulator render is model evidence, not native evidence
 - [ ] 3.2 Add `PermissionRequester` called only from setup and settings button actions; verify by test that the launch path, status observer, and menu hold no reference to it, and verify UX-2 natively with Son's grant (pane opens, VietMac listed).
 - [ ] 3.3 Add grant-change feedback: `Đã bật ✓` within one pass, focus on `Tiếp tục`, VoiceOver announcement, raise only when System Settings is frontmost; verify UX-3 and UX-12 natively by turning Accessibility on and off with Son, after U-3 has a recorded safe result.
 - [ ] 3.4 Add launch rules: first launch opens step 1, manual launch with a missing item opens once with the update heading, and the non-activating fallback until U-15; verify UX-13 natively and that the frontmost app keeps focus in the fallback.
-- [ ] 3.5 Add Help mode with the five pages, each under 120 words; verify word counts by test and page links from the menu actions.
+- [x] 3.5 Add Help mode with the five pages, each under 120 words; verify word counts by test and page links from the menu actions.
 
 ## 4. Settings and HUD
 

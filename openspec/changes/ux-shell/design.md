@@ -87,6 +87,13 @@ While a setup or settings window is visible, the shell asks the host for the 250
 
 ## Risks / Trade-offs
 
+- Interim M0 support so the shell can be tested end to end (Son's request of 2026-11-14). Each item moves to `telex-input-mvp` M2 unchanged in the shell:
+  - Exclusions: `InputHost.excludedBundleIDs` makes an excluded trial app unsupported, so keys pass through (the safe direction); `M0StatusAdapter` reports it as `standby(excludedApp)`.
+  - Shortcut: the shell registers the chord as a Carbon system hot key only while `shortcutArmed` is true, outside the key callback. `M0StatusAdapter.shortcutArmed` applies the architecture-spec 7.2 rule from cached host values, including `InputHost.secureInput`. M2 replaces this with matching in the callback.
+  - Login startup: `LoginItem` calls `SMAppService.mainApp` directly and shows the system state; U-7 (registration of a bundle under `.artifacts`) is still unknown.
+- `make app-debug` builds `VietMac Debug.app` with its own bundle ID and the simulator; `--snapshot-dir` (Debug only) renders every setup step, Help page, Settings tab, and the menu text for each reason. Snapshots are model evidence, not UX-25 screenshots.
+- `scripts/tests/test_permission_requests.py` checks that only `PermissionRequester` calls a request function and only window button commands call the requester.
+- The string catalog is copied, not compiled: the Command Line Tools build has no string compiler. `StringTable` reads `Localizable.xcstrings` as JSON, and `make app` copies it to `Contents/Resources`.
 - The M0 adapter shows `uncertainContext` as quiet `fieldUnreadable`. A selection in M0 then hides the reason that the word is held. This matches the M2 target, where selections are word-level holds and not status.
 - Vietnamese pane names in System Settings on macOS 27 are **unknown** (UX-20). The copy uses the names in ux-spec and is checked on a Vietnamese system before closing.
 - macOS 27 appearance facts are **inferred** from press coverage. UX-25 checks the built app on Son's Mac.

@@ -28,6 +28,10 @@ public struct FieldContextTracker {
     public private(set) var baseline: FieldSnapshot?
     /// A posted replacement whose insertion no observation has settled yet.
     public private(set) var replacementUnconfirmed = false
+    /// Every unsettled prediction comes from posted replacements, with no physical key after them.
+    /// Generated events are posted into the event stream right after their trigger, so the client
+    /// applies them before any later physical key.
+    public private(set) var unsettledByReplacementOnly = false
     private var pending: [FieldSnapshot] = []
 
     public init() {
@@ -42,6 +46,7 @@ public struct FieldContextTracker {
     public mutating func reset() {
         baseline = nil
         replacementUnconfirmed = false
+        unsettledByReplacementOnly = false
         pending.removeAll(keepingCapacity: true)
     }
 
@@ -53,12 +58,14 @@ public struct FieldContextTracker {
         baseline = snapshot
         pending.removeAll(keepingCapacity: true)
         replacementUnconfirmed = false
+        unsettledByReplacementOnly = false
         return true
     }
 
     /// Call after predicting a posted replacement. A settled observation confirms it.
     public mutating func markReplacement() {
         replacementUnconfirmed = baseline != nil
+        unsettledByReplacementOnly = baseline != nil
     }
 
     public mutating func observe(_ snapshot: FieldSnapshot?) -> FieldObservation {
@@ -76,7 +83,10 @@ public struct FieldContextTracker {
         if let index = pending.firstIndex(of: snapshot) {
             baseline = snapshot
             pending.removeFirst(index + 1)
-            if pending.isEmpty { replacementUnconfirmed = false }
+            if pending.isEmpty {
+                replacementUnconfirmed = false
+                unsettledByReplacementOnly = false
+            }
             return pending.isEmpty ? .consistent : .lagging
         }
         // The new state becomes the baseline; the caller invalidates the tracked word.
@@ -97,6 +107,8 @@ public struct FieldContextTracker {
         }
         pending.append(FieldSnapshot(caret: current.caret - deleting + inserting,
                                      length: current.length - deleting + inserting))
+        // A physical key ends the replacement-only window; `markReplacement` reopens it after a replacement.
+        unsettledByReplacementOnly = false
         return true
     }
 }

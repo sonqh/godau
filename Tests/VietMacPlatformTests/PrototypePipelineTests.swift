@@ -191,3 +191,71 @@ struct PrototypePipelineTests {
         #expect(first.handle(.keyUp(65535)) == .passThrough)
     }
 }
+
+struct TelexPipelineTests {
+    private func active() -> PrototypePipeline {
+        var model = PrototypePipeline(environment: InputEnvironment(permissions: PermissionSnapshot(
+            accessibility: true, eventListening: true, eventPosting: true)))
+        model.setEnabled(true)
+        return model
+    }
+
+    /// Types keys, accepting every replacement, and returns the tracked word.
+    private func type(_ keys: String, into model: inout PrototypePipeline) -> [PrototypeAction] {
+        var actions: [PrototypeAction] = []
+        for (index, scalar) in keys.unicodeScalars.enumerated() {
+            let code = UInt16(index % 100)
+            let action = scalar == " " ? model.handle(.boundary)
+                : scalar == "<" ? model.handle(.backspace)
+                : model.handle(.letter(UInt8(scalar.value), keyCode: code, isRepeat: false))
+            if case .replace(let edit) = action {
+                let accepted = model.accept(edit)
+                #expect(accepted)
+            }
+            if scalar != " " && scalar != "<" { _ = model.handle(.keyUp(code)) }
+            actions.append(action)
+        }
+        return actions
+    }
+
+    @Test func composesTiengVietThroughReplacements() {
+        var model = active()
+        let actions = type("tieengs", into: &model)
+        #expect(model.word == "tiếng")
+        #expect(actions.filter { if case .replace = $0 { true } else { false } }.count == 2)
+        _ = type(" Vieetj", into: &model)
+        #expect(model.word == "Việt")
+    }
+
+    @Test func replacementCarriesWholeWordForPlanner() {
+        var model = active()
+        _ = type("hoaf", into: &model)
+        guard case .replace(let edit) = model.handle(.letter(110, keyCode: 90, isRepeat: false)) else {
+            // `n` is a plain append for the field, but the tone moves, so it must be a replacement.
+            Issue.record("expected a replacement for the moving tone")
+            return
+        }
+        #expect(edit.previous == "hòa" && edit.next == "hoàn")
+    }
+
+    @Test func backspaceEditsVisibleLetters() {
+        var model = active()
+        _ = type("tieengs<", into: &model)
+        #expect(model.word == "tiến")
+        _ = type("f", into: &model)
+        #expect(model.word == "tiền")
+    }
+
+    @Test func staleReplacementDoesNotCommitComposerState() {
+        var model = active()
+        _ = type("a", into: &model)
+        guard case .replace(let edit) = model.handle(.letter(115, keyCode: 1, isRepeat: false)) else {
+            Issue.record("expected a replacement")
+            return
+        }
+        model.invalidate()
+        let accepted = model.accept(edit)
+        #expect(!accepted)
+        #expect(model.word.isEmpty)
+    }
+}

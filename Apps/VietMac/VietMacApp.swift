@@ -1,52 +1,212 @@
 import AppKit
 import VietMacPlatform
+import VietMacShell
 
 @MainActor
-private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
-    private var item: NSStatusItem?
+private final class AppDelegate: NSObject, NSApplicationDelegate, ShellRouter {
     private let host = InputHost()
-    private let stateItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
-    private let toggleItem = NSMenuItem(title: "Enable M0 prototype", action: nil, keyEquivalent: "")
-    private let resumeItem = NSMenuItem(title: "Resume after pause", action: nil, keyEquivalent: "")
-    private let capabilitiesItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private lazy var adapter = M0StatusAdapter(host: host)
+    private var controller: StatusItemController?
+    private var setup: SetupWindowController?
+    private var settings: SettingsWindowController?
+    private let preferences = ShellPreferences()
+    private let hotKeys = HotKeyCenter()
+    private let hud = ModeHUD()
+    private var previousStatus: RuntimeStatus?
+    #if DEBUG
+    private var simulatorMenu: SimulatorMenu?
+    #endif
     private var evidenceSignal: DispatchSourceSignal?
     private var evidenceDirectory: URL?
     private var disableSnapshots = 0
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let status = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        status.button?.title = "VM"
-        status.button?.toolTip = "VietMac M0 prototype — native acceptance pending"
-        let menu = NSMenu()
-        menu.autoenablesItems = false
-        menu.delegate = self
-        stateItem.isEnabled = false
-        capabilitiesItem.isEnabled = false
-        toggleItem.action = #selector(toggle)
-        toggleItem.target = self
-        resumeItem.action = #selector(resume)
-        resumeItem.target = self
-        menu.addItem(stateItem)
-        menu.addItem(toggleItem)
-        menu.addItem(resumeItem)
-        menu.addItem(capabilitiesItem)
-        let notice = NSMenuItem(title: "M0 examples only: as → á, aa → â", action: nil, keyEquivalent: "")
-        notice.isEnabled = false
-        menu.addItem(notice)
-        menu.addItem(.separator())
-        add("Open Accessibility settings…", action: #selector(openAccessibility), to: menu)
-        add("Open Input Monitoring settings…", action: #selector(openMonitoring), to: menu)
-        add("Save callback timing report…", action: #selector(exportTiming), to: menu)
-        menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit VietMac", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        status.menu = menu
-        item = status
         host.start()
-        // Native automation starts with the prototype on; ordinary launches stay disabled.
-        if CommandLine.arguments.contains("--enable-prototype") { host.setEnabled(true) }
-        updateMenu()
+        adapter.apply(excluded: preferences.excluded, shortcutConfigured: preferences.shortcut != nil)
+        // Native automation starts with the prototype on; ordinary launches stay in English mode.
+        if CommandLine.arguments.contains("--enable-prototype") { adapter.setMode(.vietnamese, source: .launch) }
+        adapter.start()
+        let controller = StatusItemController(source: adapter)
+        controller.router = self
+        controller.beforeModeChange = { [weak self] mode in
+            // Snapshot before disabling so the trace still covers the trial just typed.
+            guard let self, mode == .english, self.host.enabled, let directory = self.evidenceDirectory else { return }
+            self.disableSnapshots += 1
+            self.writeEvidence(to: directory, prefix: "disable-\(self.disableSnapshots)-")
+        }
+        #if DEBUG
+        let simulator = SimulatorMenu(controller: controller, live: adapter)
+        controller.extraItems = { simulator.items() }
+        simulator.resetSetup = { [weak self] in
+            self?.preferences.lastSetupStep = nil
+            self?.preferences.setupCompletedOnce = false
+        }
+        simulator.simulateLaunch = { [weak self] in self?.openSetupAtLaunch(force: true) }
+        simulatorMenu = simulator
+        #endif
+        let setup = SetupWindowController(status: { [weak controller] in
+            controller?.source.status ?? self.adapter.status
+        }, setMode: { [weak controller] mode in
+            controller?.source.setMode(mode, source: .menu)
+        }, preferences: preferences)
+        setup.router = self
+        setup.onConfigurationChange = { [weak self] in self?.applyConfiguration() }
+        let settings = SettingsWindowController(status: { [weak controller] in
+            controller?.source.status ?? self.adapter.status
+        }, counters: { [weak self] in self?.counterRows() ?? [] }, preferences: preferences)
+        settings.router = self
+        settings.onConfigurationChange = { [weak self] in self?.applyConfiguration() }
+        controller.onStatus = { [weak self] status in self?.statusPublished(status) }
+        controller.onExclusion = { [weak self] bundleID, excluded in
+            guard let self else { return }
+            var set = self.preferences.excluded
+            if excluded { set.insert(bundleID) } else { set.remove(bundleID) }
+            self.preferences.excluded = set
+            self.applyConfiguration()
+            self.settings?.exclusionsChanged()
+        }
+        hotKeys.onPress = { [weak self] in
+            guard let self, let source = self.controller?.source else { return }
+            // The chord fires only while armed; the menu stays the complete control.
+            guard source.status.shortcutArmed else { return }
+            let next: InputMode = source.status.mode == .vietnamese ? .english : .vietnamese
+            self.controller?.beforeModeChange?(next)
+            source.setMode(next, source: .shortcut)
+        }
+        self.setup = setup
+        self.settings = settings
+        self.controller = controller
+        applyConfiguration()
         startEvidenceExport()
+        openSetupAtLaunch()
     }
+
+    /// Opening VietMac again while it runs opens Settings (architecture-spec 7.7).
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        settings?.show()
+        return false
+    }
+
+    /// Applies the stored shortcut and exclusions to the host and the menu.
+    private func applyConfiguration() {
+        adapter.apply(excluded: preferences.excluded, shortcutConfigured: preferences.shortcut != nil)
+        controller?.excluded = preferences.excluded
+        controller?.shortcutDisplay = preferences.shortcut?.display
+        _ = adapter.publishIfChanged()
+        if let status = controller?.source.status { statusPublished(status) }
+        controller?.refresh()
+    }
+
+    /// Every published status: hot key arming, the mode HUD, and open windows.
+    private func statusPublished(_ status: RuntimeStatus) {
+        hotKeys.update(chord: preferences.shortcut, armed: status.shortcutArmed)
+        if ModeHUDRule.shouldShow(previous: previousStatus, next: status), let strings = controller?.strings {
+            hud.show(mode: status.mode, strings: strings)
+        }
+        previousStatus = status
+        setup?.statusChanged(status)
+        settings?.statusChanged(status)
+    }
+
+    /// Context counters since this launch, for Settings › Status. Counts only, never text.
+    private func counterRows() -> [(String, String)] {
+        let counters = host.counters
+        return [("focusChanges", counters.focusChanges), ("selectionsObserved", counters.selectionsObserved),
+                ("fieldUnavailable", counters.fieldUnavailable), ("replacementsPosted", counters.replacementsPosted),
+                ("replacementsUnconfirmed", counters.replacementsUnconfirmed),
+                ("unsettledTriggers", counters.unsettledTriggers)].map { ($0.0, String($0.1)) }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        adapter.stop()
+        host.stop()
+    }
+
+    // MARK: ShellRouter
+
+    var hasSetupWindow: Bool { true }
+    var hasHelpWindow: Bool { true }
+    var hasSettingsWindow: Bool { true }
+
+    func canPerform(_ action: ShellAction) -> Bool { true }
+
+    func perform(_ action: ShellAction) {
+        switch action {
+        case .openSetup(let step): setup?.showSetup(at: step)
+        case .openHelp(let page): setup?.showHelp(page)
+        case .openKeyboardSettings: SystemPanes.open(.keyboard)
+        case .relaunch: relaunch()
+        case .resume: controller?.source.resume()
+        case .openSettings(let tab): settings?.show(tab)
+        case .removeExclusion(let bundleID): controller?.onExclusion?(bundleID, false)
+        }
+    }
+
+    func perform(_ command: MenuModel.Command) {
+        switch command {
+        case .quit: NSApp.terminate(nil)
+        case .saveReport: saveDiagnosticReport()
+        case .continueSetup: setup?.showSetupContinuing()
+        case .help: setup?.showHelp()
+        case .settings: settings?.show()
+        }
+    }
+
+    /// Opens setup by itself only under the launch rules of ux-spec 4.6. Never requests a permission.
+    private func openSetupAtLaunch(force: Bool = false) {
+        // Native automation sessions must not get a window in front of the fields under test.
+        guard force || !CommandLine.arguments.contains("--enable-prototype") else { return }
+        let status = controller?.source.status ?? adapter.status
+        let plan = SetupPlan(status: status)
+        let decision = LaunchDecision.decide(status: status, plan: plan, completedOnce: preferences.setupCompletedOnce,
+                                             lastSeen: preferences.lastSetupStep, loginLaunch: false)
+        guard let step = decision.step else { return }
+        setup?.showSetup(at: step, updateHeading: decision.updateHeading, activate: decision.activates)
+    }
+
+    /// Opens a new instance of this bundle, then quits once the launch succeeded (architecture-spec 7.7).
+    private func relaunch() {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.createsNewApplicationInstance = true
+        let bundleURL = Bundle.main.bundleURL
+        adapter.stop()
+        host.stop()
+        NSWorkspace.shared.openApplication(at: bundleURL, configuration: configuration) { app, _ in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    if app != nil {
+                        NSApp.terminate(nil)
+                    } else {
+                        self.host.start()
+                        self.adapter.start()
+                    }
+                }
+            }
+        }
+    }
+
+    /// Exports only the "may show" fields of architecture-spec 7.9 to a location the user chooses.
+    private func saveDiagnosticReport() {
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = "vietmac-diagnostics.json"
+        NSApp.activate(ignoringOtherApps: true)
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            host.refresh()
+            let diagnostics = try JSONSerialization.jsonObject(with: host.diagnosticJSON(scope: "user-diagnostic-report"))
+            let timings = try JSONSerialization.jsonObject(with: host.timingJSON())
+            let data = try JSONSerialization.data(withJSONObject: ["diagnostics": diagnostics, "callbackTimings": timings],
+                                                  options: [.prettyPrinted, .sortedKeys])
+            try data.write(to: url, options: .atomic)
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = controller?.strings("menu.saveReport") ?? "VietMac"
+            alert.informativeText = error.localizedDescription
+            alert.runModal()
+        }
+    }
+
+    // MARK: Native evidence (development)
 
     /// `--evidence-dir <absolute path>` writes session snapshots at launch and on SIGUSR1.
     /// Writes run on the main queue outside the key callback and contain no typed text.
@@ -77,62 +237,6 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
             FileHandle.standardError.write(Data("Evidence export failed: \(error)\n".utf8))
         }
     }
-
-    func applicationWillTerminate(_ notification: Notification) { host.stop() }
-    func menuNeedsUpdate(_ menu: NSMenu) { updateMenu() }
-
-    private func add(_ title: String, action: Selector, to menu: NSMenu) {
-        let entry = NSMenuItem(title: title, action: action, keyEquivalent: "")
-        entry.target = self
-        menu.addItem(entry)
-    }
-
-    private func updateMenu() {
-        switch host.state {
-        case .disabled: stateItem.title = "Prototype disabled — ordinary input"
-        case .active: stateItem.title = "M0 prototype active — acceptance pending"
-        case .paused(let reason): stateItem.title = "Paused: \(reason.rawValue)"
-        }
-        toggleItem.title = host.enabled ? "Disable M0 prototype" : "Enable M0 prototype"
-        if case .paused = host.state { resumeItem.isEnabled = host.enabled }
-        else { resumeItem.isEnabled = false }
-        let p = host.permissions
-        capabilitiesItem.title = "Access: AX \(p.accessibility ? "✓" : "✗") · Listen \(p.eventListening ? "✓" : "✗") · Post \(p.eventPosting ? "✓" : "✗")"
-        item?.button?.toolTip = stateItem.title
-    }
-
-    @objc private func toggle() {
-        // Snapshot before disabling so the trace still covers the trial just typed.
-        if host.enabled, let directory = evidenceDirectory {
-            disableSnapshots += 1
-            writeEvidence(to: directory, prefix: "disable-\(disableSnapshots)-")
-        }
-        host.setEnabled(!host.enabled)
-        updateMenu()
-    }
-    @objc private func resume() { host.setEnabled(true); updateMenu() }
-    @objc private func openAccessibility() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-    @objc private func openMonitoring() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-    @objc private func exportTiming() {
-        let panel = NSSavePanel()
-        panel.nameFieldStringValue = "vietmac-callback-timings.json"
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        do { try host.timingJSON().write(to: url, options: .atomic) }
-        catch {
-            let alert = NSAlert()
-            alert.messageText = "Timing report could not be saved"
-            alert.informativeText = error.localizedDescription
-            alert.runModal()
-        }
-    }
 }
 
 @main
@@ -153,6 +257,9 @@ private struct VietMacApp {
             return
         }
         let app = NSApplication.shared
+        #if DEBUG
+        if Snapshots.runIfRequested() { return }
+        #endif
         let delegate = AppDelegate()
         app.setActivationPolicy(.accessory)
         app.delegate = delegate

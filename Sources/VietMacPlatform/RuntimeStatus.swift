@@ -23,11 +23,6 @@ public struct PermissionSnapshot: Equatable, Sendable {
     }
 }
 
-/// Implementation availability is distinct from native acceptance.
-public enum RuntimeStatus {
-    public static let transportImplemented = true
-}
-
 public enum PauseReason: String, Equatable, Sendable {
     case accessibility = "Accessibility access is unavailable"
     case listening = "Input monitoring is unavailable"

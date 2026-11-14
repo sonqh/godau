@@ -12,6 +12,13 @@ public final class InputHost {
     public private(set) var frontmostBundleID: String?
     public var state: InputRuntimeState { pipeline.state }
     public var enabled: Bool { pipeline.enabled }
+    /// The last refresh read secure input as on. Read-only; cached outside the key callback.
+    public var secureInput: Bool { pipeline.environment.secureInput }
+    /// Apps where the user turned Vietnamese off. An excluded app is treated like an unsupported one,
+    /// so every key passes through. Setting it refreshes the environment, which clears the tracked word.
+    public var excludedBundleIDs: Set<String> = [] {
+        didSet { if excludedBundleIDs != oldValue { refresh() } }
+    }
 
     private var pipeline: PrototypePipeline
     private let transport = PreparedTransport(marker: Int64.random(in: 1...Int64.max))
@@ -123,7 +130,9 @@ public final class InputHost {
         }
     }
 
-    private var supportedApp: Bool { frontmostBundleID.map { trialApps.contains($0) } ?? false }
+    private var supportedApp: Bool {
+        frontmostBundleID.map { trialApps.contains($0) && !excludedBundleIDs.contains($0) } ?? false
+    }
 
     /// AX notification path: field metadata only, without capability or app lookups.
     private func observeField() {

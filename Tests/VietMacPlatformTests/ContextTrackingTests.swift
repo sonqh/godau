@@ -266,6 +266,35 @@ struct ContextPolicyTests {
         #expect(session.counters.replacementsUnconfirmed == 0)
     }
 
+    /// `ass`: the second `s` arrives before any observation of the same-length `a` -> `á` replacement.
+    @Test func chainedReplacementWithoutPhysicalKeyBetween() {
+        var session = replacedInTextArea()
+        #expect(session.field.unsettledByReplacementOnly)
+        #expect(session.key(s) == "as")
+        #expect(session.counters.replacementsPosted == 2)
+        #expect(session.counters.unsettledTriggers == 0)
+        // Final state: one more unit than before the first replacement.
+        #expect(!check(&session, caret: 14, length: 14, quietMilliseconds: 600))
+        #expect(session.field.isSettled)
+        #expect(session.pipeline.state == .active)
+    }
+
+    @Test func physicalKeyAfterReplacementNeedsAnObservation() {
+        var session = replacedInTextArea()
+        _ = session.key(.letter(110, keyCode: 45, isRepeat: false)) // `n`, unobserved.
+        #expect(!session.field.unsettledByReplacementOnly)
+        #expect(session.key(s) == nil)
+        #expect(session.counters.unsettledTriggers == 1)
+    }
+
+    @Test func droppedChainedReplacementStillPauses() {
+        var session = replacedInTextArea()
+        #expect(session.key(s) == "as")
+        // The first Backspace and both insertions were dropped: the field never reaches the prediction.
+        #expect(check(&session, caret: 12, length: 12, quietMilliseconds: 600))
+        #expect(session.pipeline.state == .paused(.transportUncertain))
+    }
+
     @Test func droppedInsertionPausesAfterInputGoesQuiet() {
         var session = replacedInTextArea()
         // Deletion landed, insertion did not: the field stays one unit short.

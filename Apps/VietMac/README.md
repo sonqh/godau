@@ -1,8 +1,8 @@
 # VietMac app host
 
-This target presents the M0 native transport prototype. It starts disabled.
-When explicitly enabled with all capabilities and a supported inspected context, it intercepts keys for `as` → `á` and `aa` → `â` only.
-This is not the complete Telex engine, and native compatibility remains unverified.
+This target presents the M0 native transport host with the complete Telex composer. It starts in English mode.
+When Vietnamese is on with all capabilities and a supported inspected context, it replaces the tracked word as Telex specifies.
+Native acceptance of the five apps is still pending; see the manual test guide.
 
 Run `make app` to create `.artifacts/VietMac.app`.
 The build signs locally with ad hoc signing by default; it does not launch, install, or replace an input app.
@@ -13,7 +13,16 @@ Ad hoc signing verifies bundle integrity but does not promise permission continu
 On 2026-10-14 a build signed with an untrusted self-signed certificate received no Accessibility or Input Monitoring capability after Son re-added it. Ad hoc grants worked but are tied to one CDHash.
 Keep the same signed build at this location during a native acceptance session; record its identity and enabled capabilities.
 
-The menu exposes enable/disable, explicit resume after a pause, read-only capability status, system-settings links, and timing export.
+The menu bar item shows `VI` or `EN` with a template badge, as specified in the `ux-shell` change.
+The status menu shows one status line, one detail line, and at most one next step. Choose `Tiếng Việt` / `Vietnamese` to enable the M0 prototype and `Tiếng Anh` / `English` to disable it.
+`Tắt tiếng Việt trong <App>` excludes one of the five trial apps; an excluded app passes every key through.
+Hold Option in the open menu to reveal `Save Diagnostic Report…`, which exports diagnostics and callback timings to a file you choose.
+`M0StatusAdapter` maps the M0 host state into `RuntimeStatus` until `telex-input-mvp` M2 supplies the real status.
+The Setup and Help window opens from the menu and by itself only under the launch rules of ux-spec 4.6. Its grant buttons call the system request function and then open the System Settings pane; nothing requests a permission at launch, on a timer, or from the menu.
+Settings has General (shortcut recorder, login startup), Apps (the profile table; no profile is accepted yet), and Status tabs. Opening VietMac again while it runs opens Settings.
+The optional mode shortcut is a system hot key registered only while it is armed; a shortcut change shows the mode HUD.
+`make app-debug` builds `VietMac Debug.app` with a `Simulator (Debug)` submenu. `make snapshots` renders every screen to `.artifacts/ux-snapshots`. `make app` builds Release, which has neither.
+See [the manual test guide](../../docs/verification/ux-shell-manual-test.md).
 Opening settings does not grant permissions. Son must enable Accessibility and Input Monitoring for this bundle manually.
 Do not run another Vietnamese event-transforming app during native acceptance; keep the input source at ABC or U.S.
 

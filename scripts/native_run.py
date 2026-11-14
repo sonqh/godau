@@ -377,7 +377,8 @@ def main():
         "preservation": not preservation,
         "values": not mismatched,
         "replacementsPosted": deltas.get("replacementsPosted", 0) == scenario["replacements"],
-        "backspaces": backspaces == scenario["replacements"],
+        # One Backspace per replacement under M0; Telex replacements may delete several letters.
+        "backspaces": backspaces == scenario.get("backspaces", scenario["replacements"]),
         "replacementsUnconfirmed": deltas.get("replacementsUnconfirmed", 0) == 0,
         "minimumCounters": all(deltas.get(k, 0) >= v for k, v in scenario.get("minimum", {}).items()),
         # The driver restores the user's input source before this snapshot, which can pause

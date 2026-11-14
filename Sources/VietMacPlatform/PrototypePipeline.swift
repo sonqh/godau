@@ -22,10 +22,14 @@ public enum PrototypeAction: Equatable, Sendable {
     case replace(PendingReplacement)
 }
 
-/// M0 examples only. This is not the production Telex reducer.
+/// Key ownership, pause, and context state around the Telex composer from `VietMacCore`.
 /// The host confines this value and its transport to one owning run loop.
 public struct PrototypePipeline {
+    /// The visible text of the tracked word, as the field shows it.
     public private(set) var word = ""
+    private var composer = TelexComposer()
+    /// Composer state for a replacement that is not accepted yet.
+    private var pendingComposer: TelexComposer?
     public private(set) var generation: UInt64 = 0
     public private(set) var enabled = false
     public private(set) var literalUntilBoundary = false
@@ -71,6 +75,8 @@ public struct PrototypePipeline {
     public mutating func invalidate(holdUntilBoundary: Bool = true) {
         generation &+= 1
         word.removeAll(keepingCapacity: true)
+        composer.reset()
+        pendingComposer = nil
         literalUntilBoundary = holdUntilBoundary
         // Keep consumed key ownership until release, including after a pause.
     }
@@ -111,24 +117,28 @@ public struct PrototypePipeline {
                 return .passThrough
             }
             guard !literalUntilBoundary else { return .passThrough }
-            if !repeated, word == "a" || word == "A" {
-                let upper = word == "A"
-                let base = byte | 0x20
-                let next = base == 115 ? (upper ? "Á" : "á") :
-                           base == 97 ? (upper ? "Â" : "â") : nil
-                if let next {
-                    return .replace(PendingReplacement(previous: word, next: next,
-                                                      generation: generation, keyCode: code))
-                }
-            }
-            guard word.count < 64 else {
+            var next = composer
+            switch next.input(byte) {
+            case .untracked:
                 invalidate()
                 return .passThrough
+            case .text(let text):
+                if text == word + String(UnicodeScalar(byte)) {
+                    composer = next
+                    word = text
+                    return .passThrough
+                }
+                // A held modifier key never transforms; it is tracked as typed and the word turns literal.
+                guard !repeated else {
+                    if case .text(let literal) = composer.inputLiteral(byte) { word = literal } else { invalidate() }
+                    return .passThrough
+                }
+                pendingComposer = next
+                return .replace(PendingReplacement(previous: word, next: text, generation: generation, keyCode: code))
             }
-            word.append(Character(UnicodeScalar(byte)))
-            return .passThrough
         case .backspace:
-            if !word.isEmpty { word.removeLast() }
+            // Backspace removes the last visible letter inside the owned word; outside it, ownership ends.
+            if composer.backspace() { word = composer.text }
             else { invalidate() }
             return .passThrough
         case .boundary:
@@ -148,8 +158,10 @@ public struct PrototypePipeline {
 
     @discardableResult
     public mutating func accept(_ edit: PendingReplacement) -> Bool {
-        guard isCurrent(edit), edit.keyCode < consumed.count else { return false }
+        guard isCurrent(edit), edit.keyCode < consumed.count, let next = pendingComposer else { return false }
         word = edit.next
+        composer = next
+        pendingComposer = nil
         consumed[Int(edit.keyCode)] = true
         return true
     }

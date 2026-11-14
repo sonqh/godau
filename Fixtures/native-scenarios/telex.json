@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "family": "telex",
+  "scenarios": [
+    {
+      "id": "telex-tieng-viet",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " tieengs Vieetj",
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng Việt"
+      },
+      "replacements": 4,
+      "backspaces": 7,
+      "note": "Setup try-it sample. Replacements: tie->tiê, tiêng->tiếng (3 deletions, multi-character insertion), Vie->Viê, Viêt->Việt (2 deletions)."
+    },
+    {
+      "id": "telex-phrase",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " dduowngf nguowif hoafn khuyur thuowr quys gif",
+      "interval": 110,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT đường người hoàn khuỷu thuở quý gì"
+      },
+      "replacements": 14,
+      "backspaces": 22,
+      "note": "Paired vowels, tone movement after a final consonant, three-vowel nucleus, the thuở rule, and qu/gi prefixes."
+    },
+    {
+      "id": "telex-escape-backspace",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "keys": " ass aasa windows",
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT as áa windows"
+      },
+      "replacements": 5,
+      "backspaces": 5,
+      "note": "Repeated-modifier escape keeps the key literally; leading w stays literal."
+    }
+  ]
+}

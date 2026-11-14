@@ -1,0 +1,2760 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "action.howToQuit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to Quit %@…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách thoát %@…"
+          }
+        }
+      }
+    },
+    "action.openKeyboardSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Keyboard Settings…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở cài đặt Bàn phím…"
+          }
+        }
+      }
+    },
+    "action.reopen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reopen VietMac"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở lại VietMac"
+          }
+        }
+      }
+    },
+    "action.resume": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục gõ tiếng Việt"
+          }
+        }
+      }
+    },
+    "action.seeReason": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See the Reason…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem lý do…"
+          }
+        }
+      }
+    },
+    "action.seeSupportedApps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See Supported Apps…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem ứng dụng được hỗ trợ…"
+          }
+        }
+      }
+    },
+    "action.tryAgain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try Again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử lại"
+          }
+        }
+      }
+    },
+    "action.turnOnAccessibility": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On Accessibility…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật quyền Trợ năng…"
+          }
+        }
+      }
+    },
+    "action.turnOnListening": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On Input Monitoring…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật quyền Theo dõi đầu vào…"
+          }
+        }
+      }
+    },
+    "app.notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi chú"
+          }
+        }
+      }
+    },
+    "detail.accessibility": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Accessibility permission is off."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyền Trợ năng chưa bật."
+          }
+        }
+      }
+    },
+    "detail.conflictingTool": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ also changes what you type."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ cũng đang đổi chữ bạn gõ."
+          }
+        }
+      }
+    },
+    "detail.englishMissingPermission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can still type. Vietnamese is not ready yet."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn vẫn gõ được. Tiếng Việt chưa sẵn sàng."
+          }
+        }
+      }
+    },
+    "detail.excludedApp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You turned off Vietnamese in %@."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã tắt tiếng Việt trong %@."
+          }
+        }
+      }
+    },
+    "detail.fieldUnreadable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac cannot check this field. Your text stays as typed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac không kiểm tra được ô này. Chữ bạn gõ được giữ nguyên."
+          }
+        }
+      }
+    },
+    "detail.listening": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Input Monitoring permission is off."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyền Theo dõi đầu vào chưa bật."
+          }
+        }
+      }
+    },
+    "detail.noTextField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No text field is selected."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa chọn ô để gõ."
+          }
+        }
+      }
+    },
+    "detail.passwordField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is a password field. VietMac does not change text here."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây là ô mật khẩu. VietMac không đổi chữ ở đây."
+          }
+        }
+      }
+    },
+    "detail.posting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac cannot send keys yet."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac chưa gửi phím được."
+          }
+        }
+      }
+    },
+    "detail.recoveryLimit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac paused because the Mac responded slowly several times."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac tạm dừng vì máy phản hồi chậm nhiều lần."
+          }
+        }
+      }
+    },
+    "detail.secureInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A password field or secure input is on. Vietnamese is paused."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Một ô mật khẩu hoặc chế độ nhập an toàn đang bật. Tiếng Việt tạm dừng."
+          }
+        }
+      }
+    },
+    "detail.sleeping": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Mac was asleep. VietMac starts again automatically."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Máy vừa ngủ. VietMac sẽ tự chạy lại."
+          }
+        }
+      }
+    },
+    "detail.tapUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac cannot receive keys."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac chưa nhận được phím."
+          }
+        }
+      }
+    },
+    "detail.transportUncertain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac paused to keep your text safe. Check the last word you typed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac tạm dừng để giữ an toàn cho chữ. Hãy xem lại từ bạn vừa gõ."
+          }
+        }
+      }
+    },
+    "detail.unsupportedApp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac does not support %@ yet. Your text stays as typed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac chưa hỗ trợ %@. Chữ bạn gõ được giữ nguyên."
+          }
+        }
+      }
+    },
+    "detail.unsupportedField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac does not support %@ in %@ yet."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac chưa hỗ trợ %@ trong %@."
+          }
+        }
+      }
+    },
+    "detail.unsupportedSource": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The keyboard is %@. Select ABC."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bàn phím đang là %@. Hãy chọn ABC."
+          }
+        }
+      }
+    },
+    "detail.userDisabledTap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS stopped the key input of VietMac."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS đã tạm dừng việc nhận phím của VietMac."
+          }
+        }
+      }
+    },
+    "field.addressBar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Address bar"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thanh địa chỉ"
+          }
+        }
+      }
+    },
+    "field.editor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editor"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trình soạn thảo"
+          }
+        }
+      }
+    },
+    "field.find": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm"
+          }
+        }
+      }
+    },
+    "field.noteText": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi chú"
+          }
+        }
+      }
+    },
+    "field.quickInput": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick Open"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ô lệnh nhanh"
+          }
+        }
+      }
+    },
+    "field.textField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text field"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ô chữ"
+          }
+        }
+      }
+    },
+    "field.webText": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text on web pages"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ô chữ trên trang web"
+          }
+        }
+      }
+    },
+    "help.otherTool.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two input tools change your text twice. Quit the other tool from its menu bar icon. If you do not use it now, turn off its \"open at login\" setting."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hai bộ gõ cùng chạy sẽ đổi chữ hai lần. Thoát bộ gõ kia từ biểu tượng của nó trên thanh menu. Nếu bạn không dùng nó nữa, hãy tắt mục \"Mở khi đăng nhập\" của nó."
+          }
+        }
+      }
+    },
+    "help.otherTool.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other Input Tools"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bộ gõ khác"
+          }
+        }
+      }
+    },
+    "help.password.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac does not change text in a password field. The pause badge shows in the menu bar.\n\nIf no password field is open, another app may have secure input on (for example Terminal › Secure Keyboard Entry). Turn it off in that app."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac không đổi chữ trong ô mật khẩu. Biểu tượng tạm dừng hiện trên thanh menu.\n\nNếu không có ô mật khẩu nào đang mở, một ứng dụng khác có thể đang bật chế độ nhập an toàn (ví dụ Terminal › Nhập bằng bàn phím an toàn). Tắt chế độ đó trong ứng dụng ấy."
+          }
+        }
+      }
+    },
+    "help.password.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password Fields"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ô mật khẩu"
+          }
+        }
+      }
+    },
+    "help.permissions.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac needs two permissions.\n\n• **Input Monitoring** lets VietMac receive the keys you press.\n• **Accessibility** lets VietMac check the caret position and the kind of field. It also lets VietMac send the changed letters.\n\nVietMac does not read text in other apps. It does not store or send what you type. It does not use the network.\n\nIf the switch is on but VietMac still shows it as off, turn the switch off. Then turn it on again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac cần hai quyền.\n\n• **Theo dõi đầu vào** cho VietMac nhận phím bạn gõ.\n• **Trợ năng** cho VietMac xem vị trí con trỏ và loại ô. Quyền này cũng cho VietMac gửi chữ đã đổi.\n\nVietMac không đọc chữ trong ứng dụng khác. VietMac không lưu và không gửi chữ bạn gõ. VietMac không dùng mạng.\n\nNếu công tắc đã bật mà VietMac vẫn báo chưa bật, hãy tắt công tắc. Sau đó bật lại."
+          }
+        }
+      }
+    },
+    "help.permissions.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac Permissions"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quyền của VietMac"
+          }
+        }
+      }
+    },
+    "help.telex.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type the letter. Then type the tone key.\n\n• s acute, f grave, r hook, x tilde, j dot\n• aa â, aw ă, ee ê, oo ô, ow ơ, uw ư, dd đ\n• z removes the tone\n\nExample: `tieengs Vieetj` becomes `tiếng Việt`.\n\nType a tone key twice to remove the tone and keep the letter. Example: `ass` becomes `as`.\nA word that starts with w stays as typed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gõ chữ cái. Sau đó gõ phím dấu.\n\n• s sắc, f huyền, r hỏi, x ngã, j nặng\n• aa â, aw ă, ee ê, oo ô, ow ơ, uw ư, dd đ\n• z xoá dấu\n\nVí dụ: `tieengs Vieetj` thành `tiếng Việt`.\n\nGõ phím dấu hai lần để bỏ dấu và giữ chữ cái. Ví dụ: `ass` thành `as`.\nMột từ bắt đầu bằng w thì giữ nguyên."
+          }
+        }
+      }
+    },
+    "help.telex.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telex Keys"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bảng gõ Telex"
+          }
+        }
+      }
+    },
+    "help.unchanged.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac changes only the letters that it saw you type in the current field.\nWhen VietMac is not sure, it leaves the text as typed. This prevents damage to your text.\n\nA word stays as typed when:\n• you just clicked in existing text\n• you just pressed Delete\n• the address bar shows a suggestion\n• VietMac does not support the field\n\nTo continue, type a space. Then type the word again.\nIn an empty field, VietMac can start from the first letter."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac chỉ đổi chữ mà nó thấy bạn gõ trong ô hiện tại.\nKhi không chắc, VietMac giữ nguyên chữ để không làm hỏng văn bản.\n\nMột từ giữ nguyên khi:\n• bạn vừa bấm chuột vào giữa văn bản\n• bạn vừa xoá lùi\n• thanh địa chỉ đang hiện gợi ý\n• VietMac chưa hỗ trợ ô đó\n\nĐể gõ tiếp, hãy gõ dấu cách. Sau đó gõ lại từ đó.\nTrong một ô trống, VietMac có thể bắt đầu từ chữ đầu tiên."
+          }
+        }
+      }
+    },
+    "help.unchanged.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why a Word Stays Unchanged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vì sao một từ không đổi"
+          }
+        }
+      }
+    },
+    "help.windowTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac Help"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng dẫn VietMac"
+          }
+        }
+      }
+    },
+    "hud.english": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Anh"
+          }
+        }
+      }
+    },
+    "hud.vietnamese": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt"
+          }
+        }
+      }
+    },
+    "login.enabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã bật"
+          }
+        }
+      }
+    },
+    "login.notFound": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS cannot find VietMac to register it."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS không tìm thấy VietMac để đăng ký."
+          }
+        }
+      }
+    },
+    "login.notRegistered": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa bật"
+          }
+        }
+      }
+    },
+    "login.requiresApproval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow VietMac in System Settings › Login Items."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy cho phép VietMac trong Cài đặt Hệ thống › Mục đăng nhập."
+          }
+        }
+      }
+    },
+    "menu.continueSetup": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue Setup…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục thiết lập…"
+          }
+        }
+      }
+    },
+    "menu.english": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Anh"
+          }
+        }
+      }
+    },
+    "menu.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng dẫn…"
+          }
+        }
+      }
+    },
+    "menu.quit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit VietMac"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thoát VietMac"
+          }
+        }
+      }
+    },
+    "menu.saveReport": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Diagnostic Report…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu báo cáo chẩn đoán…"
+          }
+        }
+      }
+    },
+    "menu.settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cài đặt…"
+          }
+        }
+      }
+    },
+    "menu.turnOffInApp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn Off Vietnamese in %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tắt tiếng Việt trong %@"
+          }
+        }
+      }
+    },
+    "menu.turnOnInApp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On Vietnamese in %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật lại tiếng Việt trong %@"
+          }
+        }
+      }
+    },
+    "menu.vietnamese": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt"
+          }
+        }
+      }
+    },
+    "settings.apps.column.app": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ứng dụng"
+          }
+        }
+      }
+    },
+    "settings.apps.column.fields": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where you type and state"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nơi gõ và trạng thái"
+          }
+        }
+      }
+    },
+    "settings.apps.column.type": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gõ tiếng Việt"
+          }
+        }
+      }
+    },
+    "settings.apps.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In other apps, VietMac does not change text. In some web editors, more words may stay as typed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trong ứng dụng khác, VietMac không đổi chữ. Trong một số trình soạn thảo trên web, nhiều từ hơn có thể giữ nguyên."
+          }
+        }
+      }
+    },
+    "settings.apps.notSupported": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not supported yet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa hỗ trợ"
+          }
+        }
+      }
+    },
+    "settings.apps.supported": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supported ✓"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hỗ trợ ✓"
+          }
+        }
+      }
+    },
+    "settings.apps.supportedReduced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supported, reduced checking ⓘ"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hỗ trợ, kiểm tra giảm ⓘ"
+          }
+        }
+      }
+    },
+    "settings.general.login": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open VietMac at login"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở VietMac khi đăng nhập"
+          }
+        }
+      }
+    },
+    "settings.general.shortcut": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shortcut to switch between Vietnamese and English"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phím tắt đổi tiếng Việt / tiếng Anh"
+          }
+        }
+      }
+    },
+    "settings.general.telex": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Telex Keys"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bảng gõ Telex"
+          }
+        }
+      }
+    },
+    "settings.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở"
+          }
+        }
+      }
+    },
+    "settings.openEllipsis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở…"
+          }
+        }
+      }
+    },
+    "settings.status.accessibility": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trợ năng"
+          }
+        }
+      }
+    },
+    "settings.status.adHoc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This build loses its permissions after each rebuild."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản dựng này mất quyền sau mỗi lần dựng lại."
+          }
+        }
+      }
+    },
+    "settings.status.counters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Counters"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bộ đếm"
+          }
+        }
+      }
+    },
+    "settings.status.countersSince": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Since VietMac opened"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ lần mở VietMac này"
+          }
+        }
+      }
+    },
+    "settings.status.details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Technical Details"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chi tiết kỹ thuật"
+          }
+        }
+      }
+    },
+    "settings.status.keyboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bàn phím"
+          }
+        }
+      }
+    },
+    "settings.status.listening": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input Monitoring"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo dõi đầu vào"
+          }
+        }
+      }
+    },
+    "settings.status.otherTool": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other input tool"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bộ gõ khác"
+          }
+        }
+      }
+    },
+    "settings.status.otherToolNone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có"
+          }
+        }
+      }
+    },
+    "settings.status.version": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phiên bản"
+          }
+        }
+      }
+    },
+    "settings.tab.apps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ứng dụng"
+          }
+        }
+      }
+    },
+    "settings.tab.general": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "General"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chung"
+          }
+        }
+      }
+    },
+    "settings.tab.status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trạng thái"
+          }
+        }
+      }
+    },
+    "settings.windowTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cài đặt VietMac"
+          }
+        }
+      }
+    },
+    "setup.accessibility.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on VietMac in **Accessibility**. VietMac checks the caret position and the kind of field. It does not read text in other apps."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật VietMac trong **Trợ năng**. VietMac xem vị trí con trỏ và loại ô. VietMac không đọc chữ trong ứng dụng khác."
+          }
+        }
+      }
+    },
+    "setup.accessibility.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow VietMac to change letters in the field you type in"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho phép VietMac đổi chữ trong ô bạn đang gõ"
+          }
+        }
+      }
+    },
+    "setup.accessibility.reopenRow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reopen VietMac to use the permission you turned on."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở lại VietMac để dùng quyền bạn vừa bật."
+          }
+        }
+      }
+    },
+    "setup.accessibility.row": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessibility"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trợ năng"
+          }
+        }
+      }
+    },
+    "setup.back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại"
+          }
+        }
+      }
+    },
+    "setup.conflict.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ also changes what you type. Two input tools change your text twice. Quit %@ from its menu bar icon."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ cũng đang đổi chữ bạn gõ. Hai bộ gõ cùng lúc sẽ đổi chữ hai lần. Hãy thoát %@ từ biểu tượng của nó trên thanh menu."
+          }
+        }
+      }
+    },
+    "setup.conflict.clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is not running ✓"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ không còn chạy ✓"
+          }
+        }
+      }
+    },
+    "setup.conflict.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit the other input tool first"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thoát bộ gõ khác trước"
+          }
+        }
+      }
+    },
+    "setup.conflict.running": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is running"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ đang chạy"
+          }
+        }
+      }
+    },
+    "setup.continue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục"
+          }
+        }
+      }
+    },
+    "setup.grant.helpBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn the switch off. Then turn it on again. If the window still shows \"Off\": 1. Select VietMac in the list. 2. Click **−**. 3. Click **Open System Settings** again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tắt công tắc. Sau đó bật lại. Nếu vẫn ghi \"Chưa bật\": 1. Chọn VietMac trong danh sách. 2. Bấm nút **−**. 3. Bấm **Mở Cài đặt Hệ thống** lần nữa."
+          }
+        }
+      }
+    },
+    "setup.grant.helpTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The switch is on, but this window still shows \"Off\"?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Công tắc đã bật nhưng ở đây vẫn ghi \"Chưa bật\"?"
+          }
+        }
+      }
+    },
+    "setup.grant.step1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click the button below."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bấm nút bên dưới."
+          }
+        }
+      }
+    },
+    "setup.grant.step2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on the switch next to VietMac."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật công tắc cạnh VietMac."
+          }
+        }
+      }
+    },
+    "setup.grant.step3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If macOS asks, choose **Quit & Reopen**."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nếu macOS hỏi, chọn **Thoát & Mở lại**."
+          }
+        }
+      }
+    },
+    "setup.keyboard.addABC": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add **ABC** in System Settings › Keyboard › Input Sources."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm **ABC** trong Cài đặt Hệ thống › Bàn phím › Nguồn nhập."
+          }
+        }
+      }
+    },
+    "setup.keyboard.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac needs the ABC or U.S. keyboard. Current keyboard: **%@**."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac cần bàn phím ABC hoặc U.S. Bàn phím đang chọn: **%@**."
+          }
+        }
+      }
+    },
+    "setup.keyboard.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the ABC keyboard"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn bàn phím ABC"
+          }
+        }
+      }
+    },
+    "setup.keyboard.ok": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ✓"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ✓"
+          }
+        }
+      }
+    },
+    "setup.keyboard.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Keyboard Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở cài đặt Bàn phím"
+          }
+        }
+      }
+    },
+    "setup.keyboard.wrong": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ✗"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ✗"
+          }
+        }
+      }
+    },
+    "setup.keyboard.wrongSource": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click the keyboard icon in the menu bar. Select **ABC**."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bấm biểu tượng bàn phím trên thanh menu. Chọn **ABC**."
+          }
+        }
+      }
+    },
+    "setup.later": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để sau"
+          }
+        }
+      }
+    },
+    "setup.listening.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on VietMac in **Input Monitoring**. VietMac uses the keys only to change letters. It does not record them."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật VietMac trong **Theo dõi đầu vào**. VietMac chỉ dùng phím để đổi chữ. VietMac không ghi lại phím."
+          }
+        }
+      }
+    },
+    "setup.listening.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow VietMac to receive the keys you press"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho phép VietMac nhận phím bạn gõ"
+          }
+        }
+      }
+    },
+    "setup.listening.row": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Input Monitoring"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo dõi đầu vào"
+          }
+        }
+      }
+    },
+    "setup.openSystemSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở Cài đặt Hệ thống"
+          }
+        }
+      }
+    },
+    "setup.ready.done": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xong"
+          }
+        }
+      }
+    },
+    "setup.ready.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac is ready"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac đã sẵn sàng"
+          }
+        }
+      }
+    },
+    "setup.ready.hiddenIcon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You cannot see the icon? Open VietMac again from Launchpad or Spotlight."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thấy biểu tượng? Mở VietMac lần nữa từ Launchpad hoặc Spotlight."
+          }
+        }
+      }
+    },
+    "setup.ready.icon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac is in the menu bar. **VI** means Vietnamese. **EN** means English. Every action is in that menu."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac nằm trên thanh menu. **VI** là tiếng Việt. **EN** là tiếng Anh. Mọi thao tác đều có trong menu đó."
+          }
+        }
+      }
+    },
+    "setup.ready.login": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open VietMac at login"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở VietMac khi đăng nhập"
+          }
+        }
+      }
+    },
+    "setup.ready.shortcutLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shortcut to switch between Vietnamese and English (optional)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phím tắt đổi tiếng Việt / tiếng Anh (không bắt buộc)"
+          }
+        }
+      }
+    },
+    "setup.ready.tip": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tip: after you click in existing text, the first word may stay as typed. Type a space. Then continue."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mẹo: sau khi bạn bấm chuột vào giữa văn bản, từ đầu tiên có thể giữ nguyên. Hãy gõ dấu cách. Sau đó gõ tiếp."
+          }
+        }
+      }
+    },
+    "setup.skip": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ qua"
+          }
+        }
+      }
+    },
+    "setup.statusOff": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa bật"
+          }
+        }
+      }
+    },
+    "setup.statusOn": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On ✓"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã bật ✓"
+          }
+        }
+      }
+    },
+    "setup.stepIndicator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step %@ of %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bước %@ / %@"
+          }
+        }
+      }
+    },
+    "setup.try.changed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The text changed"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chữ đã đổi"
+          }
+        }
+      }
+    },
+    "setup.try.expected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct result: **tiếng Việt**"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kết quả đúng: **tiếng Việt**"
+          }
+        }
+      }
+    },
+    "setup.try.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try typing Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử gõ tiếng Việt"
+          }
+        }
+      }
+    },
+    "setup.try.notChanged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The text did not change"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chữ chưa đổi"
+          }
+        }
+      }
+    },
+    "setup.try.openNotes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Notes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở Ghi chú"
+          }
+        }
+      }
+    },
+    "setup.try.step1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on **Vietnamese**."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật **Tiếng Việt**."
+          }
+        }
+      }
+    },
+    "setup.try.step2Notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open a new note."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở một ghi chú mới."
+          }
+        }
+      }
+    },
+    "setup.try.step3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type: `tieengs Vieetj`"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gõ: `tieengs Vieetj`"
+          }
+        }
+      }
+    },
+    "setup.try.success": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correct. VietMac is ready."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đúng rồi. VietMac đã sẵn sàng."
+          }
+        }
+      }
+    },
+    "setup.try.switch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt"
+          }
+        }
+      }
+    },
+    "setup.try.telex": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "**Telex keys:** s sắc · f huyền · r hỏi · x ngã · j nặng · aa â · aw ă · ee ê · oo ô · ow ơ · uw ư · dd đ"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "**Bảng gõ Telex:** s sắc · f huyền · r hỏi · x ngã · j nặng · aa â · aw ă · ee ê · oo ô · ow ơ · uw ư · dd đ"
+          }
+        }
+      }
+    },
+    "setup.update.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After an update, macOS may not recognize VietMac. Turn the switch off. Then turn it on again. If that does not help, remove VietMac from the list. Then add it again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sau khi cập nhật, macOS có thể không nhận ra VietMac. Tắt công tắc. Sau đó bật lại. Nếu chưa được, hãy xoá VietMac khỏi danh sách. Sau đó thêm lại."
+          }
+        }
+      }
+    },
+    "setup.update.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On the VietMac Permission Again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy bật lại quyền cho VietMac"
+          }
+        }
+      }
+    },
+    "setup.welcome.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac changes `tieengs` to `tiếng` while you type. Setup takes about two minutes."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac đổi `tieengs` thành `tiếng` ngay khi bạn gõ. Thiết lập mất khoảng hai phút."
+          }
+        }
+      }
+    },
+    "setup.welcome.heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type Vietnamese with Telex, no underline"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gõ tiếng Việt kiểu Telex, không gạch chân"
+          }
+        }
+      }
+    },
+    "setup.welcome.otherTool": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you use OpenKey, EVKey, or another Vietnamese input tool, quit it first."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nếu bạn đang dùng OpenKey, EVKey hay bộ gõ tiếng Việt khác, hãy thoát nó trước."
+          }
+        }
+      }
+    },
+    "setup.welcome.privacy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac does not read text in other apps. It does not store or send what you type. It does not use the network."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac không đọc chữ trong ứng dụng khác. VietMac không lưu và không gửi chữ bạn gõ. VietMac không dùng mạng."
+          }
+        }
+      }
+    },
+    "setup.welcome.start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu"
+          }
+        }
+      }
+    },
+    "setup.windowTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set Up VietMac"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thiết lập VietMac"
+          }
+        }
+      }
+    },
+    "shortcut.clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá"
+          }
+        }
+      }
+    },
+    "shortcut.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa đặt"
+          }
+        }
+      }
+    },
+    "shortcut.needsModifier": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add ⌘, ⌃, or ⌥, and one other key."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm ⌘, ⌃ hoặc ⌥, và một phím khác."
+          }
+        }
+      }
+    },
+    "shortcut.notArmed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The shortcut does not work now: %@ Use the VietMac menu."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phím tắt hiện chưa dùng được: %@ Hãy dùng menu VietMac."
+          }
+        }
+      }
+    },
+    "shortcut.recordPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press a shortcut"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bấm phím tắt"
+          }
+        }
+      }
+    },
+    "shortcut.systemTaken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS already uses this shortcut."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS đang dùng phím tắt này."
+          }
+        }
+      }
+    },
+    "shortcut.useSuggestion": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use the Suggestion: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng gợi ý: %@"
+          }
+        }
+      }
+    },
+    "status.active": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese: On"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt: đang bật"
+          }
+        }
+      }
+    },
+    "status.activeReduced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese: On, Reduced Checking"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt: đang bật, kiểm tra giảm"
+          }
+        }
+      }
+    },
+    "status.blocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese: Needs Attention"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt: cần xử lý"
+          }
+        }
+      }
+    },
+    "status.off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English: VietMac Does Not Change Text"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Anh: VietMac không đổi chữ"
+          }
+        }
+      }
+    },
+    "status.standby": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese: Paused Here"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếng Việt: tạm dừng ở đây"
+          }
+        }
+      }
+    },
+    "text.literal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@"
+          }
+        }
+      }
+    },
+    "title.a11y.en": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: English"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: tiếng Anh"
+          }
+        }
+      }
+    },
+    "title.a11y.en.attention": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: English, a permission is off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: tiếng Anh, có quyền chưa bật"
+          }
+        }
+      }
+    },
+    "title.a11y.vi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: Vietnamese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: tiếng Việt"
+          }
+        }
+      }
+    },
+    "title.a11y.vi.attention": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: Vietnamese, needs attention"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: tiếng Việt, cần xử lý"
+          }
+        }
+      }
+    },
+    "title.a11y.vi.paused": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: Vietnamese, paused here"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VietMac: tiếng Việt, tạm dừng ở đây"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

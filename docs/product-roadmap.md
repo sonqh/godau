@@ -55,7 +55,7 @@ Findings that shape the plan:
 
 The last ledger record is 2026-10-15. Nothing has been recorded for four weeks.
 
-UI today: an M0 developer menu (`VM` title, enable toggle, ✓/✗ capability row, raw pause strings such as "Application is outside the M0 trial"). No setup flow, Settings window, or localization exists (**verified**, `Apps/VietMac/VietMacApp.swift`).
+UI today: the `ux-shell` status menu (`VI` / `EN` title with template badges, Vietnamese and English copy, Debug simulator) over the M0 host through `M0StatusAdapter`. Setup, Help, Settings, and the mode HUD exist (**verified** by build and offscreen snapshots; native checks pending, `docs/verification/ux-shell-manual-test.md`).
 
 ## 3. Roadmap
 

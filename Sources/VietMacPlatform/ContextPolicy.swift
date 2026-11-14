@@ -48,10 +48,12 @@ enum ContextPolicy {
         field.reset()
     }
 
-    /// Replacement needs an observation after every tracked key; otherwise the trigger stays literal.
+    /// Replacement needs an observation after every physical tracked key; otherwise the trigger stays literal.
+    /// Predictions of earlier posted replacements may still be unsettled: the client applies those events
+    /// before this key, and a later mismatch or the quiet-time check still pauses with `transportUncertain`.
     static func admitsReplacement(field: FieldContextTracker, pipeline: inout PrototypePipeline,
                                   counters: inout ContextCounters) -> Bool {
-        guard field.isSettled else {
+        guard field.isSettled || field.unsettledByReplacementOnly else {
             counters.unsettledTriggers &+= 1
             pipeline.invalidate()
             return false
