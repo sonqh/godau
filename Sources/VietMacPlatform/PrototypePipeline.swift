@@ -137,9 +137,22 @@ public struct PrototypePipeline {
                 return .replace(PendingReplacement(previous: word, next: text, generation: generation, keyCode: code))
             }
         case .backspace:
-            // Backspace removes the last visible letter inside the owned word; outside it, ownership ends.
-            if composer.backspace() { word = composer.text }
-            else { invalidate() }
+            // The physical Backspace deletes only the last visible character. When the composer would also
+            // move the tone (`hoàn` -> `hòa`), the field and the word would differ, so ownership ends instead.
+            // Moving the tone needs a Backspace-triggered replacement, which waits for U-5.
+            guard !word.isEmpty else {
+                invalidate()
+                return .passThrough
+            }
+            var next = composer
+            next.backspace()
+            let expected = String(word.dropLast())
+            if next.text == expected {
+                composer = next
+                word = expected
+            } else {
+                invalidate()
+            }
             return .passThrough
         case .boundary:
             invalidate(holdUntilBoundary: false)

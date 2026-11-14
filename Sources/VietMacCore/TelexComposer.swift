@@ -112,8 +112,20 @@ public struct TelexComposer: Equatable, Sendable {
 
     private mutating func append(_ key: UInt8, upper: Bool) -> Outcome {
         guard letters.count < Self.limit else { return .untracked }
+        let toneBefore = literal || tone == .none ? nil : toneIndex()
         letters.append(Letter(base: key, upper: upper, shape: .none))
+        // A letter that leaves no valid syllable (a vowel after the final, or a tail that cannot end a
+        // syllable) must not move or drop the tone: the word turns literal with the tone where it was.
+        if let toneBefore, !isValidSyllable {
+            literal = true
+            frozenToneIndex = toneBefore
+        }
         return .text(render())
+    }
+
+    private var isValidSyllable: Bool {
+        guard let range = nucleus() else { return false }
+        return validFinal(after: range.upperBound)
     }
 
     private mutating func applyTone(_ next: Tone, key: UInt8, upper: Bool) -> Outcome {

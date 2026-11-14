@@ -102,6 +102,15 @@ struct TelexComposerTests {
         #expect(final("as<o") == "o")
     }
 
+    /// Found by the randomized ownership test: an invalid tail must not move or drop the tone.
+    @Test func invalidSyllableKeepsTheToneInPlace() {
+        #expect(type("hufte") == ["h", "hu", "hù", "hùt", "hùte"])
+        #expect(final("hufte<") == "hùt")
+        #expect(final("cnyyfq") == "cnỳyq")
+        #expect(final("cnyyfq<") == "cnỳy")
+        #expect(final("eesxby<") == "ễb")
+    }
+
     @Test func literalPreservation() {
         #expect(final("w") == "w")
         #expect(final("windows") == "windows")

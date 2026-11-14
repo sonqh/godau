@@ -1,0 +1,15 @@
+{
+  "architecture" : "arm64",
+  "buildConfiguration" : "release",
+  "checksum" : 35437,
+  "logicalCPUCount" : 14,
+  "maximumNanoseconds" : 3334,
+  "medianNanoseconds" : 84,
+  "os" : "Version 27.0.1 (Build 26A434)",
+  "p95Nanoseconds" : 1291,
+  "p99Nanoseconds" : 1625,
+  "samples" : 10000,
+  "schemaVersion" : 1,
+  "scope" : "complete-composition-reducer",
+  "warmup" : 1000
+}

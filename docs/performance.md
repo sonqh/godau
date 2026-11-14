@@ -23,8 +23,8 @@ Its benchmark establishes the cost of that implementation, not the cost of a com
 | Scope | How to measure | Status |
 | --- | --- | --- |
 | Replacement planner | `make bench`, release build, synthetic small and 64-character cases | Implemented |
-| Complete composition reducer | Replay real synthetic event sequences and record per-event durations | Pending M1 |
-| Callback own work | Bounded timings around normalization, prototype reduction, planning, preparation, and posting; menu or `SIGUSR1` export | M0 Release baseline: p99 47.5 µs, 1,368 samples ([JSON](../benchmarks/baselines/2026-10-15-callback-own-work-arm64.json)) |
+| Complete composition reducer | `make bench-engine`: Telex composer plus replacement plan per semantic event | Release baseline: p99 3.6 µs, 10,000 samples ([JSON](../benchmarks/baselines/2026-11-14-reducer-arm64.json)) |
+| Callback own work | Bounded timings around normalization, prototype reduction, planning, preparation, and posting; menu or `SIGUSR1` export | M0 Release baseline: p99 47.5 µs, 1,368 samples ([JSON](../benchmarks/baselines/2026-10-15-callback-own-work-arm64.json)). Telex composer, `telex-timing-workload` (660 keys, 2026-11-14): p99 84 to 101 µs in Chrome, Dia, Safari |
 | Native visible input | Required apps and fields with controlled sequences | Pending |
 | Memory and allocations | Instruments or scoped allocation measurements on the release host | Pending |
 

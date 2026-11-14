@@ -1,4 +1,4 @@
-.PHONY: setup check test test-sanitize replay bench app app-debug snapshots driver specs ledger
+.PHONY: setup check test test-sanitize replay bench bench-engine app app-debug snapshots driver specs ledger
 
 setup:
 	npm ci --ignore-scripts --no-audit --no-fund
@@ -20,9 +20,13 @@ test-sanitize:
 
 replay:
 	./scripts/swift.sh run vietmac-replay Fixtures/replacement-plans.json
+	./scripts/swift.sh run vietmac-replay Fixtures/telex-composition.json
 
 bench:
 	./scripts/swift.sh run -c release vietmac-bench
+
+bench-engine:
+	./scripts/swift.sh run -c release vietmac-bench --engine
 
 app:
 	./scripts/build-app.sh

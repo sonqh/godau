@@ -13,3 +13,7 @@ It measures event-tap callback own-work under a synthetic HID-level workload, no
 
 Save temporary runs under `.artifacts`.
 Do not replace a previous baseline without retaining its history or recording why the comparison changed.
+
+The [reducer JSON](2026-11-14-reducer-arm64.json) comes from `make bench-engine` (Release, CLT Swift, macOS 27.0.1, arm64, 14 logical CPUs).
+It measures the Telex composer plus the replacement plan per semantic event over Vietnamese words, escapes, Backspace, and boundaries, as described in [docs/telex-composer.md](../../docs/telex-composer.md).
+It is not callback own-work or visible latency.

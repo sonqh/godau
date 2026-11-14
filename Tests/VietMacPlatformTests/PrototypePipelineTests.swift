@@ -1,4 +1,5 @@
 import Testing
+import VietMacCore
 @testable import VietMacPlatform
 
 private func activePipeline() -> PrototypePipeline {
@@ -246,6 +247,15 @@ struct TelexPipelineTests {
         #expect(model.word == "tiền")
     }
 
+    /// `hoàn` + Backspace: the field shows `hoà`; the tone cannot move without a Backspace-triggered
+    /// replacement (U-5), so the word stops being tracked until a boundary.
+    @Test func backspaceThatWouldMoveTheToneEndsOwnership() {
+        var model = active()
+        _ = type("hoafn<", into: &model)
+        #expect(model.word.isEmpty)
+        #expect(model.literalUntilBoundary)
+    }
+
     @Test func staleReplacementDoesNotCommitComposerState() {
         var model = active()
         _ = type("a", into: &model)
@@ -257,5 +267,76 @@ struct TelexPipelineTests {
         let accepted = model.accept(edit)
         #expect(!accepted)
         #expect(model.word.isEmpty)
+    }
+}
+
+/// Deterministic randomized ownership checks (telex-input-mvp task 2.6). An independent buffer applies
+/// exactly what the field would receive: passed-through keys and replacement plans. The buffer must
+/// always end with the tracked word, stay NFC, and stay bounded.
+struct RandomizedOwnershipTests {
+    /// SplitMix64, so a failing seed reproduces.
+    private struct Generator: RandomNumberGenerator {
+        var state: UInt64
+        mutating func next() -> UInt64 {
+            state &+= 0x9E37_79B9_7F4A_7C15
+            var z = state
+            z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+            z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+            return z ^ (z >> 31)
+        }
+    }
+
+    private static let keys: [UInt8] = Array("aeiouydwsfrxjzqgthnmcbAEOWDS".utf8)
+
+    @Test(arguments: Array(UInt64(1)...20) + [42, 1_234, 99_991, 31_337, 2_026_111_4])
+    func bufferAlwaysEndsWithTheTrackedWord(seed: UInt64) throws {
+        var random = Generator(state: seed)
+        var model = PrototypePipeline(environment: InputEnvironment(permissions: PermissionSnapshot(
+            accessibility: true, eventListening: true, eventPosting: true)))
+        model.setEnabled(true)
+        var buffer: [Character] = []
+        var history: [String] = []
+        var reported = false
+        for step in 0..<4_000 {
+            let roll = Int.random(in: 0..<100, using: &random)
+            let code = UInt16(step % 120)
+            if roll < 8 {
+                _ = model.handle(.boundary)
+                history.append("␣")
+                buffer.append(" ")
+            } else if roll < 14 {
+                _ = model.handle(.backspace)
+                history.append("⌫")
+                if !buffer.isEmpty { buffer.removeLast() }
+            } else if roll < 15 {
+                _ = model.handle(.invalidate)
+            } else {
+                let byte = Self.keys.randomElement(using: &random)!
+                history.append(String(UnicodeScalar(byte)))
+                switch model.handle(.letter(byte, keyCode: code, isRepeat: false)) {
+                case .passThrough:
+                    buffer.append(Character(UnicodeScalar(byte)))
+                case .consume:
+                    break
+                case .replace(let edit):
+                    let plan = try ReplacementPlan.compute(previous: edit.previous, next: edit.next)
+                    let accepted = model.accept(edit)
+                    #expect(accepted, "seed \(seed) step \(step)")
+                    #expect(buffer.count >= plan.deleteCount, "seed \(seed) step \(step)")
+                    buffer.removeLast(plan.deleteCount)
+                    buffer.append(contentsOf: plan.insertion)
+                }
+                _ = model.handle(.keyUp(code))
+            }
+            let word = model.word
+            let text = String(buffer)
+            if !text.hasSuffix(word) && !reported {
+                reported = true
+                Issue.record("seed \(seed) step \(step): keys \(history.suffix(14).joined()) buffer …\(String(text.suffix(12))) word \(word)")
+            }
+            #expect(word.count <= 64)
+            #expect(word.unicodeScalars.elementsEqual(word.precomposedStringWithCanonicalMapping.unicodeScalars))
+            if buffer.count > 400 { buffer.removeFirst(buffer.count - 200) }
+        }
     }
 }
