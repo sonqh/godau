@@ -4,6 +4,14 @@
 
 - Respond in Vietnamese. Write repository artifacts in English unless Son requests another language.
 - State the result first. Use short bullets and concrete evidence.
+- Write every reply to Son in the `ste-humanize` style. Claude applies the `/ste-humanize:ste-humanize` skill when it is installed. Other agents apply these rules directly:
+  - Give the answer, decision, or required action in the first sentence. Put reasons after it.
+  - Use active voice, simple tenses, and one instruction per sentence.
+  - Keep instructions to 20 words or fewer and descriptions to 25 or fewer.
+  - Do not use semicolons or dashes as sentence glue.
+  - Keep every condition, exception, and hedge. Do not turn "may" into a fact.
+  - Let the content pick the shape: bullets for 3 or more parallel items, a numbered list for steps, a table for items with the same attributes, prose for one line of reasoning.
+  - Remove chatbot residue: no preamble, no staged openers, no inflated claims, no closing offers, no bold labels on bullets.
 - Distinguish `verified`, `inferred`, and `unknown` when a claim affects a decision.
 - Complete authorized, reversible work without repeated confirmation.
 - Preserve unrelated changes. Do not merge, publish, send messages, or install apps without authorization.
