@@ -12,9 +12,53 @@ The guide covers the five screens on the approved design canvas:
 
 It also covers Help, Settings › General and Status, the shortcut, and the mode HUD.
 
-## Before you start
+## Start here
 
-Select the ABC keyboard. VietMac pauses under Apple's Vietnamese Telex input source, and this Mac uses that source by default.
+Do these steps once before the first check. Every command runs in the repository root.
+
+1. Check that the signing identity exists:
+
+   ```sh
+   security find-identity -v -p codesigning
+   ```
+
+   The output must list `"VietMac Local Signing"`. If it is missing, stop. Without it, each rebuild loses the macOS permissions that you grant.
+2. Build both bundles with that identity:
+
+   ```sh
+   export VIETMAC_SIGNING_IDENTITY="VietMac Local Signing"
+   make app-debug
+   make app
+   ```
+
+   Each build ends with `Built and locally signed .artifacts/<bundle> (not launched or installed).`
+3. Write down the commit of the build with `git rev-parse --short HEAD`. Put it in the Build column of the results table.
+4. Quit every running VietMac. Use `Thoát VietMac` in its menu, then check with `pgrep -fl VietMac`. The output must be empty.
+5. Select the ABC keyboard. VietMac pauses under Apple's Vietnamese Telex input source, and this Mac uses that source by default.
+6. Open one bundle only, for the section you run:
+
+   | Section | Bundle | Command |
+   | --- | --- | --- |
+   | A. Simulator checks | Debug | `open ".artifacts/VietMac Debug.app"` |
+   | B. Live checks | Release | `open .artifacts/VietMac.app` |
+
+   Do not run the Debug and the Release bundle at the same time. Two running bundles may replace the same keys twice (not tested).
+7. Check that the app runs: `VI` or `EN` appears in the menu bar.
+
+## Order of work
+
+Run the checks in this order. The first group gives the most evidence for the open tasks.
+
+1. B17: physical typing in Chrome, Safari, Dia, Notes, and VS Code Find.
+2. B11: exclusion in Chrome.
+3. B9 and B10: the shortcut, armed and not armed.
+4. B2, B3, B6, and B7: the permission flow (ux-shell tasks 3.2, 3.3, and 3.4).
+5. B1 and B5: fresh setup. These need a bundle with no grants, so run them last in the permission group.
+6. B14 and B15: keyboard, VoiceOver, and appearance (ux-shell task 5.1).
+7. Section A, then the remaining B checks.
+
+Task 3.3 accepts B3 and B6 only after U-3 has a recorded safe result. Record the results anyway, and mark them as early in the Notes column.
+Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese macOS, and a screenshot of every state.
 
 ## What the build can and cannot do
 
@@ -36,7 +80,7 @@ Select the ABC keyboard. VietMac pauses under Apple's Vietnamese Telex input sou
 - `⌃⌥V` is a candidate shortcut. Its conflicts in the five apps are unknown (PD-1).
 - Login startup uses `SMAppService.mainApp`. The result of registering a bundle under `.artifacts` is unknown (U-7). Turn login startup off after the test.
 
-## Builds
+## Build reference
 
 ```sh
 export VIETMAC_SIGNING_IDENTITY="VietMac Local Signing"   # trusted identity: grants survive rebuilds
@@ -45,10 +89,20 @@ make app           # .artifacts/VietMac.app: Release, no simulator
 make snapshots     # .artifacts/ux-snapshots: every setup step, Help page, Settings tab, light and dark, VI and EN
 ```
 
-- The Debug bundle has its own bundle ID. Its permissions and preferences are separate from the Release build.
-- The bundles left in `.artifacts` on 2026-11-14 have the `VietMac Local Signing` signature. The Release bundle already holds the grants from earlier sessions. The Debug bundle needs its own grant once.
+- The Debug bundle has its own bundle ID. Its permissions and preferences are separate from the Release build. Each bundle needs its own grants.
+- On 2026-11-15 both bundles were rebuilt from commit `7dbe773` with the `VietMac Local Signing` identity. Before that rebuild, the Debug bundle had an ad hoc signature.
 - Without `VIETMAC_SIGNING_IDENTITY`, a build gets an ad hoc signature and loses its grants at every rebuild.
+- `make snapshots` rebuilds the Debug bundle. It writes `menu-vi.txt` and `menu-en.txt`, which check A1 uses.
 - To test the UI in English, set VietMac Debug to English in System Settings › General › Language & Region › Applications. You can also use `Simulator (Debug) › UI Language`.
+
+## Reset to a fresh setup
+
+B1 and the UX-1 to UX-3 checks need a bundle that has no grants and no saved setup progress.
+
+1. Quit the bundle.
+2. In System Settings › Privacy & Security, select the bundle in Input Monitoring and click −. Do the same in Accessibility.
+3. Delete its preferences. For the Debug bundle, run `defaults delete local.sonquach.vietmac.debug`. For the Release bundle, run `defaults delete local.sonquach.vietmac`.
+4. Open the bundle again.
 
 ## A. Simulator checks (no permissions needed)
 
@@ -94,8 +148,16 @@ Choose `Use Live M0 Status` in the simulator submenu, or use the Release build.
 | B14 (UX-17) | Use Setup and Settings with the keyboard only and with VoiceOver | You can reach every control, and each control has a name. Esc acts as `Để sau` in Setup and closes Settings and Help |
 | B15 (UX-18, UX-25) | Light and dark, Increase Contrast, Reduce Transparency, both Liquid Glass ends, menu bar background on and off | Every title, badge, and window text stays readable |
 
+## After the test
+
+1. Turn off `Mở VietMac khi đăng nhập` if you turned it on (U-7).
+2. Quit VietMac with `Thoát VietMac`.
+3. Select your usual input source again (Apple Vietnamese Simple Telex).
+
 ## Results
 
-| ID | Result | Notes |
-| --- | --- | --- |
-| | | |
+Write one row for each check. Result is `pass`, `fail`, or `partial`. For `fail` and `partial`, write the step that went wrong and what you saw in Notes. Do not paste private text that you typed.
+
+| ID | Result | Build (commit, Debug or Release) | macOS | App and field | Notes |
+| --- | --- | --- | --- | --- | --- |
+| | | | | | |
