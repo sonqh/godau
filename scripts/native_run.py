@@ -335,9 +335,15 @@ def main():
         before = snapshot(pid, evidence)
         driver_out = out_dir / "driver.json"
         if "script" in scenario:
+            # {"click": "field"} clicks the field's reported screen point.
+            point = REPORTS[run_id][0]["clickPoint"]
+            script = json.loads(json.dumps(scenario["script"]))
+            for step in script.get("steps", []):
+                if step.get("click") == "field":
+                    step["click"] = point
             # Inline: the driver would need Files & Folders consent to read a file under ~/Documents.
-            (out_dir / "script.json").write_text(json.dumps(scenario["script"], indent=2))
-            driver_input = ["--script-json", json.dumps(scenario["script"])]
+            (out_dir / "script.json").write_text(json.dumps(script, indent=2))
+            driver_input = ["--script-json", json.dumps(script)]
         else:
             driver_input = ["--keys", scenario["keys"]]
         subprocess.run(["open", "-g", "-W", "-n", str(DRIVER), "--args", *driver_input,

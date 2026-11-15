@@ -87,6 +87,8 @@ public struct ContextCounters: Encodable, Equatable, Sendable {
     public var replacementsPosted: UInt64 = 0
     /// Replacements whose predicted field effect never settled; the host paused after each.
     public var replacementsUnconfirmed: UInt64 = 0
+    /// Focus changes where the new field held exactly the tracked word, which was kept (⌘Tab race).
+    public var wordsKeptAcrossFocus: UInt64 = 0
 
     public init() {}
 }

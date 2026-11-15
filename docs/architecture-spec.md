@@ -244,21 +244,20 @@ The status reports the first failing gate only. M0 evaluates a sticky pause befo
 | `noTextField` | Standby | No focused element, or its role is not a text role (`FocusMonitor.swift:103`) | Automatically |
 | `fieldUnreadable` | Standby | Text role without a selected range or character count (`FocusMonitor.swift:107-120`) | Automatically |
 
-Word-level literal holds are not availability and never reach the status: the first word after a click, an active selection, a lagging observation, an escape, overflow. They are visible only as counters.
+Word-level literal holds are not availability and never reach the status: an active selection, a lagging observation, an escape, overflow. They are visible only as counters.
 M0 reports a selection as the pause `uncertainContext` (`ContextPolicy.swift:35-38`); M2 keeps the invalidation and drops the pause, so the status does not change each time Son selects text.
 
 ### 6.2 Word ownership
 
 VietMac may delete only characters it watched being typed in the current field since the last reset.
 Resets: app change, focused-element change, mouse down or drag, navigation keys, Escape, Command/Control/Option/Fn chords (which include paste, cut, and undo), untracked Backspace, an event whose text is not one ASCII unit, input-source change, mode change, sleep/wake, tap loss, unexplained field metadata.
-After a reset whose position is uncertain (for example a click into existing text), the word stays literal until a boundary. VietMac never adopts text that was already in the document.
+A reset ends the tracked word, and the next letter starts a new word (Son, 2026-11-15: in Vietnamese mode, always type Vietnamese). No boundary key and no check of the text before the caret is needed. This replaces the earlier rule that held the first word after a reset literal until a boundary.
 
-A new word starts only at a positively established start:
-
-1. A boundary key that VietMac saw in this field after the last reset (**verified** behavior of M0).
-2. *Proposed*: a settled observation after the reset that shows a collapsed caret at offset 0. Nothing precedes the caret, so nothing unowned can be deleted. This makes the first word typed into an empty field transform. It needs its own scenario (U-14).
-
-VietMac does not read the character before the caret to find a word start. That would read document text and break privacy invariant 2.
+- Deletion stays bounded: a replacement deletes only letters VietMac saw typed since the reset, and only in a settled field (section 6.3). VietMac never adopts text that was already in the document.
+- A click inside an existing word makes the new letters a word of their own. For example, a click after `ho` and `af` gives `hoà`, but the tone rules see only `a`.
+- Overflow and the tone-move Backspace still hold the word literal until a boundary, because the visible word continues past what VietMac owns.
+- Letters typed while the only pause is `uncertainContext` (for example in the moments after ⌘Tab, before the new field is readable) are remembered in memory, at most 64 ASCII letters. VietMac adopts them as the word only when the first reading shows a collapsed caret at the end of a field whose length equals their count, so the field holds exactly those letters. Counter: `wordsKeptAcrossFocus`. The same rule keeps a tracked word when the focus change is seen only after the letters reached a field that holds exactly them.
+- VietMac reads no text to decide a word start. The one-character read that Son allowed earlier the same day is not used.
 
 ### 6.3 Context assurance levels (*proposed*)
 
@@ -586,7 +585,7 @@ Answers to the product owner's questions (`AQ-n` in the UX specification):
 | 9 | **Inferred** safe for a non-activating panel that never becomes key. Check natively: `focusChanges` must not rise when the HUD shows (U-8). The HUD is shown from `onStatusChange`, never from the callback |
 | 10 | Yes (section 7.7) |
 | 11 | Yes: the compiled table is public and read-only |
-| 12 | Only at field start, offset 0 (section 6.2). Anywhere else it would require reading document text |
+| 12 | Superseded by Son on 2026-11-15: after any reset the next letter starts a word, with no text read (section 6.2). Original answer: only at offset 0 |
 | 13 | Yes (section 7.2) |
 | 14 | Yes, in memory and in the exported report only (section 7.9) |
 | 15 | Yes, by construction and by test (section 7.2) |
@@ -675,7 +674,7 @@ No plugin registry, runtime ledger, or service is added for any of these.
 | AD-15 | Status is published by a run-loop observer, never from the callback (section 7.4) | Architect, 2026-11-12 |
 | AD-16 | Single instance by file lock plus reopen notification; login startup by `SMAppService.mainApp` with the system state as truth (sections 7.7, 7.8) | Architect, 2026-11-12 |
 | AD-17 | No AX observation in English mode; the tap is removed on capability loss (section 6.1) | Architect, 2026-11-12 |
-| AD-18 | A settled caret at offset 0 after a reset starts a new word (section 6.2), subject to U-14 | Architect, 2026-11-12 |
+| AD-18 | After a reset the next letter starts a new word; letters typed during an uncertain context are adopted only into a field that holds exactly them (section 6.2). Replaced the offset-0 rule on 2026-11-15 | Architect, 2026-11-12; Son, 2026-11-15 |
 
 ### For Son's final gate
 
@@ -723,6 +722,6 @@ No constraint in `AGENTS.md` needs to change.
 | U-11 | Notes: range and count availability and lag | M0 task 3.4 | `notes.text` |
 | U-12 | Address bars: transformation with no completion shown; share of literal words in ordinary use | Harness scenarios without seeded history; daily-use counters | AD-11 review |
 | U-13 | Keys typed into a non-activating panel (Spotlight) over a supported app stay literal | Native scenario: page field focused, open Spotlight, type a boundary and `as` | `observed` claim |
-| U-14 | A settled caret at offset 0 is a safe word start in each profile | Scenario: click into an empty field, type `as`; and a field whose content is replaced by script at the same moment | AD-18 |
+| U-14 | Starting a word at the next letter after a reset, and adopting letters typed during an uncertain context, never delete text VietMac did not see typed, in each profile | Scenario: click inside a word, type `as`; ⌘Tab into an empty field and type at once; a field whose content is replaced by script at the same moment | AD-18 |
 | U-15 | Whether a login-item launch through `SMAppService.mainApp` carries `keyAELaunchedAsLogInItem`; whether a window ordered front without activation stays non-key | Task 4.7: log the launch event property at a login launch and at a manual launch; show the fallback window while typing in a fixture field and check `focusChanges` | Section 7.7, the login-launch rule in the UX specification |
 | U-16 | Whether the session tap receives key events while secure input is on | Focus a password field or turn on Terminal's Secure Keyboard Entry; press the chord; read the callback sample count | `shortcutArmed` wording |

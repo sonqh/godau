@@ -73,7 +73,8 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 - Release callback own-work p99 was 74 to 103 µs. Repeated Safari runs passed 10 of 10 typed runs.
 - Notes (body and title) passed with `scripts/native_notes.py` on 2026-11-14.
 - Notes capitalizes the first word of a new line. If a replacement deletes that letter, VietMac puts it back in lowercase. Example: `as` at the start of a line.
-- After a click into existing text, the first word stays as typed until a space. This is by design.
+- After a click or an app switch, the first word transforms at once (Son, 2026-11-15). After a click inside a word, the new letters form a word of their own. Letters typed right after ⌘Tab, before VietMac can read the new field, transform only if the field held nothing else. (Changed on 2026-11-15. Retest B17.)
+- The mode shortcut can be ⌃⇧ alone: press both, release both, with no other key. (Added on 2026-11-15. Retest B9.)
 - FG-1 (Son, 2026-11-14): option C. The VS Code editor and Quick Open stay literal in v0.1.
 - No field profile is accepted yet, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.
 - The mode shortcut is a system hot key, because M0 has no shortcut matching in the key callback. VietMac registers it only while `shortcutArmed` is true.
@@ -139,6 +140,8 @@ Choose `Use Live M0 Status` in the simulator submenu, or use the Release build.
 | B7 (UX-13) | After `Xong`, turn one grant off and open VietMac from Spotlight | Setup shows `Hãy bật lại quyền cho VietMac` and does not take keyboard focus from the frontmost app |
 | B8 (UX-19) | Open VietMac again while it runs | Settings opens on the last tab. There is still one VietMac process |
 | B9 (UX-22) | Settings › General › `Dùng gợi ý: ⌃⌥V`. With every grant on, press ⌃⌥V in Notes | The mode toggles once and the HUD shows once. A 2 s hold of the chord toggles once |
+| B9b | Settings › General › click the recorder, press ⌃⇧ and release. In Notes, press ⌃⇧ and release. Then press ⌃⇧T in Chrome | The recorder shows `⌃⇧`. In Notes the mode toggles once and the HUD shows once. ⌃⇧T reopens a tab and does not toggle the mode |
+| B9c | Click the recorder, press ⌥ alone and release | The recorder keeps the old value and shows `Thêm ⌘, ⌃ hoặc ⌥, và một phím khác. Hoặc chỉ dùng ⌃⇧.` |
 | B10 (UX-22) | Turn one grant off (or focus a password field) and press ⌃⌥V | The mode does not change. The chord reaches the app. General shows `Phím tắt hiện chưa dùng được: …` |
 | B11 (UX-15) | Vietnamese on in Chrome. Choose `Tắt tiếng Việt trong Chrome`. Type `cas` | `cas` stays literal. A pause badge shows. The menu reads `Bật lại tiếng Việt trong Chrome`. Other apps still change `cas` to `cá` |
 | B16 (UX-6) | Setup › Thử gõ: turn on Tiếng Việt, open Notes, type a space, then `tieengs Vieetj` | `tiếng Việt` without underline. `Chữ đã đổi` shows the success line |
@@ -160,4 +163,7 @@ Write one row for each check. Result is `pass`, `fail`, or `partial`. For `fail`
 
 | ID | Result | Build (commit, Debug or Release) | macOS | App and field | Notes |
 | --- | --- | --- | --- | --- | --- |
-| | | | | | |
+| B17 | fail | `7dbe773`, Release | 27.0.1 | Notes, note body | 2026-11-15. `Tieengs Vieetj` gave `Tieengs Việt`. The first word stayed literal with and without a click before typing. Same result in Chrome: `Hayx` at the start of a prompt field stayed literal |
+| B17 (outside scope) | fail | `7dbe773`, Release | 27.0.1 | VS Code, Claude extension prompt (webview) | 2026-11-15. Some words stayed literal in the middle of a sentence, for example `Truowngf`, `dduowjc`, `suwr`, `ddang`, while nearby words changed. Not one of the five accepted fields. FG-1 keeps the VS Code editor literal |
+| B9 (Setup step 6) | fail | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. Son pressed ⌃⇧ (modifier only). The spec rejects this gesture, but the recorder showed no message: it listens to key-down events only, so it never sees a modifier-only gesture |
+| B12 (Setup step 6) | known limit | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. The login line says `macOS cannot find VietMac to register it.` Expected while the bundle is under `.artifacts` (U-7) |

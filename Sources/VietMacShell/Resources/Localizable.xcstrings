@@ -2047,13 +2047,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tip: after you click in existing text, the first word may stay as typed. Type a space. Then continue."
+            "value": "Tip: if you click inside a word and keep typing, VietMac treats the new letters as a separate word."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mẹo: sau khi bạn bấm chuột vào giữa văn bản, từ đầu tiên có thể giữ nguyên. Hãy gõ dấu cách. Sau đó gõ tiếp."
+            "value": "Mẹo: nếu bạn bấm chuột vào giữa một từ rồi gõ tiếp, VietMac coi các chữ mới là một từ riêng."
           }
         }
       }
@@ -2489,13 +2489,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add ⌘, ⌃, or ⌥, and one other key."
+            "value": "Add ⌘, ⌃, or ⌥, and one other key. Or use ⌃⇧ alone."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thêm ⌘, ⌃ hoặc ⌥, và một phím khác."
+            "value": "Thêm ⌘, ⌃ hoặc ⌥, và một phím khác. Hoặc chỉ dùng ⌃⇧."
           }
         }
       }

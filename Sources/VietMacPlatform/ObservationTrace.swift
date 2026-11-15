@@ -12,6 +12,8 @@ public struct ObservationRecord: Encodable, Sendable {
     public let keysSincePrevious: UInt32
     public let pendingAfter: Int
     public let settledAfter: Bool
+    /// The pipeline holds the current word literal until a boundary, after this observation.
+    public let holdingAfter: Bool
 }
 
 /// Fixed-capacity ring filled on the owning run loop outside the key callback.
@@ -26,7 +28,7 @@ public struct ObservationTrace {
     }
 
     mutating func append(source: String, inspection: FocusInspection, result: FieldObservation,
-                         keysSincePrevious: UInt32, field: FieldContextTracker) {
+                         keysSincePrevious: UInt32, field: FieldContextTracker, holding: Bool) {
         sequence &+= 1
         var caret: Int?
         var length: Int?
@@ -42,7 +44,7 @@ public struct ObservationTrace {
         let record = ObservationRecord(sequence: sequence, source: source, role: inspection.role,
             elementHash: inspection.elementHash, focusChanged: inspection.changed, reading: reading,
             caret: caret, length: length, result: "\(result)", keysSincePrevious: keysSincePrevious,
-            pendingAfter: field.pendingCount, settledAfter: field.isSettled)
+            pendingAfter: field.pendingCount, settledAfter: field.isSettled, holdingAfter: holding)
         if records.count < Self.capacity { records.append(record) }
         else { records[next] = record }
         next = (next + 1) % Self.capacity

@@ -22,6 +22,8 @@ final class ShortcutRecorderControl: NSStackView {
     private let recordButton = NSButton()
     private let message = NSTextField(labelWithString: "")
     private var monitor: Any?
+    /// The modifiers held together during the current gesture, and whether a key ended it.
+    private var gesture: ShortcutChord.Modifiers = []
 
     init(strings: Strings, chord: ShortcutChord?, onChange: @escaping (ShortcutChord?) -> Void) {
         self.strings = strings
@@ -69,25 +71,46 @@ final class ShortcutRecorderControl: NSStackView {
     @objc private func startRecording() {
         guard monitor == nil else { return }
         updateTitle(recording: true)
-        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
+        gesture = []
+        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .flagsChanged]) { [weak self] event in
             MainActor.assumeIsolated {
-                self?.record(event)
+                if event.type == .flagsChanged { self?.recordModifiers(event) } else { self?.record(event) }
             }
-            return nil
+            return event.type == .flagsChanged ? event : nil
         }
     }
 
-    private func record(_ event: NSEvent) {
-        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-        if event.keyCode == 53 && flags.isEmpty { stopRecording(); return } // Esc cancels.
+    static func modifiers(_ flags: NSEvent.ModifierFlags) -> ShortcutChord.Modifiers {
+        let flags = flags.intersection(.deviceIndependentFlagsMask)
         var modifiers: ShortcutChord.Modifiers = []
         if flags.contains(.control) { modifiers.insert(.control) }
         if flags.contains(.option) { modifiers.insert(.option) }
         if flags.contains(.shift) { modifiers.insert(.shift) }
         if flags.contains(.command) { modifiers.insert(.command) }
-        let result = ShortcutChord.validate(keyCode: event.keyCode, modifiers: modifiers,
-                                            keyLabel: Self.label(for: event), modifierOnly: false,
-                                            systemShortcuts: HotKeyCenter.systemShortcuts())
+        return modifiers
+    }
+
+    /// A modifier-only gesture ends when every modifier is released with no key in between.
+    private func recordModifiers(_ event: NSEvent) {
+        let held = Self.modifiers(event.modifierFlags)
+        gesture.formUnion(held)
+        guard held.isEmpty, !gesture.isEmpty else { return }
+        let peak = gesture
+        gesture = []
+        finish(ShortcutChord.validate(keyCode: ShortcutChord.modifierOnlyKeyCode, modifiers: peak, keyLabel: "",
+                                      modifierOnly: true, systemShortcuts: []))
+    }
+
+    private func record(_ event: NSEvent) {
+        let modifiers = Self.modifiers(event.modifierFlags)
+        if event.keyCode == 53 && modifiers.isEmpty { stopRecording(); return } // Esc cancels.
+        gesture = []
+        finish(ShortcutChord.validate(keyCode: event.keyCode, modifiers: modifiers,
+                                      keyLabel: Self.label(for: event), modifierOnly: false,
+                                      systemShortcuts: HotKeyCenter.systemShortcuts()))
+    }
+
+    private func finish(_ result: Result<ShortcutChord, ShortcutChord.Rejection>) {
         switch result {
         case .success(let recorded):
             set(recorded)

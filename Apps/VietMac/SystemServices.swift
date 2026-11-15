@@ -14,6 +14,9 @@ final class HotKeyCenter {
     private var reference: EventHotKeyRef?
     private var handler: EventHandlerRef?
     private(set) var registered: ShortcutChord?
+    /// Monitors for a modifier-only gesture (⌃⇧). A Carbon hot key cannot match modifiers alone.
+    private var gestureMonitors: [Any] = []
+    private var detector: ModifierTapDetector?
     var onPress: (() -> Void)?
 
     init() {
@@ -32,7 +35,14 @@ final class HotKeyCenter {
         if let reference { UnregisterEventHotKey(reference) }
         reference = nil
         registered = nil
+        for monitor in gestureMonitors { NSEvent.removeMonitor(monitor) }
+        gestureMonitors.removeAll()
+        detector = nil
         guard let wanted else { return }
+        if wanted.isModifierOnly {
+            installGesture(wanted)
+            return
+        }
         var modifiers: UInt32 = 0
         if wanted.modifiers.contains(.control) { modifiers |= UInt32(controlKey) }
         if wanted.modifiers.contains(.option) { modifiers |= UInt32(optionKey) }
@@ -44,6 +54,35 @@ final class HotKeyCenter {
             reference = created
             registered = wanted
         }
+    }
+
+    /// The modifier keys reach the frontmost app unchanged. A global monitor sees other apps' events
+    /// (it needs Accessibility, which arming requires); a local monitor sees VietMac's own windows.
+    private func installGesture(_ chord: ShortcutChord) {
+        detector = ModifierTapDetector(target: chord.modifiers)
+        let mask: NSEvent.EventTypeMask = [.flagsChanged, .keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown]
+        let handle: (NSEvent) -> Void = { [weak self] event in
+            MainActor.assumeIsolated {
+                guard let self, self.detector != nil else { return }
+                if event.type == .flagsChanged {
+                    if self.detector!.modifiersChanged(ShortcutRecorderControl.modifiers(event.modifierFlags)) {
+                        self.onPress?()
+                    }
+                } else {
+                    self.detector!.otherInput()
+                }
+            }
+        }
+        if let global = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: handle) {
+            gestureMonitors.append(global)
+        }
+        if let local = NSEvent.addLocalMonitorForEvents(matching: mask, handler: { event in
+            handle(event)
+            return event
+        }) {
+            gestureMonitors.append(local)
+        }
+        registered = chord
     }
 
     /// Enabled system shortcuts from System Settings › Keyboard Shortcuts.

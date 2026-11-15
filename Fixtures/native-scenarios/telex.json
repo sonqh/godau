@@ -122,6 +122,196 @@
       "replacements": 2,
       "backspaces": 4,
       "note": "One word at 45 ms per key; the observation trace keeps every event of both replacements."
+    },
+    {
+      "id": "telex-click-word-0",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "script": {
+        "steps": [
+          {
+            "text": " "
+          },
+          {
+            "pause": 800
+          },
+          {
+            "click": "field"
+          },
+          {
+            "pause": 0
+          },
+          {
+            "text": "tieengs"
+          }
+        ]
+      },
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "B17 (2026-11-15): click after a space, wait 0 ms, type the first word with no leading space. A known word start (AD-18) must transform it."
+    },
+    {
+      "id": "telex-click-word-100",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "script": {
+        "steps": [
+          {
+            "text": " "
+          },
+          {
+            "pause": 800
+          },
+          {
+            "click": "field"
+          },
+          {
+            "pause": 100
+          },
+          {
+            "text": "tieengs"
+          }
+        ]
+      },
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "B17 (2026-11-15): click after a space, wait 100 ms, type the first word with no leading space. A known word start (AD-18) must transform it."
+    },
+    {
+      "id": "telex-click-word-300",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "area",
+      "script": {
+        "steps": [
+          {
+            "text": " "
+          },
+          {
+            "pause": 800
+          },
+          {
+            "click": "field"
+          },
+          {
+            "pause": 300
+          },
+          {
+            "text": "tieengs"
+          }
+        ]
+      },
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "area": "LEFT  RIGHT tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "B17 (2026-11-15): click after a space, wait 300 ms, type the first word with no leading space. A known word start (AD-18) must transform it."
+    },
+    {
+      "id": "telex-click-word-rich-0",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "rich",
+      "script": {
+        "steps": [
+          {
+            "text": " "
+          },
+          {
+            "pause": 800
+          },
+          {
+            "click": "field"
+          },
+          {
+            "pause": 0
+          },
+          {
+            "text": "tieengs"
+          }
+        ]
+      },
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "rich": "<strong>&nbsp;LEFT</strong>  RIGHT 👩🏽‍💻tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "B17 (2026-11-15): rich-text field (contenteditable, like web and webview prompt boxes). Click after a space, wait 0 ms, type the first word. The fixture focuses a contenteditable with the caret at its start, so the leading space lands before LEFT; the click then puts the caret after the emoji, which is a word start."
+    },
+    {
+      "id": "telex-click-word-rich-300",
+      "version": 1,
+      "rules": "telex-mvp",
+      "apps": [
+        "chrome",
+        "dia",
+        "safari"
+      ],
+      "field": "rich",
+      "script": {
+        "steps": [
+          {
+            "text": " "
+          },
+          {
+            "pause": 800
+          },
+          {
+            "click": "field"
+          },
+          {
+            "pause": 300
+          },
+          {
+            "text": "tieengs"
+          }
+        ]
+      },
+      "interval": 120,
+      "hold": 60,
+      "expect": {
+        "rich": "<strong>&nbsp;LEFT</strong>  RIGHT 👩🏽‍💻tiếng"
+      },
+      "replacements": 2,
+      "backspaces": 4,
+      "note": "B17 (2026-11-15): rich-text field (contenteditable, like web and webview prompt boxes). Click after a space, wait 300 ms, type the first word. The fixture focuses a contenteditable with the caret at its start, so the leading space lands before LEFT; the click then puts the caret after the emoji, which is a word start."
     }
   ]
 }

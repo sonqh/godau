@@ -30,7 +30,7 @@ Claims that affect a decision carry a label: **verified** (evidence in the repos
 | --- | --- |
 | Writing Vietnamese prose in a browser or Notes | Nothing. The title says `VI` and stays still |
 | Switching to code or a URL mid-sentence | A fast mode switch and certainty about the current mode |
-| Clicking into the middle of existing text | Accept that the first word may stay as typed; find the reason in Help |
+| Clicking into the middle of existing text | Type at once; letters typed after a click inside a word form a word of their own |
 | Typing in an app or field outside the supported set | See at a glance that VietMac is not working there |
 | Typing in VS Code | Know whether VS Code is supported in this build, and what it needs (FG-1) |
 | After a rebuild, OS update, or reinstall | A clear signal if a grant was lost; no silent failure |
@@ -219,7 +219,7 @@ Rules:
 
 - First launch is English mode (**verified** spec requirement). The switch here is an explicit user action and calls the same `setMode` as the menu.
 - The in-window success check compares the shell's own field value with the sample in memory; nothing is stored (AQ-4 answer). The in-window field is an ordinary `observed` profile with its own matrix row.
-- The sample starts in an empty field, so the first word can start at offset 0 (AD-18). Until U-14 passes, the instruction says to click the field, then type, and the success check accepts `tiếng Việt` with or without a leading space.
+- The sample starts in an empty field; the first word transforms without a leading space (AD-18). The success check accepts `tiếng Việt` with or without a leading space.
 - The copy names the correct result and never says "VietMac will": the UI does not promise a transformation (architecture-spec 7.10 rule 3).
 
 #### Step 7 — Ready
@@ -231,7 +231,7 @@ Rules:
 | Shortcut label | Phím tắt đổi tiếng Việt / tiếng Anh (không bắt buộc) | Shortcut to switch between Vietnamese and English (optional) |
 | Shortcut control | Shortcut recorder, empty, with button `Dùng gợi ý: <chord>` | `Use the Suggestion: <chord>` |
 | Login checkbox | ☐ Mở VietMac khi đăng nhập | ☐ Open VietMac at login |
-| Tip | Mẹo: sau khi bạn bấm chuột vào giữa văn bản, từ đầu tiên có thể giữ nguyên. Hãy gõ dấu cách. Sau đó gõ tiếp. | Tip: after you click in existing text, the first word may stay as typed. Type a space. Then continue. |
+| Tip | Mẹo: nếu bạn bấm chuột vào giữa một từ rồi gõ tiếp, VietMac coi các chữ mới là một từ riêng. | Tip: if you click inside a word and keep typing, VietMac treats the new letters as a separate word. |
 | Hidden icon | Không thấy biểu tượng? Mở VietMac lần nữa từ Launchpad hoặc Spotlight. | You cannot see the icon? Open VietMac again from Launchpad or Spotlight. |
 | Primary | Xong | Done |
 
@@ -413,7 +413,8 @@ When a shortcut is set but not armed, Settings › General shows under the recor
 - The stored default stays unset, as the spec requires (**verified**). A preset chord could silently take a command in one of Son's apps.
 - Setup step 7 and Settings offer one button `Dùng gợi ý: <chord>`. Recording another chord is one click away.
 - The suggested chord ships only after a native conflict test in VS Code, Chrome, Dia, Safari, and Notes. Candidate: `⌃⌥V`; its conflicts are **unknown**. Avoid `⌃Space` and `⌃⌥Space`, which macOS uses for input sources by default (**inferred**).
-- The recorder rejects a chord without Command, Control, or Option, and modifier-only gestures: `Thêm ⌘, ⌃ hoặc ⌥, và một phím khác.` / `Add ⌘, ⌃, or ⌥, and one other key.`
+- The recorder accepts one modifier-only gesture: ⌃⇧ pressed together and released with no other key (Son, 2026-11-15). Any other key, click, or extra modifier while ⌃⇧ is held cancels the gesture, so ⌃⇧ chords in apps still work.
+- The recorder rejects a chord without Command, Control, or Option, and every other modifier-only gesture: `Thêm ⌘, ⌃ hoặc ⌥, và một phím khác. Hoặc chỉ dùng ⌃⇧.` / `Add ⌘, ⌃, or ⌥, and one other key. Or use ⌃⇧ alone.`
 - A chord that matches a system shortcut is refused with `macOS đang dùng phím tắt này.` / `macOS already uses this shortcut.` (AQ-8 answer: system shortcuts only). App shortcuts cannot be detected; the native conflict test covers the suggested chord.
 
 This was G-3. It needs no decision from Son: it keeps the spec's default and adds only an opt-in convenience. Son can still change or clear the chord.
@@ -516,8 +517,8 @@ Counters are in memory for this process only; the label says `Từ lần mở Vi
 
 | Situation | Cause | UI response | Why not more |
 | --- | --- | --- | --- |
-| First word after clicking into existing text stays as typed | Word ownership is uncertain after a click (architecture-spec 6.2) | Nothing at the time. Setup tip and Help › Why a word stays unchanged | It happens many times a day; any indicator would be noise. The next word after a space works |
-| Retyping a word after Backspace still stays as typed | An untracked Backspace resets the word; a new word starts only at a boundary key VietMac saw, or at a settled caret at field start (AD-18). VietMac does not read the character before the caret, because that is document text | Help explains: type a space, then the word. In an empty field the first word can start right away | Any other start rule would read document text (AQ-12 answer) |
+| Letters typed after a click inside a word form their own word | After a reset the next letter starts a word (architecture-spec 6.2, Son 2026-11-15) | Nothing at the time. Setup tip | Expected; VietMac never deletes letters it did not see typed |
+| Retyping after Backspace into an earlier word | An untracked Backspace resets the word; the next letter starts a new word (AD-18) | Help explains that new letters form their own word | Son, 2026-11-15: in Vietnamese mode, always type Vietnamese; no text is read |
 | Words in an address bar stay as typed | The browser shows an inline completion as a selection; words stay literal for as long as a completion is shown (AD-11) | Nothing at the time. Help mentions it | Accepted for v0.1; the share of literal words is measured (U-12) |
 | A word with `w` first, brackets, or an escape stays literal | Language rule (**verified** spec) | Help › Telex | Expected Telex behavior |
 | Nothing transforms in an app or field | `unsupportedApp`, `unsupportedField`, `excludedApp` | Standby badge; menu reason | Badge is passive and silent |

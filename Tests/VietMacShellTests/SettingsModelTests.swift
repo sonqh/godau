@@ -9,13 +9,27 @@ struct ShortcutChordTests {
     @Test func rejectsPlainLetterAndModifierOnly() {
         let plain = ShortcutChord.validate(keyCode: 9, modifiers: [], keyLabel: "V", modifierOnly: false, systemShortcuts: [])
         #expect(plain == .failure(.needsModifier))
-        #expect(vi(ShortcutChord.Rejection.needsModifier.message) == "Thêm ⌘, ⌃ hoặc ⌥, và một phím khác.")
+        #expect(vi(ShortcutChord.Rejection.needsModifier.message) == "Thêm ⌘, ⌃ hoặc ⌥, và một phím khác. Hoặc chỉ dùng ⌃⇧.")
         let shiftOnly = ShortcutChord.validate(keyCode: 9, modifiers: [.shift], keyLabel: "V", modifierOnly: false,
                                                systemShortcuts: [])
         #expect(shiftOnly == .failure(.needsModifier))
         let gesture = ShortcutChord.validate(keyCode: 58, modifiers: [.option], keyLabel: "", modifierOnly: true,
                                              systemShortcuts: [])
         #expect(gesture == .failure(.needsModifier))
+    }
+
+    @Test func acceptsControlShiftAloneOnly() {
+        let gesture = ShortcutChord.validate(keyCode: ShortcutChord.modifierOnlyKeyCode, modifiers: [.control, .shift],
+                                             keyLabel: "", modifierOnly: true, systemShortcuts: [])
+        #expect(gesture == .success(.controlShift))
+        #expect(ShortcutChord.controlShift.isModifierOnly)
+        #expect(ShortcutChord.controlShift.display == "⌃⇧")
+        for other: ShortcutChord.Modifiers in [[.control], [.shift], [.option, .shift], [.control, .shift, .option]] {
+            let rejected = ShortcutChord.validate(keyCode: ShortcutChord.modifierOnlyKeyCode, modifiers: other,
+                                                  keyLabel: "", modifierOnly: true, systemShortcuts: [])
+            #expect(rejected == .failure(.needsModifier))
+        }
+        #expect(!ShortcutChord.suggested.isModifierOnly)
     }
 
     @Test func rejectsSystemShortcut() {
@@ -99,5 +113,54 @@ struct SettingsTabTests {
         #expect(tab.rows[0].action == .requestPermission(.inputMonitoring))
         #expect(tab.rows[1].action == .requestPermission(.accessibility))
         #expect(en(tab.rows[1].value) == "Off")
+    }
+}
+
+struct ModifierTapDetectorTests {
+    @Test func controlThenShiftThenReleaseFiresOnce() {
+        var detector = ModifierTapDetector(target: [.control, .shift])
+        let r1 = detector.modifiersChanged([.control])
+        #expect(!r1)
+        let r2 = detector.modifiersChanged([.control, .shift])
+        #expect(!r2)
+        let r3 = detector.modifiersChanged([.shift])
+        #expect(!r3)
+        let r4 = detector.modifiersChanged([])
+        #expect(r4)
+        let r5 = detector.modifiersChanged([])
+        #expect(!r5)
+    }
+
+    @Test func aKeyOrClickWhileHeldCancels() {
+        var detector = ModifierTapDetector(target: [.control, .shift])
+        _ = detector.modifiersChanged([.control, .shift])
+        detector.otherInput() // For example ⌃⇧T in a browser.
+        let r6 = detector.modifiersChanged([])
+        #expect(!r6)
+    }
+
+    @Test func anExtraModifierCancels() {
+        var detector = ModifierTapDetector(target: [.control, .shift])
+        _ = detector.modifiersChanged([.control, .shift])
+        _ = detector.modifiersChanged([.control, .shift, .command])
+        _ = detector.modifiersChanged([.control, .shift])
+        let r7 = detector.modifiersChanged([])
+        #expect(!r7)
+    }
+
+    @Test func oneModifierAloneDoesNotFire() {
+        var detector = ModifierTapDetector(target: [.control, .shift])
+        _ = detector.modifiersChanged([.control])
+        let r8 = detector.modifiersChanged([])
+        #expect(!r8)
+    }
+
+    @Test func aKeyBeforeTheGestureDoesNotCancelIt() {
+        var detector = ModifierTapDetector(target: [.control, .shift])
+        detector.otherInput()
+        _ = detector.modifiersChanged([.shift])
+        _ = detector.modifiersChanged([.control, .shift])
+        let r9 = detector.modifiersChanged([])
+        #expect(r9)
     }
 }

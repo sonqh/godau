@@ -22,6 +22,15 @@ public struct ShortcutChord: Equatable, Hashable, Codable, Sendable {
         self.keyLabel = keyLabel
     }
 
+    /// Key code of a modifier-only gesture. No physical key has it.
+    public static let modifierOnlyKeyCode: UInt16 = 0xFFFF
+
+    /// ⌃⇧ pressed and released with no other key, the only accepted modifier-only gesture (Son, 2026-11-15).
+    public static let controlShift = ShortcutChord(keyCode: modifierOnlyKeyCode, modifiers: [.control, .shift],
+                                                   keyLabel: "")
+
+    public var isModifierOnly: Bool { keyCode == Self.modifierOnlyKeyCode }
+
     /// The candidate chord. Its conflicts in the five apps are unknown until the PD-1 native test.
     public static let suggested = ShortcutChord(keyCode: 9, modifiers: [.control, .option], keyLabel: "V")
 
@@ -48,11 +57,11 @@ public struct ShortcutChord: Equatable, Hashable, Codable, Sendable {
     }
 
     /// Recorder rules: a chord needs ⌘, ⌃, or ⌥ plus one other key, and must not be a system shortcut.
-    /// A modifier-only gesture never reaches this function as a key code, so it is rejected by the caller
-    /// passing `modifierOnly`.
+    /// A modifier-only gesture (`modifierOnly`) is accepted only as ⌃⇧; its key code and label are ignored.
     public static func validate(keyCode: UInt16, modifiers: Modifiers, keyLabel: String, modifierOnly: Bool,
                                 systemShortcuts: Set<ShortcutChord.Key>) -> Result<ShortcutChord, Rejection> {
-        guard !modifierOnly, !keyLabel.isEmpty,
+        if modifierOnly { return modifiers == controlShift.modifiers ? .success(controlShift) : .failure(.needsModifier) }
+        guard !keyLabel.isEmpty,
               !modifiers.intersection([.command, .control, .option]).isEmpty else { return .failure(.needsModifier) }
         let chord = ShortcutChord(keyCode: keyCode, modifiers: modifiers, keyLabel: keyLabel)
         if systemShortcuts.contains(chord.key) { return .failure(.systemShortcut) }
@@ -70,6 +79,36 @@ public struct ShortcutChord: Equatable, Hashable, Codable, Sendable {
     }
 
     public var key: Key { Key(keyCode: keyCode, modifiers: modifiers) }
+}
+
+/// Detects a modifier-only gesture: every key of `target` held together, then all released, with no other
+/// key or click in between and no modifier outside `target`. Pure state, fed by the app's event monitors.
+public struct ModifierTapDetector: Sendable {
+    public let target: ShortcutChord.Modifiers
+    private var down: ShortcutChord.Modifiers = []
+    private var matched = false
+    private var spoiled = false
+
+    public init(target: ShortcutChord.Modifiers) { self.target = target }
+
+    /// Call on every modifier change with the modifiers now held. Returns true when the gesture completes.
+    public mutating func modifiersChanged(_ held: ShortcutChord.Modifiers) -> Bool {
+        down = held
+        if held.isEmpty {
+            let fired = matched && !spoiled
+            matched = false
+            spoiled = false
+            return fired
+        }
+        if !target.isSuperset(of: held) { spoiled = true }
+        if held == target { matched = true }
+        return false
+    }
+
+    /// Call on a key press or a click. Any input while a modifier is held cancels the gesture.
+    public mutating func otherInput() {
+        if !down.isEmpty { spoiled = true }
+    }
 }
 
 /// The line under the recorder while a shortcut is set but cannot fire (ux-spec 6.1).

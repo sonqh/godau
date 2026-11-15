@@ -37,11 +37,18 @@ public struct PrototypePipeline {
     private var pause: PauseReason?
     private var consumed = Array(repeating: false, count: 128)
     private var timeoutRecoveries: [UInt64] = []
+    /// ASCII letters typed while the only pause was an uncertain context, in order. Never transformed;
+    /// adopted only when an observation shows the field holds exactly these letters. Bounded to 64.
+    private var unownedLetters: [UInt8] = []
 
     public init(environment: InputEnvironment) {
         self.environment = environment
         timeoutRecoveries.reserveCapacity(3)
+        unownedLetters.reserveCapacity(Self.unownedCapacity)
     }
+
+    static let unownedCapacity = 64
+    public var unownedLetterCount: Int { unownedLetters.count }
 
     public var state: InputRuntimeState {
         if !enabled { return .disabled }
@@ -68,13 +75,39 @@ public struct PrototypePipeline {
 
     public mutating func updateEnvironment(_ value: InputEnvironment) {
         guard value != environment else { return }
+        // Context turning certain changes no ownership: the word is empty, or was adopted from this
+        // observation. Every other change ends the word.
+        var regained = environment
+        regained.certainContext = true
+        let onlyRegainedCertainty = !environment.certainContext && value.certainContext && regained == value
         environment = value
-        invalidate()
+        if !onlyRegainedCertainty { invalidate() }
     }
 
-    public mutating func invalidate(holdUntilBoundary: Bool = true) {
+    /// Makes the letters typed during an uncertain context the tracked word. The field shows them as typed;
+    /// the composer state may already differ (for example `tuw` is `tư`), and the next key's replacement
+    /// rewrites the visible letters. Returns false, and forgets them, if they cannot form a tracked word.
+    @discardableResult
+    public mutating func adoptUnownedLetters() -> Bool {
+        defer { unownedLetters.removeAll(keepingCapacity: true) }
+        guard word.isEmpty, !literalUntilBoundary, !unownedLetters.isEmpty else { return false }
+        var next = TelexComposer()
+        for byte in unownedLetters {
+            if case .untracked = next.input(byte) { return false }
+        }
+        composer = next
+        word = String(decoding: unownedLetters, as: UTF8.self)
+        return true
+    }
+
+    /// Ends the tracked word. A context reset starts the next word at the next letter (Son, 2026-11-15:
+    /// in Vietnamese mode, always type Vietnamese). Replacements still delete only letters VietMac saw typed
+    /// since the reset, and only in a settled field. `holdUntilBoundary` is for overflow and the tone-move
+    /// Backspace, where the visible word continues past what VietMac owns.
+    public mutating func invalidate(holdUntilBoundary: Bool = false) {
         generation &+= 1
         word.removeAll(keepingCapacity: true)
+        unownedLetters.removeAll(keepingCapacity: true)
         composer.reset()
         pendingComposer = nil
         literalUntilBoundary = holdUntilBoundary
@@ -108,7 +141,10 @@ public struct PrototypePipeline {
         }
         if case .letter(_, let code, let repeated) = input,
            beginPhysicalPress(code, isRepeat: repeated) { return .consume }
-        guard state == .active else { return .passThrough }
+        guard state == .active else {
+            recordUnowned(input)
+            return .passThrough
+        }
         switch input {
         case .letter(let byte, let code, let repeated):
             guard code < consumed.count,
@@ -120,7 +156,8 @@ public struct PrototypePipeline {
             var next = composer
             switch next.input(byte) {
             case .untracked:
-                invalidate()
+                // Overflow: never transform a disconnected suffix of the same visible word.
+                invalidate(holdUntilBoundary: true)
                 return .passThrough
             case .text(let text):
                 if text == word + String(UnicodeScalar(byte)) {
@@ -141,7 +178,8 @@ public struct PrototypePipeline {
             // move the tone (`hoàn` -> `hòa`), the field and the word would differ, so ownership ends instead.
             // Moving the tone needs a Backspace-triggered replacement, which waits for U-5.
             guard !word.isEmpty else {
-                invalidate()
+                // An unowned Backspace keeps an overflow hold; otherwise the next letter starts a word.
+                invalidate(holdUntilBoundary: literalUntilBoundary)
                 return .passThrough
             }
             var next = composer
@@ -151,7 +189,7 @@ public struct PrototypePipeline {
                 composer = next
                 word = expected
             } else {
-                invalidate()
+                invalidate(holdUntilBoundary: true)
             }
             return .passThrough
         case .boundary:
@@ -162,6 +200,27 @@ public struct PrototypePipeline {
             return .passThrough
         case .keyUp:
             return .passThrough
+        }
+    }
+
+    /// While the only pause is an uncertain context, remember letters for a later adoption.
+    private mutating func recordUnowned(_ input: PrototypeInput) {
+        guard enabled, pause == nil, environment.pauseReason == .uncertainContext else {
+            unownedLetters.removeAll(keepingCapacity: true)
+            return
+        }
+        switch input {
+        case .letter(let byte, _, let repeated):
+            guard !repeated, (65...90).contains(byte) || (97...122).contains(byte),
+                  unownedLetters.count < Self.unownedCapacity else {
+                unownedLetters.removeAll(keepingCapacity: true)
+                return
+            }
+            unownedLetters.append(byte)
+        case .keyUp:
+            break
+        case .backspace, .boundary, .invalidate:
+            unownedLetters.removeAll(keepingCapacity: true)
         }
     }
 

@@ -161,7 +161,7 @@ struct ContextPolicyTests {
         #expect(session.counters.unexplainedFieldChanges == 0)
         _ = session.key(a)
         session.observe(caret: 8, length: 14)
-        #expect(session.key(s) == nil) // Stays literal until a word boundary.
+        #expect(session.key(s) == "á") // A new word starts at the observed a; only that a is deleted.
     }
 
     @Test func sameCaretExternalEditInvalidatesTheTrackedWord() {
@@ -175,7 +175,7 @@ struct ContextPolicyTests {
         session.observe(caret: 6, length: 16)
         #expect(session.counters.unexplainedFieldChanges == 1)
         #expect(session.key(s) == nil)
-        #expect(session.pipeline.word.isEmpty)
+        #expect(session.pipeline.word == "s") // The old a is no longer owned; s starts a new word.
     }
 
     @Test func externalEditDuringLagIsDetected() {
@@ -196,7 +196,7 @@ struct ContextPolicyTests {
         session.observe(caret: 6, length: 12, focusChanged: true)
         #expect(session.counters.focusChanges == 1)
         #expect(session.key(s) == nil)
-        #expect(session.pipeline.word.isEmpty)
+        #expect(session.pipeline.word == "s") // The a in the old field is never deleted.
     }
 
     @Test func selectionOrSuggestionPreventsSuffixDeletion() {
@@ -351,22 +351,87 @@ struct ContextPolicyTests {
         #expect(session.counters.replacementsUnconfirmed == 0)
     }
 
-    /// Session 6 ordinary input: a click, `as` stays literal, then space `as` is replaced.
-    @Test func firstWordAfterAClickStaysLiteralUntilABoundary() {
+    /// B17 (2026-11-15): after a click, the first word transforms (Son: in Vietnamese mode, always).
+    @Test func firstWordAfterAClickTransforms() {
         var session = Session()
         _ = session.key(.invalidate) // Mouse-down in the field.
         session.observe(caret: 5, length: 11)
         _ = session.key(a)
         session.observe(caret: 6, length: 12)
-        #expect(session.key(s) == nil)
-        session.observe(caret: 7, length: 13)
-        _ = session.key(.boundary, keyCode: 49)
-        session.observe(caret: 8, length: 14)
-        _ = session.key(a)
-        session.observe(caret: 9, length: 15)
         #expect(session.key(s) == "á")
-        #expect(session.counters.replacementsPosted == 1)
+        #expect(!check(&session, caret: 6, length: 12, quietMilliseconds: 600))
+        _ = session.key(.boundary, keyCode: 49)
+        session.observe(caret: 7, length: 13)
+        _ = session.key(a)
+        session.observe(caret: 8, length: 14)
+        #expect(session.key(s) == "á")
+        #expect(session.counters.replacementsPosted == 2)
         #expect(session.counters.unsettledTriggers == 0)
+    }
+
+    /// ⌘Tab race (2026-11-15 trace): letters typed before the first observation of the new field
+    /// start the word; the first observation settles the field, so the next trigger transforms.
+    @Test func lettersTypedBeforeTheFirstObservationStillStartTheWord() {
+        var session = Session()
+        session.observe(.unavailable(.noFocusedElement), focusChanged: true)
+        _ = session.key(a) // Typed before VietMac reads the new field.
+        session.observe(caret: 1, length: 1, focusChanged: true)
+        #expect(session.key(s) == "á")
+        #expect(session.counters.wordsKeptAcrossFocus == 1)
+    }
+
+    /// A new field with other text in it never adopts the word typed before the focus change.
+    @Test func aNewFieldWithOtherTextDropsTheWord() {
+        var session = Session()
+        session.observe(caret: 5, length: 11)
+        _ = session.key(a)
+        session.observe(caret: 6, length: 20, focusChanged: true)
+        #expect(session.key(s) == nil)
+        #expect(session.counters.wordsKeptAcrossFocus == 0)
+    }
+
+    /// A selection replaced by the first letter: that letter starts the word.
+    @Test func aLetterThatReplacesASelectionStartsTheWord() {
+        var session = Session()
+        session.observe(.selection)
+        _ = session.key(a)
+        session.observe(caret: 1, length: 1)
+        #expect(session.key(s) == "á")
+    }
+
+    /// Son's `tuwf` after ⌘Tab (2026-11-15): `tuw` is typed while the new field is still unreadable, so the
+    /// pipeline is paused; the first reading shows a field holding exactly those letters, and `f` gives `từ`.
+    @Test func lettersTypedWhileTheNewFieldIsUnreadableBecomeTheWord() {
+        var session = Session()
+        var uncertain = session.pipeline.environment
+        uncertain.certainContext = false
+        session.pipeline.updateEnvironment(uncertain)
+        for (byte, code) in [(116, 17), (117, 32), (119, 13)] as [(UInt8, UInt16)] {
+            _ = session.key(.letter(byte, keyCode: code, isRepeat: false))
+        }
+        #expect(session.pipeline.unownedLetterCount == 3)
+        session.observe(caret: 3, length: 3, focusChanged: true)
+        var certain = uncertain
+        certain.certainContext = true
+        session.pipeline.updateEnvironment(certain)
+        #expect(session.pipeline.word == "tuw")
+        #expect(session.key(.letter(102, keyCode: 3, isRepeat: false)) == "từ")
+    }
+
+    /// Letters typed during uncertainty into a field that also holds other text are never adopted.
+    @Test func unownedLettersInAFieldWithOtherTextAreDropped() {
+        var session = Session()
+        var uncertain = session.pipeline.environment
+        uncertain.certainContext = false
+        session.pipeline.updateEnvironment(uncertain)
+        _ = session.key(a)
+        session.observe(caret: 9, length: 9, focusChanged: true)
+        var certain = uncertain
+        certain.certainContext = true
+        session.pipeline.updateEnvironment(certain)
+        #expect(session.pipeline.word.isEmpty)
+        #expect(session.pipeline.unownedLetterCount == 0)
+        #expect(session.counters.wordsKeptAcrossFocus == 0)
     }
 
     /// Session 6 Backspace case: `ok á`, Backspace removes only `á`, retyped `as` replaces again.
@@ -397,7 +462,7 @@ struct ObservationTraceTests {
         for index in 0..<(ObservationTrace.capacity + 3) {
             let inspection = FocusInspection(changed: index == 0,
                 field: .caret(FieldSnapshot(caret: index, length: index)), role: "AXTextField", elementHash: 7)
-            trace.append(source: "poll", inspection: inspection, result: .consistent, keysSincePrevious: 1, field: field)
+            trace.append(source: "poll", inspection: inspection, result: .consistent, keysSincePrevious: 1, field: field, holding: false)
         }
         let records = trace.ordered
         #expect(records.count == ObservationTrace.capacity)
@@ -405,7 +470,8 @@ struct ObservationTraceTests {
         #expect(records.last?.sequence == UInt64(ObservationTrace.capacity + 3))
         #expect(records.last?.caret == ObservationTrace.capacity + 2)
         trace.append(source: "notification", inspection: FocusInspection(changed: false,
-            field: .unavailable(.noCharacterCount)), result: .unavailable, keysSincePrevious: 0, field: field)
+            field: .unavailable(.noCharacterCount)), result: .unavailable, keysSincePrevious: 0, field: field, holding: true)
         #expect(trace.ordered.last?.reading == "unavailable:noCharacterCount")
+        #expect(trace.ordered.last?.holdingAfter == true)
     }
 }

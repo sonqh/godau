@@ -93,7 +93,7 @@ struct PrototypePipelineTests {
         #expect(!model.isCurrent(edit))
         #expect(model.accept(edit) == false)
         #expect(model.handle(.letter(115, keyCode: 1, isRepeat: false)) == .passThrough)
-        #expect(model.word.isEmpty)
+        #expect(model.word == "s") // A reset starts a new word; the old edit stays dead.
         _ = model.handle(.boundary)
         _ = model.handle(.letter(97, keyCode: 0, isRepeat: false))
         if case .replace = model.handle(.letter(115, keyCode: 1, isRepeat: false)) {} else {
@@ -176,8 +176,9 @@ struct PrototypePipelineTests {
         #expect(model.word == "b")
         _ = model.handle(.boundary)
         _ = model.handle(.backspace)
+        // The unowned Backspace ends nothing VietMac owns; the next letter starts a word of its own.
         _ = model.handle(.letter(97, keyCode: 0, isRepeat: false))
-        #expect(model.word.isEmpty)
+        #expect(model.word == "a")
     }
 
     @Test func malformedInputAndIndependentInstancesAreSafe() {

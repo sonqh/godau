@@ -148,7 +148,7 @@ public final class InputHost {
         let observed = ContextPolicy.observe(focusChanged: inspected.changed, reading: inspected.field,
                                              field: &field, pipeline: &pipeline, counters: &counters)
         trace.append(source: source, inspection: inspected, result: observed.result,
-                     keysSincePrevious: keysSinceObservation, field: field)
+                     keysSincePrevious: keysSinceObservation, field: field, holding: pipeline.literalUntilBoundary)
         keysSinceObservation = 0
         let quiet = DispatchTime.now().uptimeNanoseconds &- lastTrackedKeyNanos
         if ContextPolicy.checkReplacementDelivery(result: observed.result, reading: inspected.field,

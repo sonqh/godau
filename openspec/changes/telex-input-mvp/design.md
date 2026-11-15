@@ -104,7 +104,7 @@ Field identity and selected suggestions must be established in each accepted pro
 No cached PID or context token is treated as proof of document text.
 
 Clear all state on observed navigation, selection, click/drag, edit shortcuts, app/field changes, input-source changes, mode changes, sleep/wake, and tap loss.
-When a reset leaves word ownership uncertain, stay literal until a boundary or a positively established new-word start.
+After a reset, the next letter starts a new word (Son, 2026-11-15). Replacements still delete only letters typed since the reset, in a settled field.
 Do not adopt preceding document text.
 Overflow always stays literal until a boundary, even if later Backspace shortens the visible word.
 Keep the logical limit at 64 and encoded generated text within the planner's allowance.
@@ -175,7 +175,7 @@ Benefit: fields graduate one at a time, which the dogfood build needs. Trade-off
 
 The platform exposes `RuntimeStatus` and five calls (`start`, `setMode`, `apply`, `resume`, `diagnostics`) as in architecture-spec section 7.2. The `ux-shell` change adds the value types; this change produces them and removes `M0StatusAdapter`.
 Availability classes: Active, Standby (clears by itself), Blocked (Son must act; four sticky reasons need `resume`). Gate order: mode, capabilities, sticky pause, secure input, input source, conflicting tool, exclusion, field profile, field readability. The status reports the first failing gate.
-Word-level literal holds (first word after a click, selection, lagging observation, escape, overflow) are counters, not status. M0's `uncertainContext` pause for a selection is dropped; the invalidation stays.
+Word-level literal holds (selection, lagging observation, escape, overflow) are counters, not status. M0's `uncertainContext` pause for a selection is dropped; the invalidation stays.
 The platform owns the live mode because the shortcut changes it in the callback; the shell persists it. `Configuration` holds only the shortcut and exclusions.
 Any mutation sets one dirty flag. One `CFRunLoopObserver` builds the status before the loop waits and publishes at most once per pass when it differs. The callback never publishes.
 A unit test enumerates gate combinations and asserts that `availability == .active` equals the callback gate.
@@ -193,10 +193,10 @@ Trade-off: a trust change in any app costs one refresh interval of literal typin
 Login startup uses `SMAppService.mainApp`. The system status is the truth; the stored preference is only the last request.
 Trade-off: registration after a rebuild in place or with ad hoc signing is **unknown** (U-7); M3 fixes a stable bundle location first.
 
-### 12. Word start at a settled caret at offset 0 (AD-18)
+### 12. Word start after a reset (AD-18)
 
-After a reset, a settled observation that shows a collapsed caret at offset 0 starts a new word, because no unowned text precedes it. This applies only after U-14 passes in each profile; until then only a boundary key seen in the field starts a word.
-VietMac never reads the character before the caret.
+Son decided on 2026-11-15: in Vietnamese mode, always type Vietnamese. After a reset the next letter starts a new word; no boundary key and no text read are needed. Overflow and the tone-move Backspace still hold until a boundary.
+Letters typed while the only pause is `uncertainContext` are kept in memory (at most 64 ASCII letters) and adopted as the word only when the first reading shows a collapsed caret at the end of a field whose length equals their count. A profile is accepted only after U-14 passes in it.
 
 ### 13. Dogfood build (FG-4)
 

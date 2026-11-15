@@ -11,10 +11,24 @@ enum ContextPolicy {
         if focusChanged {
             // An unchanged application identity is not proof of field ownership.
             counters.focusChanges &+= 1
-            invalidate(field: &field, pipeline: &pipeline)
+            if case .caret(let snapshot) = reading, keepsWordTypedIntoNewField(snapshot, field: field, pipeline: pipeline) {
+                // ⌘Tab race: the letters reached the new field before VietMac saw the focus change, and the
+                // field holds exactly those letters. Keep the word; the field starts at this observation.
+                counters.wordsKeptAcrossFocus &+= 1
+                field.reset()
+                if pipeline.word.isEmpty { pipeline.adoptUnownedLetters() }
+            } else {
+                invalidate(field: &field, pipeline: &pipeline)
+            }
         }
         switch reading {
         case .caret(let snapshot):
+            // First reading after a reset in the same element: letters typed while the context was uncertain
+            // become the word when the field holds exactly them.
+            if !focusChanged, field.predicted == nil, pipeline.word.isEmpty,
+               keepsWordTypedIntoNewField(snapshot, field: field, pipeline: pipeline), pipeline.adoptUnownedLetters() {
+                counters.wordsKeptAcrossFocus &+= 1
+            }
             let replacementPending = field.replacementUnconfirmed
             let result = field.observe(snapshot)
             switch result {
@@ -41,6 +55,15 @@ enum ContextPolicy {
             invalidate(field: &field, pipeline: &pipeline)
             return (false, .unavailable)
         }
+    }
+
+    /// True when the new field's whole content can only be the tracked word, or the letters typed during an
+    /// uncertain context: a collapsed caret at the end,
+    /// and a length equal to the word's UTF-16 length. Needs no text read. A pending replacement never qualifies.
+    static func keepsWordTypedIntoNewField(_ snapshot: FieldSnapshot, field: FieldContextTracker,
+                                           pipeline: PrototypePipeline) -> Bool {
+        let units = pipeline.word.isEmpty ? pipeline.unownedLetterCount : pipeline.word.utf16.count
+        return units > 0 && !field.replacementUnconfirmed && snapshot.caret == snapshot.length && snapshot.length == units
     }
 
     static func invalidate(field: inout FieldContextTracker, pipeline: inout PrototypePipeline) {
