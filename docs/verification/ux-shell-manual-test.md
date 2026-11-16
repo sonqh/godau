@@ -169,4 +169,5 @@ Write one row for each check. Result is `pass`, `fail`, or `partial`. For `fail`
 | B9 (Setup step 6) | fail | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. Son pressed ⌃⇧ (modifier only). The spec rejects this gesture, but the recorder showed no message: it listens to key-down events only, so it never sees a modifier-only gesture |
 | B17 (address bar) | pass | `f180902`, Release | 27.0.1 | Chrome, Dia, Safari address bars | 2026-11-16. Physical typing: `dd`, `oo`, `as` transform while a suggestion is shown |
 | B17 (VS Code editor) | pass | `5980f93`+FG-1 B, Release | 27.0.1 | VS Code editor | 2026-11-16. Physical typing: `đường người hoàn khuỷu thuở quý gì`, also while the suggestion popup shows (FG-1 option B, event-only) |
+| B17 (VS Code Quick Open) | pass | after `2692254`, Release | 27.0.1 | VS Code Quick Open | 2026-11-16. Physical typing transforms; focus bounces to the result list no longer end the word |
 | B12 (Setup step 6) | known limit | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. The login line says `macOS cannot find VietMac to register it.` Expected while the bundle is under `.artifacts` (U-7) |

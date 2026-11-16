@@ -38,9 +38,10 @@ public final class InputHost {
     private var addressBarField = false
     /// The focused field has an event-only profile (`addressBar` or `vscodeEditor`).
     private var eventOnlyField = false
-    /// Element hash of the last VS Code editor that had focus. VS Code moves Accessibility focus to an
-    /// `AXStaticText` (the suggestion widget) and back while you type; that round trip keeps the word.
-    private var vscodeEditorHash: UInt?
+    /// Element hash of the last VS Code text field that had focus (the editor or Quick Open). VS Code moves
+    /// Accessibility focus to an `AXStaticText` (suggestion widget, Quick Open result) and back after keys;
+    /// that round trip keeps the word.
+    private var vscodeFieldHash: UInt?
     private var addressBarCaretAtEnd = false
     private var addressBarCompletionShown = false
     private var lastTrackedKeyNanos: UInt64 = 0
@@ -157,7 +158,8 @@ public final class InputHost {
         let inspection = focus.inspect(pid: pid, bundleID: frontmostBundleID,
                                       allowed: permissions.accessibility && supportedApp && !sleeping)
         var inspected = inspection
-        if let hash = vscodeEditorHash, frontmostBundleID == "com.microsoft.VSCode" {
+        let inVSCode = frontmostBundleID == "com.microsoft.VSCode"
+        if let hash = vscodeFieldHash, inVSCode {
             if inspected.role == kAXStaticTextRole as String {
                 // Suggestion widget: keystrokes still reach the editor. Keep the editor's profile and word.
                 counters.vscodeFocusBounces &+= 1
@@ -167,9 +169,10 @@ public final class InputHost {
                 keysSinceObservation = 0
                 return true
             }
-            if inspected.vscodeEditor, inspected.elementHash == hash { inspected.changed = false }
+            if inspected.elementHash == hash { inspected.changed = false }
         }
-        vscodeEditorHash = inspected.vscodeEditor ? inspected.elementHash : nil
+        let textRoles: Set<String> = [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole]
+        vscodeFieldHash = inVSCode && textRoles.contains(inspected.role ?? "") ? inspected.elementHash : nil
         addressBarField = inspected.addressBar
         eventOnlyField = inspected.addressBar || inspected.vscodeEditor
         if eventOnlyField {
