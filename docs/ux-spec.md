@@ -519,7 +519,7 @@ Counters are in memory for this process only; the label says `Từ lần mở Vi
 | --- | --- | --- | --- |
 | Letters typed after a click inside a word form their own word | After a reset the next letter starts a word (architecture-spec 6.2, Son 2026-11-15) | Nothing at the time. Setup tip | Expected; VietMac never deletes letters it did not see typed |
 | Retyping after Backspace into an earlier word | An untracked Backspace resets the word; the next letter starts a new word (AD-18) | Help explains that new letters form their own word | Son, 2026-11-15: in Vietnamese mode, always type Vietnamese; no text is read |
-| Words in an address bar stay as typed | The browser shows an inline completion as a selection; words stay literal for as long as a completion is shown (AD-11) | Nothing at the time. Help mentions it | Accepted for v0.1; the share of literal words is measured (U-12) |
+| A word in an address bar comes out wrong while a suggestion changes | Address bars are event-only since 2026-11-16 (architecture-spec 6.2); VietMac clears the inline completion before replacing | Nothing at the time | Rare; type the word again |
 | A word with `w` first, brackets, or an escape stays literal | Language rule (**verified** spec) | Help › Telex | Expected Telex behavior |
 | Nothing transforms in an app or field | `unsupportedApp`, `unsupportedField`, `excludedApp` | Standby badge; menu reason | Badge is passive and silent |
 | Nothing transforms in a field VietMac cannot read | `fieldUnreadable` | Menu line only | Frequent and not actionable, except the VS Code hint under A1 |

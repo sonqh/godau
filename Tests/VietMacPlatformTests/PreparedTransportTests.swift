@@ -38,6 +38,23 @@ struct PreparedTransportTests {
         #expect(posted.allSatisfy { $0.getIntegerValueField(.eventSourceUserData) == 1234 && $0.flags.isEmpty })
     }
 
+    /// Address bar (2026-11-15): one forward Delete removes the inline completion before any Backspace.
+    @Test func addressBarReplacementStartsWithOneForwardDelete() throws {
+        let transport = PreparedTransport(marker: 12)
+        let prepared = try transport.prepare(ReplacementPlan.compute(previous: "d", next: "đ"), insertionKeyCode: 2,
+                                             leadingKey: 117)
+        #expect(prepared.events.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [117, 117, 51, 51, 2, 2])
+        #expect(prepared.events.map(\.type) == [.keyDown, .keyUp, .keyDown, .keyUp, .keyDown, .keyUp])
+        let plain = try transport.prepare(ReplacementPlan.compute(previous: "d", next: "đ"), insertionKeyCode: 2)
+        #expect(!plain.events.contains { $0.getIntegerValueField(.keyboardEventKeycode) == 117 })
+        let dia = try transport.prepare(ReplacementPlan.compute(previous: "d", next: "đ"), insertionKeyCode: 2,
+                                        leadingKey: 51)
+        #expect(dia.events.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [51, 51, 51, 51, 2, 2])
+        #expect(throws: TransportError.invalidPlan) {
+            try transport.prepare(ReplacementPlan.compute(previous: "d", next: "đ"), insertionKeyCode: 2, leadingKey: 0)
+        }
+    }
+
     /// Session 5: `a` still held when `s` triggered; Chrome dropped an insertion sent as kVK_ANSI_A.
     @Test func insertionUsesTheConsumedTriggerKeyNotTheHeldPreviousKey() throws {
         let transport = PreparedTransport(marker: 11)

@@ -33,6 +33,11 @@ public final class InputHost {
     public private(set) var counters = ContextCounters()
     private var trace = ObservationTrace()
     private var keysSinceObservation: UInt32 = 0
+    /// The focused field has the `addressBar` profile: `eventOnly` (no settled observation is required before a
+    /// replacement), and a forward Delete first while the caret is at the end.
+    private var addressBarField = false
+    private var addressBarCaretAtEnd = false
+    private var addressBarCompletionShown = false
     private var lastTrackedKeyNanos: UInt64 = 0
     private var pid: pid_t = 0
     private var sleeping = false
@@ -144,7 +149,31 @@ public final class InputHost {
 
     /// Compares observed caret/length with predicted key effects. Returns whether a caret is known.
     private func observeFocus(source: String) -> Bool {
-        let inspected = focus.inspect(pid: pid, allowed: permissions.accessibility && supportedApp && !sleeping)
+        let inspected = focus.inspect(pid: pid, bundleID: frontmostBundleID,
+                                      allowed: permissions.accessibility && supportedApp && !sleeping)
+        addressBarField = inspected.addressBar
+        if inspected.addressBar {
+            // Event-only profile: keep focus and reading resets, skip prediction checks.
+            if inspected.changed {
+                counters.focusChanges &+= 1
+                ContextPolicy.invalidate(field: &field, pipeline: &pipeline)
+            }
+            field.reset()
+            let certain: Bool
+            if case .caret(let snapshot) = inspected.field {
+                addressBarCaretAtEnd = snapshot.caret == snapshot.length
+                addressBarCompletionShown = inspected.completionShown
+                certain = true
+            } else {
+                addressBarCaretAtEnd = false
+                addressBarCompletionShown = false
+                certain = false
+            }
+            trace.append(source: source, inspection: inspected, result: certain ? .consistent : .unavailable,
+                         keysSincePrevious: keysSinceObservation, field: field, holding: pipeline.literalUntilBoundary)
+            keysSinceObservation = 0
+            return certain
+        }
         let observed = ContextPolicy.observe(focusChanged: inspected.changed, reading: inspected.field,
                                              field: &field, pipeline: &pipeline, counters: &counters)
         trace.append(source: source, inspection: inspected, result: observed.result,
@@ -304,14 +333,18 @@ public final class InputHost {
             case .consume:
                 return false
             case .replace(let edit):
-                // Require an observation after every tracked key before deleting anything.
-                guard ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
+                // Require an observation after every tracked key before deleting anything, except in an
+                // event-only address bar.
+                guard addressBarField
+                        || ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
                     expectPassThrough(input, keyCode: code, previous: before)
                     return original
                 }
                 do {
                     let plan = try ReplacementPlan.compute(previous: before, next: edit.next)
-                    let prepared = try transport.prepare(plan, insertionKeyCode: CGKeyCode(edit.keyCode))
+                    let prepared = try transport.prepare(plan, insertionKeyCode: CGKeyCode(edit.keyCode),
+                                                         leadingKey: completionClearKey)
+                    if addressBarField { counters.addressBarReplacements &+= 1 }
                     let result = transport.send(prepared, isCurrent: { pipeline.isCurrent(edit) }, post: {
                         $0.tapPostEvent(proxy)
                         return true // A void OS post is not client acknowledgement.
@@ -342,6 +375,15 @@ public final class InputHost {
                 }
             }
         }
+    }
+
+    /// The key that clears an address bar's inline completion before the Backspaces, if any. Dia's command bar
+    /// ignores a posted forward Delete (2026-11-16 automation), so Dia gets a Backspace, sent only when the
+    /// latest reading showed a completion.
+    private var completionClearKey: CGKeyCode? {
+        guard addressBarField, addressBarCaretAtEnd else { return nil }
+        if frontmostBundleID == "company.thebrowser.dia" { return addressBarCompletionShown ? 51 : nil }
+        return 117
     }
 
     private func markUncertainSend(_ edit: PendingReplacement) {

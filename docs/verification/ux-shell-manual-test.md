@@ -74,6 +74,7 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 - Notes (body and title) passed with `scripts/native_notes.py` on 2026-11-14.
 - Notes capitalizes the first word of a new line. If a replacement deletes that letter, VietMac puts it back in lowercase. Example: `as` at the start of a line.
 - After a click or an app switch, the first word transforms at once (Son, 2026-11-15). After a click inside a word, the new letters form a word of their own. Letters typed right after ⌘Tab, before VietMac can read the new field, transform only if the field held nothing else. (Changed on 2026-11-15. Retest B17.)
+- Address bars in Chrome, Dia, and Safari transform words even while a suggestion is shown (2026-11-16). Retest B17 in the address bar.
 - The mode shortcut can be ⌃⇧ alone: press both, release both, with no other key. (Added on 2026-11-15. Retest B9.)
 - FG-1 (Son, 2026-11-14): option C. The VS Code editor and Quick Open stay literal in v0.1.
 - No field profile is accepted yet, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.

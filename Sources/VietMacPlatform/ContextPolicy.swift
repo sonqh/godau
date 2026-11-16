@@ -30,7 +30,15 @@ enum ContextPolicy {
                 counters.wordsKeptAcrossFocus &+= 1
             }
             let replacementPending = field.replacementUnconfirmed
-            let result = field.observe(snapshot)
+            var result = field.observe(snapshot)
+            if result == .suspect || result == .mismatch, !replacementPending,
+               keepsWordTypedIntoNewField(snapshot, field: field, pipeline: pipeline) {
+                // An empty field whose placeholder counted as text (caret 0, length 12) holds exactly the
+                // tracked letters after the first key. Rebase on this reading and keep the word.
+                counters.placeholderRebases &+= 1
+                field.reset()
+                result = field.observe(snapshot)
+            }
             switch result {
             case .consistent, .unavailable, .suspect: break
             case .lagging: counters.laggingObservations &+= 1

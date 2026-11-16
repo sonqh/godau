@@ -257,6 +257,7 @@ A reset ends the tracked word, and the next letter starts a new word (Son, 2026-
 - A click inside an existing word makes the new letters a word of their own. For example, a click after `ho` and `af` gives `hoà`, but the tone rules see only `a`.
 - Overflow and the tone-move Backspace still hold the word literal until a boundary, because the visible word continues past what VietMac owns.
 - Letters typed while the only pause is `uncertainContext` (for example in the moments after ⌘Tab, before the new field is readable) are remembered in memory, at most 64 ASCII letters. VietMac adopts them as the word only when the first reading shows a collapsed caret at the end of a field whose length equals their count, so the field holds exactly those letters. Counter: `wordsKeptAcrossFocus`. The same rule keeps a tracked word when the focus change is seen only after the letters reached a field that holds exactly them.
+- A reading that disagrees with the prediction, while the field holds exactly the tracked word (collapsed caret at the end, length equal to the word), rebases instead of ending the word. This covers an empty field whose placeholder counted as text (for example caret 0, length 12) and vanished on the first key. Counter: `placeholderRebases` (2026-11-15, Son's `oo` report).
 - VietMac reads no text to decide a word start. The one-character read that Son allowed earlier the same day is not used.
 
 ### 6.3 Context assurance levels (*proposed*)
@@ -264,7 +265,7 @@ A reset ends the tracked word, and the next letter starts a new word (Son, 2026-
 M0 implements one policy: require Accessibility metadata that confirms the prediction after every tracked key. This document names it `observed`.
 
 - Browser page fields expose caret, length, and selection in time for fast typing (**verified** by native automation: Chrome, Dia, Safari; 36 of 36 replacements in a 1,368-event workload in each).
-- Address bars show an inline completion as a selection, and the word stays literal while it is shown (**verified** safe by automation in one seeded scenario per browser: 0 replacements). Transformation without a completion is **unknown** (U-12).
+- Address bars use the `addressBar` profile (Son, 2026-11-16, replacing AD-11): identified by AX identifier (Safari `WEB_BROWSER_ADDRESS_AND_SEARCH_FIELD`, Dia `commandBarTextField`) or, in Chrome, by the description `Address and search bar` or a toolbar ancestor. No text is read. A selection that runs to the end is the inline completion; the reading reports the caret at its start. The profile is `eventOnly`: no settled observation is needed before a replacement. With the caret at the end, the replacement starts with one forward Delete that removes the completion (no effect when none is shown); Dia ignores a posted forward Delete, so Dia gets one Backspace, only when the latest reading showed a completion. **Verified** by automation in Chrome, Dia, and Safari on 2026-11-16 (`/a` with completion, then `s`, gives `/á`, 1 replacement). Risk (**inferred**): a completion that changes while the events are posted can corrupt the current word, and the event-only profile does not detect it.
 - In VS Code the editor element reports the text "not accessible" without screen-reader mode, and quick input keeps AX focus on a list row (**verified** observation with the driver, ledger 2026-10-15). What `FocusMonitor` reads there (role, range, count) was not recorded. Replacement under `observed` is **inferred** impossible in the editor and quick input (U-1).
 
 What the code knows in a field without AX caret and length (**verified**): `FocusMonitor.inspect` returns `unavailable`, `ContextPolicy.observe` invalidates the word, and the state is not active, so every key passes through. Nothing is transformed there today.
@@ -350,7 +351,7 @@ Profiles let fields graduate one at a time, which the roadmap uses for early dai
 | Strategy | Events | Status |
 | --- | --- | --- |
 | `backspaceUnicode` | n × Backspace down/up, then one Unicode key down/up on a keycode the client does not see as held | Delivered. **Verified** in Chrome, Dia, Safari page fields for a one-character insertion after one Backspace. Multi-character insertion is tested only synthetically (U-4). A Backspace trigger is untested (U-5) |
-| `selectionAware` | Variant for a trailing inline completion that an `observed` field reports as a selection | Not designed. Not planned for v0.1 (AD-11) |
+| `selectionAware` | Variant for a trailing inline completion that an `observed` field reports as a selection | Replaced by the `addressBar` event-only profile (section 6.2 list, Son 2026-11-16) |
 
 Excluded as defaults by `AGENTS.md`: marked text, clipboard changes, invisible sentinel characters. Excluded by this document: Accessibility value writes.
 A new strategy needs a failing native reproduction, a profile that names it, and matrix evidence. It cannot change language behavior.
@@ -560,7 +561,7 @@ The UI must never:
 3. Promise that a word will transform. Word-level literal holds are normal and silent; the UI may explain them in help, not predict them.
 4. Promise that the app detects every problem. Same-length edits and changes between observations are undetectable (section 6.3).
 5. Say "all websites" or "all fields" are supported. Copy names apps and field kinds from the profile table. Field kinds are the ten profiles, not the seventeen matrix groups: page inputs, text areas, and rich text are one kind.
-6. Describe the address bar as "first word literal". Words stay literal for as long as the browser shows an inline completion.
+6. Describe the address bar as "first word literal". Since 2026-11-16 words transform in address bars of Chrome, Dia, and Safari.
 7. Say the app "never reads the text" in a way that covers VietMac's own try-it field. The accurate claim: VietMac reads no text from any other app, and stores and sends nothing.
 8. Switch the input source, quit another app, or change a setting in another app.
 9. Request a capability except from a click, and only after FG-3. It must not present posting as a third switch to turn on.
@@ -667,7 +668,7 @@ No plugin registry, runtime ledger, or service is added for any of these.
 | AD-8 | Native automation is evidence, labeled separately; physical spot checks remain | Harness design |
 | AD-9 | Trusted local signing certificate for grant continuity | Verified, sessions 3–5 |
 | AD-10 | Field profiles replace `trialApps` in M2, with `observed` as the only level built. Resolves OD-3: profiles are already in the MVP design; `eventOnly` is specified here and built only through FG-1 | Architect, 2026-11-12 |
-| AD-11 | Address bars keep `observed`. Words stay literal while an inline completion is shown. No `selectionAware` transport in v0.1; revisit from daily-use counters. Resolves OD-2 | Architect, 2026-11-12; evidence: ledger 2026-10-15 |
+| AD-11 | Superseded on 2026-11-16 by Son: address bars use the event-only `addressBar` profile with a completion-clearing key (section 6.2). Original: address bars keep `observed`, words stay literal while an inline completion is shown | Architect, 2026-11-12; Son, 2026-11-16 |
 | AD-12 | One status value with Active, Standby, and Blocked classes; word-level holds are not status (sections 6.1, 7.2) | Architect, 2026-11-12 |
 | AD-13 | The platform owns the live mode; the shell persists it. `Configuration` holds only shortcut and exclusions (section 6.6) | Architect, 2026-11-12 |
 | AD-14 | The mode shortcut is matched in the tap, so the tap stays in English mode when a shortcut is set. A Carbon hot key was not chosen: its ordering against the tap is unknown, and the MVP design specifies key pairing in the tap | Architect, 2026-11-12 |

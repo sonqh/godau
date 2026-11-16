@@ -4,7 +4,7 @@
   "scenarios": [
     {
       "id": "address-inline-completion",
-      "version": 1,
+      "version": 2,
       "rules": "m0",
       "apps": [
         "chrome",
@@ -56,19 +56,20 @@
           "prefix": "127.0.0.1:8765/a"
         },
         "final": {
-          "value": "127.0.0.1:8765/as"
+          "value": "127.0.0.1:8765/á"
         }
       },
-      "replacements": 0,
-      "minimum": {
-        "selectionsObserved": 1
-      },
+      "replacements": 1,
       "withoutInlineCompletion": {
         "final": {
           "value": "127.0.0.1:8765/á"
         },
         "replacements": 1
-      }
+      },
+      "minimum": {
+        "addressBarReplacements": 1
+      },
+      "note": "v2 (Son, 2026-11-15): address bars use the event-only addressBar profile. With an inline completion shown after /a, typing s removes the completion with one forward Delete and gives /á. v1 expected /as (AD-11, literal while a completion is shown)."
     }
   ]
 }

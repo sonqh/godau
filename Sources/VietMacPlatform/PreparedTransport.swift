@@ -31,18 +31,26 @@ public final class PreparedTransport {
     /// `insertionKeyCode` must be a key the client cannot see as held. The host passes the consumed
     /// trigger key: reusing another physical key (for example `kVK_ANSI_A` while A is down) lets the
     /// client drop the insertion after the deletion has already landed.
-    public func prepare(_ plan: ReplacementPlan, insertionKeyCode: CGKeyCode) throws -> PreparedReplacement {
+    /// `leadingKey` prepends one key that removes an address bar's inline completion: forward Delete (117),
+    /// which does nothing when no completion is shown, or Backspace (51) where the field ignores forward Delete.
+    public func prepare(_ plan: ReplacementPlan, insertionKeyCode: CGKeyCode,
+                        leadingKey: CGKeyCode? = nil) throws -> PreparedReplacement {
         let units = Array(plan.insertion.utf16)
         guard (0...64).contains(plan.deleteCount), units.count <= 128 else {
             throw TransportError.invalidPlan
         }
         var events: [CGEvent] = []
-        events.reserveCapacity(plan.deleteCount * 2 + (units.isEmpty ? 0 : 2))
+        events.reserveCapacity(plan.deleteCount * 2 + (units.isEmpty ? 0 : 2) + (leadingKey == nil ? 0 : 2))
         func make(_ code: CGKeyCode, down: Bool) throws -> CGEvent {
             guard let event = factory(code, down) else { throw TransportError.preparationFailed }
             event.flags = []
             event.setIntegerValueField(.eventSourceUserData, value: marker)
             return event
+        }
+        if let leadingKey {
+            guard leadingKey == 117 || leadingKey == 51 else { throw TransportError.invalidPlan }
+            events.append(try make(leadingKey, down: true))
+            events.append(try make(leadingKey, down: false))
         }
         for _ in 0..<plan.deleteCount {
             events.append(try make(51, down: true))

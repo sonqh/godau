@@ -89,6 +89,11 @@ public struct ContextCounters: Encodable, Equatable, Sendable {
     public var replacementsUnconfirmed: UInt64 = 0
     /// Focus changes where the new field held exactly the tracked word, which was kept (⌘Tab race).
     public var wordsKeptAcrossFocus: UInt64 = 0
+    /// Unexplained readings where the field held exactly the tracked word, for example after a placeholder
+    /// that counted as text disappeared. The word was kept.
+    public var placeholderRebases: UInt64 = 0
+    /// Replacements sent in an address bar under the event-only profile.
+    public var addressBarReplacements: UInt64 = 0
 
     public init() {}
 }

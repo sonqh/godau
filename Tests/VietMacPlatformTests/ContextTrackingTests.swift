@@ -434,6 +434,31 @@ struct ContextPolicyTests {
         #expect(session.counters.wordsKeptAcrossFocus == 0)
     }
 
+    /// Son's `oo` at the start of a prompt (2026-11-15): the empty field reports its 12-character placeholder
+    /// as length; after the first `o` the field holds just `o`. The word is kept and `oo` gives `ô`.
+    @Test func aPlaceholderThatDisappearsKeepsTheFirstLetter() {
+        var session = Session()
+        session.observe(caret: 0, length: 12)
+        let o = PrototypeInput.letter(111, keyCode: 31, isRepeat: false)
+        _ = session.key(o)
+        session.observe(caret: 1, length: 1)
+        #expect(session.counters.placeholderRebases == 1)
+        #expect(session.counters.unexplainedFieldChanges == 0)
+        #expect(session.key(o) == "ô")
+    }
+
+    /// The same disagreement in a field with other text stays an unexplained change.
+    @Test func anUnexplainedChangeWithOtherTextIsNotRebased() {
+        var session = Session()
+        session.observe(caret: 0, length: 12)
+        _ = session.key(a)
+        session.observe(caret: 1, length: 5)
+        session.observe(caret: 1, length: 5)
+        #expect(session.counters.placeholderRebases == 0)
+        #expect(session.counters.unexplainedFieldChanges == 1)
+        #expect(session.key(s) == nil)
+    }
+
     /// Session 6 Backspace case: `ok á`, Backspace removes only `á`, retyped `as` replaces again.
     @Test func backspaceAfterAConfirmedReplacementThenRetypeReplacesAgain() {
         var session = Session()
