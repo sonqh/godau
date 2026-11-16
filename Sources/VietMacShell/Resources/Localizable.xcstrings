@@ -41,13 +41,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reopen VietMac"
+            "value": "Reopen Gõ Dấu"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mở lại VietMac"
+            "value": "Mở lại Gõ Dấu"
           }
         }
       }
@@ -245,13 +245,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac cannot check this field. Your text stays as typed."
+            "value": "Gõ Dấu cannot check this field. Your text stays as typed."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac không kiểm tra được ô này. Chữ bạn gõ được giữ nguyên."
+            "value": "Gõ Dấu không kiểm tra được ô này. Chữ bạn gõ được giữ nguyên."
           }
         }
       }
@@ -296,13 +296,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This is a password field. VietMac does not change text here."
+            "value": "This is a password field. Gõ Dấu does not change text here."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đây là ô mật khẩu. VietMac không đổi chữ ở đây."
+            "value": "Đây là ô mật khẩu. Gõ Dấu không đổi chữ ở đây."
           }
         }
       }
@@ -313,13 +313,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac cannot send keys yet."
+            "value": "Gõ Dấu cannot send keys yet."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac chưa gửi phím được."
+            "value": "Gõ Dấu chưa gửi phím được."
           }
         }
       }
@@ -330,13 +330,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac paused because the Mac responded slowly several times."
+            "value": "Gõ Dấu paused because the Mac responded slowly several times."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac tạm dừng vì máy phản hồi chậm nhiều lần."
+            "value": "Gõ Dấu tạm dừng vì máy phản hồi chậm nhiều lần."
           }
         }
       }
@@ -364,13 +364,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The Mac was asleep. VietMac starts again automatically."
+            "value": "The Mac was asleep. Gõ Dấu starts again automatically."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Máy vừa ngủ. VietMac sẽ tự chạy lại."
+            "value": "Máy vừa ngủ. Gõ Dấu sẽ tự chạy lại."
           }
         }
       }
@@ -381,13 +381,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac cannot receive keys."
+            "value": "Gõ Dấu cannot receive keys."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac chưa nhận được phím."
+            "value": "Gõ Dấu chưa nhận được phím."
           }
         }
       }
@@ -398,13 +398,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac paused to keep your text safe. Check the last word you typed."
+            "value": "Gõ Dấu paused to keep your text safe. Check the last word you typed."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac tạm dừng để giữ an toàn cho chữ. Hãy xem lại từ bạn vừa gõ."
+            "value": "Gõ Dấu tạm dừng để giữ an toàn cho chữ. Hãy xem lại từ bạn vừa gõ."
           }
         }
       }
@@ -415,13 +415,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac does not support %@ yet. Your text stays as typed."
+            "value": "Gõ Dấu does not support %@ yet. Your text stays as typed."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac chưa hỗ trợ %@. Chữ bạn gõ được giữ nguyên."
+            "value": "Gõ Dấu chưa hỗ trợ %@. Chữ bạn gõ được giữ nguyên."
           }
         }
       }
@@ -432,13 +432,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac does not support %@ in %@ yet."
+            "value": "Gõ Dấu does not support %@ in %@ yet."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac chưa hỗ trợ %@ trong %@."
+            "value": "Gõ Dấu chưa hỗ trợ %@ trong %@."
           }
         }
       }
@@ -466,13 +466,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS stopped the key input of VietMac."
+            "value": "macOS stopped the key input of Gõ Dấu."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS đã tạm dừng việc nhận phím của VietMac."
+            "value": "macOS đã tạm dừng việc nhận phím của Gõ Dấu."
           }
         }
       }
@@ -636,13 +636,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac does not change text in a password field. The pause badge shows in the menu bar.\n\nIf no password field is open, another app may have secure input on (for example Terminal › Secure Keyboard Entry). Turn it off in that app."
+            "value": "Gõ Dấu does not change text in a password field. The pause badge shows in the menu bar.\n\nIf no password field is open, another app may have secure input on (for example Terminal › Secure Keyboard Entry). Turn it off in that app."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac không đổi chữ trong ô mật khẩu. Biểu tượng tạm dừng hiện trên thanh menu.\n\nNếu không có ô mật khẩu nào đang mở, một ứng dụng khác có thể đang bật chế độ nhập an toàn (ví dụ Terminal › Nhập bằng bàn phím an toàn). Tắt chế độ đó trong ứng dụng ấy."
+            "value": "Gõ Dấu không đổi chữ trong ô mật khẩu. Biểu tượng tạm dừng hiện trên thanh menu.\n\nNếu không có ô mật khẩu nào đang mở, một ứng dụng khác có thể đang bật chế độ nhập an toàn (ví dụ Terminal › Nhập bằng bàn phím an toàn). Tắt chế độ đó trong ứng dụng ấy."
           }
         }
       }
@@ -670,13 +670,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac needs two permissions.\n\n• **Input Monitoring** lets VietMac receive the keys you press.\n• **Accessibility** lets VietMac check the caret position and the kind of field. It also lets VietMac send the changed letters.\n\nVietMac does not read text in other apps. It does not store or send what you type. It does not use the network.\n\nIf the switch is on but VietMac still shows it as off, turn the switch off. Then turn it on again."
+            "value": "Gõ Dấu needs two permissions.\n\n• **Input Monitoring** lets Gõ Dấu receive the keys you press.\n• **Accessibility** lets Gõ Dấu check the caret position and the kind of field. It also lets Gõ Dấu send the changed letters.\n\nGõ Dấu does not read text in other apps. It does not store or send what you type. It does not use the network.\n\nIf the switch is on but Gõ Dấu still shows it as off, turn the switch off. Then turn it on again."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac cần hai quyền.\n\n• **Theo dõi đầu vào** cho VietMac nhận phím bạn gõ.\n• **Trợ năng** cho VietMac xem vị trí con trỏ và loại ô. Quyền này cũng cho VietMac gửi chữ đã đổi.\n\nVietMac không đọc chữ trong ứng dụng khác. VietMac không lưu và không gửi chữ bạn gõ. VietMac không dùng mạng.\n\nNếu công tắc đã bật mà VietMac vẫn báo chưa bật, hãy tắt công tắc. Sau đó bật lại."
+            "value": "Gõ Dấu cần hai quyền.\n\n• **Theo dõi đầu vào** cho Gõ Dấu nhận phím bạn gõ.\n• **Trợ năng** cho Gõ Dấu xem vị trí con trỏ và loại ô. Quyền này cũng cho Gõ Dấu gửi chữ đã đổi.\n\nGõ Dấu không đọc chữ trong ứng dụng khác. Gõ Dấu không lưu và không gửi chữ bạn gõ. Gõ Dấu không dùng mạng.\n\nNếu công tắc đã bật mà Gõ Dấu vẫn báo chưa bật, hãy tắt công tắc. Sau đó bật lại."
           }
         }
       }
@@ -687,13 +687,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac Permissions"
+            "value": "Gõ Dấu Permissions"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quyền của VietMac"
+            "value": "Quyền của Gõ Dấu"
           }
         }
       }
@@ -738,13 +738,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac changes only the letters that it saw you type in the current field.\nWhen VietMac is not sure, it leaves the text as typed. This prevents damage to your text.\n\nA word stays as typed when:\n• you just clicked in existing text\n• you just pressed Delete\n• the address bar shows a suggestion\n• VietMac does not support the field\n\nTo continue, type a space. Then type the word again.\nIn an empty field, VietMac can start from the first letter."
+            "value": "Gõ Dấu changes only the letters that it saw you type in the current field.\nWhen Gõ Dấu is not sure, it leaves the text as typed. This prevents damage to your text.\n\nA word stays as typed when:\n• you just clicked in existing text\n• you just pressed Delete\n• the address bar shows a suggestion\n• Gõ Dấu does not support the field\n\nTo continue, type a space. Then type the word again.\nIn an empty field, Gõ Dấu can start from the first letter."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac chỉ đổi chữ mà nó thấy bạn gõ trong ô hiện tại.\nKhi không chắc, VietMac giữ nguyên chữ để không làm hỏng văn bản.\n\nMột từ giữ nguyên khi:\n• bạn vừa bấm chuột vào giữa văn bản\n• bạn vừa xoá lùi\n• thanh địa chỉ đang hiện gợi ý\n• VietMac chưa hỗ trợ ô đó\n\nĐể gõ tiếp, hãy gõ dấu cách. Sau đó gõ lại từ đó.\nTrong một ô trống, VietMac có thể bắt đầu từ chữ đầu tiên."
+            "value": "Gõ Dấu chỉ đổi chữ mà nó thấy bạn gõ trong ô hiện tại.\nKhi không chắc, Gõ Dấu giữ nguyên chữ để không làm hỏng văn bản.\n\nMột từ giữ nguyên khi:\n• bạn vừa bấm chuột vào giữa văn bản\n• bạn vừa xoá lùi\n• thanh địa chỉ đang hiện gợi ý\n• Gõ Dấu chưa hỗ trợ ô đó\n\nĐể gõ tiếp, hãy gõ dấu cách. Sau đó gõ lại từ đó.\nTrong một ô trống, Gõ Dấu có thể bắt đầu từ chữ đầu tiên."
           }
         }
       }
@@ -772,13 +772,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac Help"
+            "value": "Gõ Dấu Help"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hướng dẫn VietMac"
+            "value": "Hướng dẫn Gõ Dấu"
           }
         }
       }
@@ -840,13 +840,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS cannot find VietMac to register it."
+            "value": "macOS cannot find Gõ Dấu to register it."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "macOS không tìm thấy VietMac để đăng ký."
+            "value": "macOS không tìm thấy Gõ Dấu để đăng ký."
           }
         }
       }
@@ -874,13 +874,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allow VietMac in System Settings › Login Items."
+            "value": "Allow Gõ Dấu in System Settings › Login Items."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hãy cho phép VietMac trong Cài đặt Hệ thống › Mục đăng nhập."
+            "value": "Hãy cho phép Gõ Dấu trong Cài đặt Hệ thống › Mục đăng nhập."
           }
         }
       }
@@ -942,13 +942,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quit VietMac"
+            "value": "Quit Gõ Dấu"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thoát VietMac"
+            "value": "Thoát Gõ Dấu"
           }
         }
       }
@@ -1095,13 +1095,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In other apps, VietMac does not change text. In some web editors, more words may stay as typed."
+            "value": "In other apps, Gõ Dấu does not change text. In some web editors, more words may stay as typed."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trong ứng dụng khác, VietMac không đổi chữ. Trong một số trình soạn thảo trên web, nhiều từ hơn có thể giữ nguyên."
+            "value": "Trong ứng dụng khác, Gõ Dấu không đổi chữ. Trong một số trình soạn thảo trên web, nhiều từ hơn có thể giữ nguyên."
           }
         }
       }
@@ -1163,13 +1163,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open VietMac at login"
+            "value": "Open Gõ Dấu at login"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mở VietMac khi đăng nhập"
+            "value": "Mở Gõ Dấu khi đăng nhập"
           }
         }
       }
@@ -1299,13 +1299,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Since VietMac opened"
+            "value": "Since Gõ Dấu opened"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Từ lần mở VietMac này"
+            "value": "Từ lần mở Gõ Dấu này"
           }
         }
       }
@@ -1469,13 +1469,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac Settings"
+            "value": "Gõ Dấu Settings"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cài đặt VietMac"
+            "value": "Cài đặt Gõ Dấu"
           }
         }
       }
@@ -1486,13 +1486,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn on VietMac in **Accessibility**. VietMac checks the caret position and the kind of field. It does not read text in other apps."
+            "value": "Turn on Gõ Dấu in **Accessibility**. Gõ Dấu checks the caret position and the kind of field. It does not read text in other apps."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bật VietMac trong **Trợ năng**. VietMac xem vị trí con trỏ và loại ô. VietMac không đọc chữ trong ứng dụng khác."
+            "value": "Bật Gõ Dấu trong **Trợ năng**. Gõ Dấu xem vị trí con trỏ và loại ô. Gõ Dấu không đọc chữ trong ứng dụng khác."
           }
         }
       }
@@ -1503,13 +1503,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allow VietMac to change letters in the field you type in"
+            "value": "Allow Gõ Dấu to change letters in the field you type in"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cho phép VietMac đổi chữ trong ô bạn đang gõ"
+            "value": "Cho phép Gõ Dấu đổi chữ trong ô bạn đang gõ"
           }
         }
       }
@@ -1520,13 +1520,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reopen VietMac to use the permission you turned on."
+            "value": "Reopen Gõ Dấu to use the permission you turned on."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mở lại VietMac để dùng quyền bạn vừa bật."
+            "value": "Mở lại Gõ Dấu để dùng quyền bạn vừa bật."
           }
         }
       }
@@ -1656,13 +1656,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn the switch off. Then turn it on again. If the window still shows \"Off\": 1. Select VietMac in the list. 2. Click **−**. 3. Click **Open System Settings** again."
+            "value": "Turn the switch off. Then turn it on again. If the window still shows \"Off\": 1. Select Gõ Dấu in the list. 2. Click **−**. 3. Click **Open System Settings** again."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tắt công tắc. Sau đó bật lại. Nếu vẫn ghi \"Chưa bật\": 1. Chọn VietMac trong danh sách. 2. Bấm nút **−**. 3. Bấm **Mở Cài đặt Hệ thống** lần nữa."
+            "value": "Tắt công tắc. Sau đó bật lại. Nếu vẫn ghi \"Chưa bật\": 1. Chọn Gõ Dấu trong danh sách. 2. Bấm nút **−**. 3. Bấm **Mở Cài đặt Hệ thống** lần nữa."
           }
         }
       }
@@ -1707,13 +1707,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn on the switch next to VietMac."
+            "value": "Turn on the switch next to Gõ Dấu."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bật công tắc cạnh VietMac."
+            "value": "Bật công tắc cạnh Gõ Dấu."
           }
         }
       }
@@ -1758,13 +1758,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac needs the ABC or U.S. keyboard. Current keyboard: **%@**."
+            "value": "Gõ Dấu needs the ABC or U.S. keyboard. Current keyboard: **%@**."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac cần bàn phím ABC hoặc U.S. Bàn phím đang chọn: **%@**."
+            "value": "Gõ Dấu cần bàn phím ABC hoặc U.S. Bàn phím đang chọn: **%@**."
           }
         }
       }
@@ -1877,13 +1877,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn on VietMac in **Input Monitoring**. VietMac uses the keys only to change letters. It does not record them."
+            "value": "Turn on Gõ Dấu in **Input Monitoring**. Gõ Dấu uses the keys only to change letters. It does not record them."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bật VietMac trong **Theo dõi đầu vào**. VietMac chỉ dùng phím để đổi chữ. VietMac không ghi lại phím."
+            "value": "Bật Gõ Dấu trong **Theo dõi đầu vào**. Gõ Dấu chỉ dùng phím để đổi chữ. Gõ Dấu không ghi lại phím."
           }
         }
       }
@@ -1894,13 +1894,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allow VietMac to receive the keys you press"
+            "value": "Allow Gõ Dấu to receive the keys you press"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cho phép VietMac nhận phím bạn gõ"
+            "value": "Cho phép Gõ Dấu nhận phím bạn gõ"
           }
         }
       }
@@ -1962,13 +1962,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac is ready"
+            "value": "Gõ Dấu is ready"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac đã sẵn sàng"
+            "value": "Gõ Dấu đã sẵn sàng"
           }
         }
       }
@@ -1979,13 +1979,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You cannot see the icon? Open VietMac again from Launchpad or Spotlight."
+            "value": "You cannot see the icon? Open Gõ Dấu again from Launchpad or Spotlight."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Không thấy biểu tượng? Mở VietMac lần nữa từ Launchpad hoặc Spotlight."
+            "value": "Không thấy biểu tượng? Mở Gõ Dấu lần nữa từ Launchpad hoặc Spotlight."
           }
         }
       }
@@ -1996,13 +1996,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac is in the menu bar. **VI** means Vietnamese. **EN** means English. Every action is in that menu."
+            "value": "Gõ Dấu is in the menu bar. **VI** means Vietnamese. **EN** means English. Every action is in that menu."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac nằm trên thanh menu. **VI** là tiếng Việt. **EN** là tiếng Anh. Mọi thao tác đều có trong menu đó."
+            "value": "Gõ Dấu nằm trên thanh menu. **VI** là tiếng Việt. **EN** là tiếng Anh. Mọi thao tác đều có trong menu đó."
           }
         }
       }
@@ -2013,13 +2013,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open VietMac at login"
+            "value": "Open Gõ Dấu at login"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mở VietMac khi đăng nhập"
+            "value": "Mở Gõ Dấu khi đăng nhập"
           }
         }
       }
@@ -2047,13 +2047,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tip: if you click inside a word and keep typing, VietMac treats the new letters as a separate word."
+            "value": "Tip: if you click inside a word and keep typing, Gõ Dấu treats the new letters as a separate word."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mẹo: nếu bạn bấm chuột vào giữa một từ rồi gõ tiếp, VietMac coi các chữ mới là một từ riêng."
+            "value": "Mẹo: nếu bạn bấm chuột vào giữa một từ rồi gõ tiếp, Gõ Dấu coi các chữ mới là một từ riêng."
           }
         }
       }
@@ -2268,13 +2268,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Correct. VietMac is ready."
+            "value": "Correct. Gõ Dấu is ready."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đúng rồi. VietMac đã sẵn sàng."
+            "value": "Đúng rồi. Gõ Dấu đã sẵn sàng."
           }
         }
       }
@@ -2319,13 +2319,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "After an update, macOS may not recognize VietMac. Turn the switch off. Then turn it on again. If that does not help, remove VietMac from the list. Then add it again."
+            "value": "After an update, macOS may not recognize Gõ Dấu. Turn the switch off. Then turn it on again. If that does not help, remove Gõ Dấu from the list. Then add it again."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sau khi cập nhật, macOS có thể không nhận ra VietMac. Tắt công tắc. Sau đó bật lại. Nếu chưa được, hãy xoá VietMac khỏi danh sách. Sau đó thêm lại."
+            "value": "Sau khi cập nhật, macOS có thể không nhận ra Gõ Dấu. Tắt công tắc. Sau đó bật lại. Nếu chưa được, hãy xoá Gõ Dấu khỏi danh sách. Sau đó thêm lại."
           }
         }
       }
@@ -2336,13 +2336,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Turn On the VietMac Permission Again"
+            "value": "Turn On the Gõ Dấu Permission Again"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hãy bật lại quyền cho VietMac"
+            "value": "Hãy bật lại quyền cho Gõ Dấu"
           }
         }
       }
@@ -2353,13 +2353,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac changes `tieengs` to `tiếng` while you type. Setup takes about two minutes."
+            "value": "Gõ Dấu changes `tieengs` to `tiếng` while you type. Setup takes about two minutes."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac đổi `tieengs` thành `tiếng` ngay khi bạn gõ. Thiết lập mất khoảng hai phút."
+            "value": "Gõ Dấu đổi `tieengs` thành `tiếng` ngay khi bạn gõ. Thiết lập mất khoảng hai phút."
           }
         }
       }
@@ -2404,13 +2404,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac does not read text in other apps. It does not store or send what you type. It does not use the network."
+            "value": "Gõ Dấu does not read text in other apps. It does not store or send what you type. It does not use the network."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac không đọc chữ trong ứng dụng khác. VietMac không lưu và không gửi chữ bạn gõ. VietMac không dùng mạng."
+            "value": "Gõ Dấu không đọc chữ trong ứng dụng khác. Gõ Dấu không lưu và không gửi chữ bạn gõ. Gõ Dấu không dùng mạng."
           }
         }
       }
@@ -2438,13 +2438,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Set Up VietMac"
+            "value": "Set Up Gõ Dấu"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thiết lập VietMac"
+            "value": "Thiết lập Gõ Dấu"
           }
         }
       }
@@ -2506,13 +2506,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The shortcut does not work now: %@ Use the VietMac menu."
+            "value": "The shortcut does not work now: %@ Use the Gõ Dấu menu."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Phím tắt hiện chưa dùng được: %@ Hãy dùng menu VietMac."
+            "value": "Phím tắt hiện chưa dùng được: %@ Hãy dùng menu Gõ Dấu."
           }
         }
       }
@@ -2625,13 +2625,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "English: VietMac Does Not Change Text"
+            "value": "English: Gõ Dấu Does Not Change Text"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tiếng Anh: VietMac không đổi chữ"
+            "value": "Tiếng Anh: Gõ Dấu không đổi chữ"
           }
         }
       }
@@ -2676,13 +2676,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: English"
+            "value": "Gõ Dấu: English"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: tiếng Anh"
+            "value": "Gõ Dấu: tiếng Anh"
           }
         }
       }
@@ -2693,13 +2693,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: English, a permission is off"
+            "value": "Gõ Dấu: English, a permission is off"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: tiếng Anh, có quyền chưa bật"
+            "value": "Gõ Dấu: tiếng Anh, có quyền chưa bật"
           }
         }
       }
@@ -2710,13 +2710,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: Vietnamese"
+            "value": "Gõ Dấu: Vietnamese"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: tiếng Việt"
+            "value": "Gõ Dấu: tiếng Việt"
           }
         }
       }
@@ -2727,13 +2727,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: Vietnamese, needs attention"
+            "value": "Gõ Dấu: Vietnamese, needs attention"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: tiếng Việt, cần xử lý"
+            "value": "Gõ Dấu: tiếng Việt, cần xử lý"
           }
         }
       }
@@ -2744,13 +2744,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: Vietnamese, paused here"
+            "value": "Gõ Dấu: Vietnamese, paused here"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "VietMac: tiếng Việt, tạm dừng ở đây"
+            "value": "Gõ Dấu: tiếng Việt, tạm dừng ở đây"
           }
         }
       }

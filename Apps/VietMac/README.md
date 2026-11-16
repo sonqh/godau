@@ -4,7 +4,7 @@ This target presents the M0 native transport host with the complete Telex compos
 When Vietnamese is on with all capabilities and a supported inspected context, it replaces the tracked word as Telex specifies.
 Native acceptance of the five apps is still pending; see the manual test guide.
 
-Run `make app` to create `.artifacts/VietMac.app`.
+Run `make app` to create `.artifacts/GoDau.app`.
 The build signs locally with ad hoc signing by default; it does not launch, install, or replace an input app.
 Set `VIETMAC_SIGNING_IDENTITY` explicitly to use a chosen existing identity. No certificate or trust setting is created automatically.
 Use a stable signing identity and location before native permission verification.
@@ -21,7 +21,7 @@ Hold Option in the open menu to reveal `Save Diagnostic Report…`, which export
 The Setup and Help window opens from the menu and by itself only under the launch rules of ux-spec 4.6. Its grant buttons call the system request function and then open the System Settings pane; nothing requests a permission at launch, on a timer, or from the menu.
 Settings has General (shortcut recorder, login startup), Apps (the profile table; no profile is accepted yet), and Status tabs. Opening VietMac again while it runs opens Settings.
 The optional mode shortcut is a system hot key registered only while it is armed; a shortcut change shows the mode HUD.
-`make app-debug` builds `VietMac Debug.app` with a `Simulator (Debug)` submenu. `make snapshots` renders every screen to `.artifacts/ux-snapshots`. `make app` builds Release, which has neither.
+`make app-debug` builds `GoDau Debug.app` with a `Simulator (Debug)` submenu. `make snapshots` renders every screen to `.artifacts/ux-snapshots`. `make app` builds Release, which has neither.
 See [the manual test guide](../../docs/verification/ux-shell-manual-test.md).
 
 UX criteria that stay with `telex-input-mvp` (they need the full M2 runtime or native acceptance): UX-6 (try-it typing), UX-7 mode part, UX-9 to UX-11 (title timing in real apps, word-level holds, shortcut press with VoiceOver and focus), UX-14 (`transportUncertain` in the field), UX-15 (exclusion in real typing), UX-16 (login registration states), UX-19 (single instance), UX-21 (report contents after typing), UX-23 (login-item launch), and UX-24 (profile table after acceptance).
@@ -30,15 +30,15 @@ Opening settings does not grant permissions. Son must enable Accessibility and I
 Do not run another Vietnamese event-transforming app during native acceptance; keep the input source at ABC or U.S.
 
 ```sh
-.artifacts/VietMac.app/Contents/MacOS/VietMac --diagnostics
+.artifacts/GoDau.app/Contents/MacOS/VietMac --diagnostics
 ```
 
 Diagnostics exits without an event tap or permission prompt and identifies the capability state of the invoked process.
 A successful command is not proof of a Launch Services app session or native input.
 
 ```sh
-open .artifacts/VietMac.app --args --evidence-dir "$PWD/.artifacts/native/session-1"
-kill -USR1 "$(pgrep -f 'VietMac.app/Contents/MacOS/VietMac')"
+open .artifacts/GoDau.app --args --evidence-dir "$PWD/.artifacts/native/session-1"
+kill -USR1 "$(pgrep -f 'GoDau.app/Contents/MacOS/VietMac')"
 ```
 
 `--evidence-dir` takes an absolute path. The running app writes `session-diagnostics.json` (capabilities, state, tap, context counters) and `callback-timings.json` at launch and on `SIGUSR1`, outside the key callback.

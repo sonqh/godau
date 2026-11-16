@@ -39,8 +39,8 @@ Do these steps once before the first check. Every command runs in the repository
 
    | Section | Bundle | Command |
    | --- | --- | --- |
-   | A. Simulator checks | Debug | `open ".artifacts/VietMac Debug.app"` |
-   | B. Live checks | Release | `open .artifacts/VietMac.app` |
+   | A. Simulator checks | Debug | `open ".artifacts/GoDau Debug.app"` |
+   | B. Live checks | Release | `open .artifacts/GoDau.app` |
 
    Do not run the Debug and the Release bundle at the same time. Two running bundles may replace the same keys twice (not tested).
 7. Check that the app runs: `VI` or `EN` appears in the menu bar.
@@ -86,8 +86,8 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 
 ```sh
 export VIETMAC_SIGNING_IDENTITY="VietMac Local Signing"   # trusted identity: grants survive rebuilds
-make app-debug     # .artifacts/VietMac Debug.app: Simulator (Debug) submenu, bundle ID local.sonquach.vietmac.debug
-make app           # .artifacts/VietMac.app: Release, no simulator
+make app-debug     # .artifacts/GoDau Debug.app: Simulator (Debug) submenu, bundle ID local.sonquach.vietmac.debug
+make app           # .artifacts/GoDau.app: Release, no simulator
 make snapshots     # .artifacts/ux-snapshots: every setup step, Help page, Settings tab, light and dark, VI and EN
 ```
 
@@ -108,7 +108,7 @@ B1 and the UX-1 to UX-3 checks need a bundle that has no grants and no saved set
 
 ## A. Simulator checks (no permissions needed)
 
-1. Open `VietMac Debug.app`.
+1. Open `GoDau Debug.app`.
 2. Close Setup if it opens.
 3. Click `VI`/`EN` in the menu bar.
 4. Open `Simulator (Debug) › Start Simulator`.

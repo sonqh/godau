@@ -24,7 +24,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-APP = ROOT / ".artifacts/VietMac.app"
+APP = ROOT / ".artifacts/GoDau.app"
 DRIVER = ROOT / ".artifacts/VietMacDriver.app"
 PORT = 8765
 

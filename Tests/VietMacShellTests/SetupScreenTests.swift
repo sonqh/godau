@@ -28,7 +28,7 @@ struct SetupScreenTests {
     @Test func missingGrantStep() {
         let s = screen(.inputMonitoring, english(.none))
         #expect(vi(s.indicator) == "Bước 2 / 6")
-        #expect(vi(s.heading) == "Cho phép VietMac nhận phím bạn gõ")
+        #expect(vi(s.heading) == "Cho phép Gõ Dấu nhận phím bạn gõ")
         #expect(s.instructions.count == 3)
         #expect(s.statusRow.map { vi($0.value) } == "Chưa bật")
         #expect(s.statusRow?.satisfied == false)
@@ -56,21 +56,21 @@ struct SetupScreenTests {
     @Test func postingStuckOffersRelaunchRow() {
         let caps = Capabilities(accessibility: true, eventListening: true, eventPosting: false)
         let s = screen(.accessibility, english(caps))
-        #expect(s.extraRow.map { vi($0.text) } == "Mở lại VietMac để dùng quyền bạn vừa bật.")
+        #expect(s.extraRow.map { vi($0.text) } == "Mở lại Gõ Dấu để dùng quyền bạn vừa bật.")
         #expect(s.extraRow?.button.command == .reopen)
         #expect(s.statusRow?.satisfied == false)
     }
 
     @Test func updateHeadingOnlyWhileMissing() {
         let s = screen(.accessibility, english(.none), SetupContext(updateHeading: true))
-        #expect(vi(s.heading) == "Hãy bật lại quyền cho VietMac")
+        #expect(vi(s.heading) == "Hãy bật lại quyền cho Gõ Dấu")
         let granted = screen(.accessibility, english(.all), SetupContext(updateHeading: true))
-        #expect(vi(granted.heading) == "Cho phép VietMac đổi chữ trong ô bạn đang gõ")
+        #expect(vi(granted.heading) == "Cho phép Gõ Dấu đổi chữ trong ô bạn đang gõ")
     }
 
     @Test func keyboardStepNamesWrongSourceAndNeverSwitches() {
         let s = screen(.keyboard, english(.all, source: "com.apple.inputmethod.VietnameseIM.Telex"))
-        #expect(vi(s.paragraphs[0]) == "VietMac cần bàn phím ABC hoặc U.S. Bàn phím đang chọn: **Telex**.")
+        #expect(vi(s.paragraphs[0]) == "Gõ Dấu cần bàn phím ABC hoặc U.S. Bàn phím đang chọn: **Telex**.")
         #expect(s.statusRow.map { vi($0.value) } == "Telex ✗")
         #expect(s.instructions == [LocalizedText("setup.keyboard.wrongSource")])
         #expect(s.primary.command == .openKeyboardSettings)

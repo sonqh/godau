@@ -200,7 +200,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, ShellRouter {
             try data.write(to: url, options: .atomic)
         } catch {
             let alert = NSAlert()
-            alert.messageText = controller?.strings("menu.saveReport") ?? "VietMac"
+            alert.messageText = controller?.strings("menu.saveReport") ?? "Gõ Dấu"
             alert.informativeText = error.localizedDescription
             alert.runModal()
         }

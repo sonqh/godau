@@ -20,8 +20,8 @@ struct StatusPresentationTests {
         #expect(p.uiClass == .active)
         #expect(p.title == "VI")
         #expect(p.badge == .none)
-        #expect(vi(p.accessibilityLabel) == "VietMac: tiếng Việt")
-        #expect(en(p.accessibilityLabel) == "VietMac: Vietnamese")
+        #expect(vi(p.accessibilityLabel) == "Gõ Dấu: tiếng Việt")
+        #expect(en(p.accessibilityLabel) == "Gõ Dấu: Vietnamese")
         #expect(vi(p.statusLine) == "Tiếng Việt: đang bật")
         #expect(p.detailLine == nil)
         #expect(p.nextStep == nil)
@@ -32,16 +32,16 @@ struct StatusPresentationTests {
         let p = StatusPresentation(status: makeStatus(mode: .english, availability: .off, capabilities: caps))
         #expect(p.title == "EN")
         #expect(p.badge == .triangle)
-        #expect(vi(p.accessibilityLabel) == "VietMac: tiếng Anh, có quyền chưa bật")
-        #expect(en(p.accessibilityLabel) == "VietMac: English, a permission is off")
-        #expect(vi(p.statusLine) == "Tiếng Anh: VietMac không đổi chữ")
+        #expect(vi(p.accessibilityLabel) == "Gõ Dấu: tiếng Anh, có quyền chưa bật")
+        #expect(en(p.accessibilityLabel) == "Gõ Dấu: English, a permission is off")
+        #expect(vi(p.statusLine) == "Tiếng Anh: Gõ Dấu không đổi chữ")
     }
 
     @Test func englishWithAllGrantsHasNoBadgeOrDetail() {
         let p = StatusPresentation(status: makeStatus(mode: .english, availability: .off))
         #expect(p.badge == .none)
         #expect(p.detailLine == nil)
-        #expect(en(p.accessibilityLabel) == "VietMac: English")
+        #expect(en(p.accessibilityLabel) == "Gõ Dấu: English")
     }
 
     @Test func listeningIsNotRequiredWhenTheGateIsRemoved() {
@@ -59,7 +59,7 @@ struct StatusPresentationTests {
             #expect(p.title == "VI")
             #expect(p.badge == (quiet ? .none : .pause), "\(reason)")
             #expect(p.uiClass == (quiet ? .standbyQuiet : .standbyShown))
-            #expect(vi(p.accessibilityLabel) == (quiet ? "VietMac: tiếng Việt" : "VietMac: tiếng Việt, tạm dừng ở đây"))
+            #expect(vi(p.accessibilityLabel) == (quiet ? "Gõ Dấu: tiếng Việt" : "Gõ Dấu: tiếng Việt, tạm dừng ở đây"))
             #expect(vi(p.statusLine) == "Tiếng Việt: tạm dừng ở đây")
         }
     }
@@ -68,7 +68,7 @@ struct StatusPresentationTests {
         for reason in BlockReason.allCases {
             let p = StatusPresentation(status: makeStatus(availability: .blocked(reason), conflicting: "com.tuyenmai.openkey"))
             #expect(p.badge == .triangle)
-            #expect(vi(p.accessibilityLabel) == "VietMac: tiếng Việt, cần xử lý")
+            #expect(vi(p.accessibilityLabel) == "Gõ Dấu: tiếng Việt, cần xử lý")
             #expect(en(p.statusLine) == "Vietnamese: Needs Attention")
             #expect(p.detailLine != nil)
             #expect(p.nextStep != nil, "\(reason)")
@@ -83,41 +83,41 @@ struct StatusPresentationTests {
              "Bật quyền Trợ năng…", "Turn On Accessibility…", .openSetup(.accessibility)),
             (.blocked(.listening), "Quyền Theo dõi đầu vào chưa bật.", "The Input Monitoring permission is off.",
              "Bật quyền Theo dõi đầu vào…", "Turn On Input Monitoring…", .openSetup(.inputMonitoring)),
-            (.blocked(.posting), "VietMac chưa gửi phím được.", "VietMac cannot send keys yet.",
-             "Mở lại VietMac", "Reopen VietMac", .relaunch),
+            (.blocked(.posting), "Gõ Dấu chưa gửi phím được.", "Gõ Dấu cannot send keys yet.",
+             "Mở lại Gõ Dấu", "Reopen Gõ Dấu", .relaunch),
             (.blocked(.unsupportedSource), "Bàn phím đang là Telex. Hãy chọn ABC.", "The keyboard is Telex. Select ABC.",
              "Mở cài đặt Bàn phím…", "Open Keyboard Settings…", .openKeyboardSettings),
             (.blocked(.conflictingTool), "openkey cũng đang đổi chữ bạn gõ.", "openkey also changes what you type.",
              "Cách thoát openkey…", "How to Quit openkey…", .openHelp(.otherTool)),
-            (.blocked(.tapUnavailable), "VietMac chưa nhận được phím.", "VietMac cannot receive keys.",
+            (.blocked(.tapUnavailable), "Gõ Dấu chưa nhận được phím.", "Gõ Dấu cannot receive keys.",
              "Thử lại", "Try Again", .resume),
-            (.blocked(.userDisabledTap), "macOS đã tạm dừng việc nhận phím của VietMac.",
-             "macOS stopped the key input of VietMac.", "Tiếp tục gõ tiếng Việt", "Resume Vietnamese", .resume),
-            (.blocked(.recoveryLimit), "VietMac tạm dừng vì máy phản hồi chậm nhiều lần.",
-             "VietMac paused because the Mac responded slowly several times.",
+            (.blocked(.userDisabledTap), "macOS đã tạm dừng việc nhận phím của Gõ Dấu.",
+             "macOS stopped the key input of Gõ Dấu.", "Tiếp tục gõ tiếng Việt", "Resume Vietnamese", .resume),
+            (.blocked(.recoveryLimit), "Gõ Dấu tạm dừng vì máy phản hồi chậm nhiều lần.",
+             "Gõ Dấu paused because the Mac responded slowly several times.",
              "Tiếp tục gõ tiếng Việt", "Resume Vietnamese", .resume),
-            (.blocked(.transportUncertain), "VietMac tạm dừng để giữ an toàn cho chữ. Hãy xem lại từ bạn vừa gõ.",
-             "VietMac paused to keep your text safe. Check the last word you typed.",
+            (.blocked(.transportUncertain), "Gõ Dấu tạm dừng để giữ an toàn cho chữ. Hãy xem lại từ bạn vừa gõ.",
+             "Gõ Dấu paused to keep your text safe. Check the last word you typed.",
              "Tiếp tục gõ tiếng Việt", "Resume Vietnamese", .resume),
             (.standby(.secureInput), "Một ô mật khẩu hoặc chế độ nhập an toàn đang bật. Tiếng Việt tạm dừng.",
              "A password field or secure input is on. Vietnamese is paused.",
              "Xem lý do…", "See the Reason…", .openHelp(.password)),
-            (.standby(.passwordField), "Đây là ô mật khẩu. VietMac không đổi chữ ở đây.",
-             "This is a password field. VietMac does not change text here.", nil, nil, nil),
-            (.standby(.unsupportedApp), "VietMac chưa hỗ trợ Chrome. Chữ bạn gõ được giữ nguyên.",
-             "VietMac does not support Chrome yet. Your text stays as typed.",
+            (.standby(.passwordField), "Đây là ô mật khẩu. Gõ Dấu không đổi chữ ở đây.",
+             "This is a password field. Gõ Dấu does not change text here.", nil, nil, nil),
+            (.standby(.unsupportedApp), "Gõ Dấu chưa hỗ trợ Chrome. Chữ bạn gõ được giữ nguyên.",
+             "Gõ Dấu does not support Chrome yet. Your text stays as typed.",
              "Xem ứng dụng được hỗ trợ…", "See Supported Apps…", .openSettings(.apps)),
             (.standby(.excludedApp), "Bạn đã tắt tiếng Việt trong Chrome.", "You turned off Vietnamese in Chrome.",
              "Bật lại tiếng Việt trong Chrome", "Turn On Vietnamese in Chrome",
              .removeExclusion(bundleID: "com.google.Chrome")),
-            (.standby(.unsupportedField), "VietMac chưa hỗ trợ Thanh địa chỉ trong Chrome.",
-             "VietMac does not support Address bar in Chrome yet.",
+            (.standby(.unsupportedField), "Gõ Dấu chưa hỗ trợ Thanh địa chỉ trong Chrome.",
+             "Gõ Dấu does not support Address bar in Chrome yet.",
              "Xem ứng dụng được hỗ trợ…", "See Supported Apps…", .openSettings(.apps)),
             (.standby(.noTextField), "Chưa chọn ô để gõ.", "No text field is selected.", nil, nil, nil),
-            (.standby(.fieldUnreadable), "VietMac không kiểm tra được ô này. Chữ bạn gõ được giữ nguyên.",
-             "VietMac cannot check this field. Your text stays as typed.", nil, nil, nil),
-            (.standby(.sleeping), "Máy vừa ngủ. VietMac sẽ tự chạy lại.",
-             "The Mac was asleep. VietMac starts again automatically.", nil, nil, nil),
+            (.standby(.fieldUnreadable), "Gõ Dấu không kiểm tra được ô này. Chữ bạn gõ được giữ nguyên.",
+             "Gõ Dấu cannot check this field. Your text stays as typed.", nil, nil, nil),
+            (.standby(.sleeping), "Máy vừa ngủ. Gõ Dấu sẽ tự chạy lại.",
+             "The Mac was asleep. Gõ Dấu starts again automatically.", nil, nil, nil),
         ]
         for (availability, detailVI, detailEN, actionVI, actionEN, action) in rows {
             let status = makeStatus(availability: availability, inputSourceID: "com.apple.inputmethod.VietnameseIM.Telex",
@@ -135,7 +135,7 @@ struct StatusPresentationTests {
         let p = StatusPresentation(status: makeStatus(availability: .blocked(.tapUnavailable)),
                                    context: PresentationContext(tapRetryFailed: true))
         #expect(p.nextStep == NextStep(title: LocalizedText("action.reopen"), action: .relaunch))
-        #expect(en(p.nextStep!.title) == "Reopen VietMac")
+        #expect(en(p.nextStep!.title) == "Reopen Gõ Dấu")
     }
 
     @Test func noSurfaceSaysOnUnlessActive() {

@@ -1,8 +1,10 @@
-# VietMac
+# Gõ Dấu
 
 Vietnamese input for macOS. Private repository: [sonqh/vietmac](https://github.com/sonqh/vietmac).
 
-VietMac is the base of Son's personal Vietnamese input app for macOS.
+Gõ Dấu is Son's personal Vietnamese input app for macOS. The app was renamed from VietMac on 2026-11-16.
+The repository, Swift modules, scripts, and bundle ID (`local.sonquach.vietmac`) keep the VietMac name,
+so macOS permissions survive the rename. The built bundle is `.artifacts/GoDau.app`.
 You type Telex, and VietMac replaces the keys with precomposed Unicode through generated events.
 It does not use marked text.
 The app must work in five applications: VS Code, Chrome, Dia, Safari, and Apple Notes.
@@ -30,13 +32,13 @@ make bench
 make app
 ```
 
-`make app` builds `.artifacts/VietMac.app` and signs it locally. It does not open or install the app.
+`make app` builds `.artifacts/GoDau.app` and signs it locally. It does not open or install the app.
 
 ### Open and inspect the app
 
 - Signing is ad hoc by default. To sign with a local identity you chose, set `VIETMAC_SIGNING_IDENTITY`.
-- For a read-only capability snapshot, run `.artifacts/VietMac.app/Contents/MacOS/VietMac --diagnostics`. This command creates no event tap.
-- To record evidence, open the app with `open .artifacts/VietMac.app --args --evidence-dir <absolute path>`. The app records the session's capabilities, context counters, and callback timings. Send `SIGUSR1` to refresh the record.
+- For a read-only capability snapshot, run `.artifacts/GoDau.app/Contents/MacOS/VietMac --diagnostics`. This command creates no event tap.
+- To record evidence, open the app with `open .artifacts/GoDau.app --args --evidence-dir <absolute path>`. The app records the session's capabilities, context counters, and callback timings. Send `SIGUSR1` to refresh the record.
 - Before you enable the prototype, read [M0 verification and pending native checks](docs/verification/macos-transport-spike.md).
 
 ### Toolchain

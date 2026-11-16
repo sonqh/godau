@@ -1,13 +1,13 @@
 #!/bin/sh
 # Usage: build-app.sh [release|debug]
-# release (default): .artifacts/VietMac.app, no Debug simulator.
-# debug: .artifacts/VietMac Debug.app with bundle ID local.sonquach.vietmac.debug and the status simulator.
+# release (default): .artifacts/GoDau.app, no Debug simulator.
+# debug: .artifacts/GoDau Debug.app with bundle ID local.sonquach.vietmac.debug and the status simulator.
 set -eu
 cd "$(dirname "$0")/.."
 vietmac_config=${1:-release}
 case "$vietmac_config" in
-    release) vietmac_bundle=.artifacts/VietMac.app ;;
-    debug) vietmac_bundle=".artifacts/VietMac Debug.app" ;;
+    release) vietmac_bundle=.artifacts/GoDau.app ;;
+    debug) vietmac_bundle=".artifacts/GoDau Debug.app" ;;
     *) printf '%s\n' "Unknown configuration: $vietmac_config" >&2; exit 2 ;;
 esac
 ./scripts/swift.sh build -c "$vietmac_config" --product VietMacApp
@@ -18,7 +18,7 @@ cp Apps/VietMac/Info.plist "$vietmac_bundle/Contents/Info.plist"
 if [ "$vietmac_config" = debug ]; then
     # A separate identity keeps Debug grants and preferences apart from the Release build.
     plutil -replace CFBundleIdentifier -string local.sonquach.vietmac.debug "$vietmac_bundle/Contents/Info.plist"
-    plutil -replace CFBundleDisplayName -string "VietMac Debug" "$vietmac_bundle/Contents/Info.plist"
+    plutil -replace CFBundleDisplayName -string "Gõ Dấu Debug" "$vietmac_bundle/Contents/Info.plist"
 fi
 # The string catalog is read at runtime, so it is copied, not compiled.
 cp Sources/VietMacShell/Resources/Localizable.xcstrings "$vietmac_bundle/Contents/Resources/Localizable.xcstrings"
