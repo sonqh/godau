@@ -1,4 +1,4 @@
-.PHONY: setup check test test-sanitize replay bench bench-engine app app-debug snapshots driver specs ledger
+.PHONY: setup check test test-sanitize replay bench bench-engine app app-debug install icon snapshots driver specs ledger
 
 setup:
 	npm ci --ignore-scripts --no-audit --no-fund
@@ -33,6 +33,14 @@ app:
 
 app-debug:
 	./scripts/build-app.sh debug
+
+# Regenerates Apps/VietMac/AppIcon.icns from scripts/make-icon.swift.
+icon:
+	./scripts/make-icon.sh
+
+# Builds the Release app and installs it to /Applications/GoDau.app, replacing and reopening a running copy.
+install: app
+	./scripts/install-app.sh
 
 # Renders every setup step, Help page, Settings tab, and the menu text for every reason (Debug only).
 snapshots: app-debug
