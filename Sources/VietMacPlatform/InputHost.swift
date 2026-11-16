@@ -36,6 +36,11 @@ public final class InputHost {
     /// The focused field has the `addressBar` profile: `eventOnly` (no settled observation is required before a
     /// replacement), and a forward Delete first while the caret is at the end.
     private var addressBarField = false
+    /// The focused field has an event-only profile (`addressBar` or `vscodeEditor`).
+    private var eventOnlyField = false
+    /// Element hash of the last VS Code editor that had focus. VS Code moves Accessibility focus to an
+    /// `AXStaticText` (the suggestion widget) and back while you type; that round trip keeps the word.
+    private var vscodeEditorHash: UInt?
     private var addressBarCaretAtEnd = false
     private var addressBarCompletionShown = false
     private var lastTrackedKeyNanos: UInt64 = 0
@@ -149,10 +154,25 @@ public final class InputHost {
 
     /// Compares observed caret/length with predicted key effects. Returns whether a caret is known.
     private func observeFocus(source: String) -> Bool {
-        let inspected = focus.inspect(pid: pid, bundleID: frontmostBundleID,
+        let inspection = focus.inspect(pid: pid, bundleID: frontmostBundleID,
                                       allowed: permissions.accessibility && supportedApp && !sleeping)
+        var inspected = inspection
+        if let hash = vscodeEditorHash, frontmostBundleID == "com.microsoft.VSCode" {
+            if inspected.role == kAXStaticTextRole as String {
+                // Suggestion widget: keystrokes still reach the editor. Keep the editor's profile and word.
+                counters.vscodeFocusBounces &+= 1
+                trace.append(source: source, inspection: inspected, result: .consistent,
+                             keysSincePrevious: keysSinceObservation, field: field,
+                             holding: pipeline.literalUntilBoundary)
+                keysSinceObservation = 0
+                return true
+            }
+            if inspected.vscodeEditor, inspected.elementHash == hash { inspected.changed = false }
+        }
+        vscodeEditorHash = inspected.vscodeEditor ? inspected.elementHash : nil
         addressBarField = inspected.addressBar
-        if inspected.addressBar {
+        eventOnlyField = inspected.addressBar || inspected.vscodeEditor
+        if eventOnlyField {
             // Event-only profile: keep focus and reading resets, skip prediction checks.
             if inspected.changed {
                 counters.focusChanges &+= 1
@@ -160,7 +180,12 @@ public final class InputHost {
             }
             field.reset()
             let certain: Bool
-            if case .caret(let snapshot) = inspected.field {
+            if inspected.vscodeEditor {
+                // FG-1 option B: the default-mode editor reports nothing usable; keys alone drive the word.
+                addressBarCaretAtEnd = false
+                addressBarCompletionShown = false
+                certain = true
+            } else if case .caret(let snapshot) = inspected.field {
                 addressBarCaretAtEnd = snapshot.caret == snapshot.length
                 addressBarCompletionShown = inspected.completionShown
                 certain = true
@@ -335,7 +360,7 @@ public final class InputHost {
             case .replace(let edit):
                 // Require an observation after every tracked key before deleting anything, except in an
                 // event-only address bar.
-                guard addressBarField
+                guard eventOnlyField
                         || ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
                     expectPassThrough(input, keyCode: code, previous: before)
                     return original
@@ -345,6 +370,7 @@ public final class InputHost {
                     let prepared = try transport.prepare(plan, insertionKeyCode: CGKeyCode(edit.keyCode),
                                                          leadingKey: completionClearKey)
                     if addressBarField { counters.addressBarReplacements &+= 1 }
+                    else if eventOnlyField { counters.vscodeEditorReplacements &+= 1 }
                     let result = transport.send(prepared, isCurrent: { pipeline.isCurrent(edit) }, post: {
                         $0.tapPostEvent(proxy)
                         return true // A void OS post is not client acknowledgement.

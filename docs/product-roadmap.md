@@ -200,6 +200,7 @@ UX measures are recorded by observation or from reports Son exports. No typed te
 One list for both documents. Details: architecture-spec section 12 and ux-spec section 16.
 
 Son's answers, 2026-11-12: FG-2 yes, FG-3 yes, FG-4 yes with the stated conditions. FG-1 waits for U-1 and FG-5 waits for U-6.
+FG-1: Son chose C on 2026-11-14, then B (`eventOnly`) on 2026-11-15. Implemented 2026-11-16 for the editor only, as the `vscodeEditor` profile: VS Code's default-mode text area whose description starts with "The editor is not accessible" (English UI). Quick Open reports caret and length, so it stays an observed field. Native acceptance pending.
 The OpenSpec changes carry these answers: `telex-input-mvp` (amended), `macos-transport-spike` (tasks 3.0 and 3.2), and the new `ux-shell`.
 
 | ID | Decision | Blocks | Recommendation (architect and product owner agree) |

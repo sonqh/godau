@@ -18,7 +18,7 @@ enum FieldReading: Equatable {
 
 /// Metadata for the diagnostic trace. Contains no document text.
 struct FocusInspection {
-    let changed: Bool
+    var changed: Bool
     let field: FieldReading
     var role: String? = nil
     var elementHash: UInt? = nil
@@ -27,6 +27,8 @@ struct FocusInspection {
     var addressBar = false
     /// An address bar showed an inline completion in this reading.
     var completionShown = false
+    /// The focused element is the VS Code editor in its default mode (`vscodeEditor` profile, FG-1 option B).
+    var vscodeEditor = false
 }
 
 /// Reads identity, selected range, and character count only, never document or typed text.
@@ -40,6 +42,7 @@ final class FocusMonitor {
     private var bundleID: String?
     /// Address-bar identity of `element`, resolved once per focused-element change.
     private var elementIsAddressBar = false
+    private var elementIsVSCodeEditor = false
     var onNotification: (() -> Void)?
 
     func stop() {
@@ -95,6 +98,7 @@ final class FocusMonitor {
             element = focused
             AXUIElementSetMessagingTimeout(focused, 0.05)
             elementIsAddressBar = Self.isAddressBar(focused, bundleID: bundleID)
+            elementIsVSCodeEditor = Self.isVSCodeEditor(focused, bundleID: bundleID)
             if let observer {
                 // Value changes can be external edits that keep the same caret.
                 for name in Self.elementNotifications {
@@ -108,9 +112,10 @@ final class FocusMonitor {
         AXUIElementCopyAttributeValue(focused, kAXSubroleAttribute as CFString, &subrole)
         let roleName = role as? String
         let addressBar = elementIsAddressBar
+        let vscodeEditor = elementIsVSCodeEditor
         func result(_ field: FieldReading, completion: Bool = false) -> FocusInspection {
             FocusInspection(changed: changed, field: field, role: roleName, elementHash: CFHash(focused),
-                            addressBar: addressBar, completionShown: completion)
+                            addressBar: addressBar, completionShown: completion, vscodeEditor: vscodeEditor)
         }
         guard let roleName, [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(roleName) else {
             return result(.unavailable(.unsupportedRole))
@@ -138,6 +143,18 @@ final class FocusMonitor {
             return result(.caret(FieldSnapshot(caret: range.location, length: range.location)), completion: true)
         }
         return result(.caret(FieldSnapshot(caret: range.location, length: length)))
+    }
+
+    /// The VS Code editor in default mode: a text area whose description says the editor is not accessible
+    /// (verified 2026-10-15, VS Code 1.141, English UI). Screen-reader mode and other UI languages do not match.
+    static func isVSCodeEditor(_ element: AXUIElement, bundleID: String?) -> Bool {
+        guard bundleID == "com.microsoft.VSCode" else { return false }
+        var role: CFTypeRef?
+        var description: CFTypeRef?
+        AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &role)
+        AXUIElementCopyAttributeValue(element, kAXDescriptionAttribute as CFString, &description)
+        return role as? String == kAXTextAreaRole
+            && (description as? String)?.hasPrefix("The editor is not accessible") == true
     }
 
     /// Browsers whose address bar has the `addressBar` profile.

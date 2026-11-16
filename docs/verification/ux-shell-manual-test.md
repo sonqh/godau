@@ -76,7 +76,7 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 - After a click or an app switch, the first word transforms at once (Son, 2026-11-15). After a click inside a word, the new letters form a word of their own. Letters typed right after ⌘Tab, before VietMac can read the new field, transform only if the field held nothing else. (Changed on 2026-11-15. Retest B17.)
 - Address bars in Chrome, Dia, and Safari transform words even while a suggestion is shown (2026-11-16). Retest B17 in the address bar.
 - The mode shortcut can be ⌃⇧ alone: press both, release both, with no other key. (Added on 2026-11-15. Retest B9.)
-- FG-1 (Son, 2026-11-14): option C. The VS Code editor and Quick Open stay literal in v0.1.
+- FG-1 (Son, 2026-11-15): option B. The VS Code editor (English UI, default mode) transforms with the event-only profile. Quick Open stays an observed field.
 - No field profile is accepted yet, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.
 - The mode shortcut is a system hot key, because M0 has no shortcut matching in the key callback. VietMac registers it only while `shortcutArmed` is true.
 - `⌃⌥V` is a candidate shortcut. Its conflicts in the five apps are unknown (PD-1).
@@ -168,4 +168,5 @@ Write one row for each check. Result is `pass`, `fail`, or `partial`. For `fail`
 | B17 (outside scope) | fail | `7dbe773`, Release | 27.0.1 | VS Code, Claude extension prompt (webview) | 2026-11-15. Some words stayed literal in the middle of a sentence, for example `Truowngf`, `dduowjc`, `suwr`, `ddang`, while nearby words changed. Not one of the five accepted fields. FG-1 keeps the VS Code editor literal |
 | B9 (Setup step 6) | fail | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. Son pressed ⌃⇧ (modifier only). The spec rejects this gesture, but the recorder showed no message: it listens to key-down events only, so it never sees a modifier-only gesture |
 | B17 (address bar) | pass | `f180902`, Release | 27.0.1 | Chrome, Dia, Safari address bars | 2026-11-16. Physical typing: `dd`, `oo`, `as` transform while a suggestion is shown |
+| B17 (VS Code editor) | pass | `5980f93`+FG-1 B, Release | 27.0.1 | VS Code editor | 2026-11-16. Physical typing: `đường người hoàn khuỷu thuở quý gì`, also while the suggestion popup shows (FG-1 option B, event-only) |
 | B12 (Setup step 6) | known limit | `7dbe773`, Release | 27.0.1 | VietMac Setup, step 6 | 2026-11-15. The login line says `macOS cannot find VietMac to register it.` Expected while the bundle is under `.artifacts` (U-7) |

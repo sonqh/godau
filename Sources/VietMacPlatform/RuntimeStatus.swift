@@ -94,6 +94,10 @@ public struct ContextCounters: Encodable, Equatable, Sendable {
     public var placeholderRebases: UInt64 = 0
     /// Replacements sent in an address bar under the event-only profile.
     public var addressBarReplacements: UInt64 = 0
+    /// Replacements sent in the VS Code editor under the event-only profile (FG-1 option B).
+    public var vscodeEditorReplacements: UInt64 = 0
+    /// VS Code moved Accessibility focus from the editor to a static text (suggestion widget); ignored.
+    public var vscodeFocusBounces: UInt64 = 0
 
     public init() {}
 }
