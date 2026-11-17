@@ -66,6 +66,8 @@ struct FocusInspection {
     /// The focused element is the VS Code editor in its default mode (`vscodeEditor` profile, FG-1 option B).
     var vscodeEditor = false
     var capability = FieldCapability.noTextField
+    /// Frontmost application, for the diagnostic trace. Set by the host.
+    var bundleID: String? = nil
 
     /// Keys alone drive the word and no reading is needed. Identified profiles come before capability.
     var keysOnly: Bool { vscodeEditor || (!addressBar && capability == .eventOnly) }

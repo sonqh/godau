@@ -30,10 +30,10 @@ Native tasks stay pending until real application evidence exists. A passing mode
 
 ## 5. Native verification
 
-- [ ] 5.1 Type the scripted Telex words in one `observed` field outside the required five (for example TextEdit); record application version, macOS version, counters, and result in the ledger
+- [x] 5.1 Type the scripted Telex words in one `observed` field outside the required five (for example TextEdit); record application version, macOS version, counters, and result in the ledger
 - [ ] 5.2 Type the scripted Telex words in one `eventOnly` field outside the required five, chosen from the 1.1 probe; record `eventOnlyReplacements` and the result
-- [ ] 5.3 Type `as` with a non-text focus (for example a Finder file list) and confirm that no Backspace is posted and nothing is deleted; record the result
-- [ ] 5.4 Repeat one Telex scenario in each of the five required applications and confirm the counters show no new `unexplainedFieldChanges` or `replacementsUnconfirmed` against the 2026-11-16 evidence
+- [x] 5.3 Type `as` with a non-text focus (for example a Finder file list) and confirm that no Backspace is posted and nothing is deleted; record the result
+- [ ] 5.4 (2026-11-17: typing is correct in all five by Son's report, but `unexplainedFieldChanges` rose to 41 against 2 on 2026-11-16 and cannot be attributed without the bundle ID in the trace; repeat with the next build.) Repeat one Telex scenario in each of the five required applications and confirm the counters show no new `unexplainedFieldChanges` or `replacementsUnconfirmed` against the 2026-11-16 evidence
 
 ## Workflow follow-up
 

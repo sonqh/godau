@@ -166,6 +166,7 @@ public final class InputHost {
                                       allowed: permissions.accessibility && !appExcluded && !sleeping
                                           && pid != ProcessInfo.processInfo.processIdentifier)
         var inspected = inspection
+        inspected.bundleID = frontmostBundleID
         let inVSCode = frontmostBundleID == "com.microsoft.VSCode"
         if let hash = vscodeFieldHash, inVSCode {
             if inspected.role == kAXStaticTextRole as String {

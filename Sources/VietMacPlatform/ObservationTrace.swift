@@ -2,6 +2,9 @@
 public struct ObservationRecord: Encodable, Sendable {
     public let sequence: UInt64
     public let source: String
+    /// Frontmost application and the capability chosen for the field. Identity only, never content.
+    public let bundleID: String?
+    public let capability: String
     public let role: String?
     public let elementHash: UInt?
     public let focusChanged: Bool
@@ -41,7 +44,8 @@ public struct ObservationTrace {
         case .selection: reading = "selection"
         case .unavailable(let reason): reading = "unavailable:\(reason.rawValue)"
         }
-        let record = ObservationRecord(sequence: sequence, source: source, role: inspection.role,
+        let record = ObservationRecord(sequence: sequence, source: source, bundleID: inspection.bundleID,
+            capability: "\(inspection.capability)", role: inspection.role,
             elementHash: inspection.elementHash, focusChanged: inspection.changed, reading: reading,
             caret: caret, length: length, result: "\(result)", keysSincePrevious: keysSincePrevious,
             pendingAfter: field.pendingCount, settledAfter: field.isSettled, holdingAfter: holding)
