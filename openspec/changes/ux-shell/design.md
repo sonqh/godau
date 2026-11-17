@@ -40,7 +40,7 @@ Trade-off: the types exist before the pipeline produces all of them. `active(.ev
 | input source, frontmost bundle ID | `inputSourceID`, `frontmostBundleID` |
 | `paused(accessibility/listening/posting/unsupportedSource/tapUnavailable/recoveryLimit/userDisabledTap/transportUncertain)` | `blocked` with the same reason |
 | `paused(secureInput)` | `standby(secureInput)` |
-| `paused(unsupportedApp)` | `standby(unsupportedApp)` |
+| `paused(excludedApp)` (was `unsupportedApp` before `open-app-coverage`) | `standby(excludedApp)` |
 | `paused(uncertainContext)` | `standby(fieldUnreadable)` |
 | `paused(sleeping)` | `standby(sleeping)` |
 

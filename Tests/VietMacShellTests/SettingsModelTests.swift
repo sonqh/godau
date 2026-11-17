@@ -85,15 +85,25 @@ struct SettingsTabTests {
         #expect(tab.rows.map(\.typesVietnamese) == [true, false, true, true, true])
         #expect(tab.rows[0].fields.map { vi($0.name) } == ["Ô chữ trên trang web", "Thanh địa chỉ"])
         #expect(tab.rows[3].fields.map { vi($0.name) } == ["Trình soạn thảo", "Tìm", "Ô lệnh nhanh"])
-        // No profile is accepted yet, so no row claims support (UX-24).
-        #expect(tab.rows.allSatisfy { $0.fields.allSatisfy { vi($0.state) == "Chưa hỗ trợ" } })
+        // The label is evidence only: Find and Notes have none, and no row says "supported".
+        #expect(tab.rows[3].fields.map { vi($0.state) } == ["Đã kiểm thử, kiểm tra giảm ⓘ", "Chưa kiểm thử", "Đã kiểm thử ✓"])
+        #expect(tab.rows[4].fields.map { vi($0.state) } == ["Chưa kiểm thử"])
     }
 
-    @Test func acceptedProfileShowsSupported() {
+    @Test func testedLabelFollowsTheProfile() {
         let catalog = ProfileCatalog(profiles: [
-            .init(id: "chrome.webText", bundleID: "com.google.Chrome", field: .webText, accepted: true),
+            .init(id: "chrome.webText", bundleID: "com.google.Chrome", field: .webText, tested: true),
         ])
-        #expect(en(AppsTab(catalog: catalog, excluded: []).rows[0].fields[0].state) == "Supported ✓")
+        #expect(en(AppsTab(catalog: catalog, excluded: []).rows[0].fields[0].state) == "Tested ✓")
+    }
+
+    @Test func excludedAppOutsideTheListGetsARowWithoutFields() {
+        let tab = AppsTab(catalog: .stub, excluded: ["com.tinyspeck.slackmacgap"])
+        #expect(tab.rows.count == 6)
+        #expect(tab.rows[5].bundleID == "com.tinyspeck.slackmacgap")
+        #expect(tab.rows[5].fields.isEmpty)
+        #expect(!tab.rows[5].typesVietnamese)
+        #expect(tab.rows.prefix(5).map(\.typesVietnamese) == [true, true, true, true, true])
     }
 
     @Test func statusTabHasNoPostingRow() {

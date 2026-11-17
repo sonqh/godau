@@ -47,16 +47,16 @@ The app SHALL offer an optional shortcut containing a non-modifier key and at le
 - **AND** modifier-release sequences alone do not toggle mode
 
 ### Requirement: Tested-context gating and exclusions
-Transformation SHALL be enabled only in a field that resolves to an accepted compiled field profile, with ABC or U.S. input sources. Resolution SHALL run once per focused-element change outside the key callback and SHALL NOT read a field value, selected text, title, or URL. A user exclusion SHALL override support. Unsupported or unidentifiable contexts, password fields, and terminal surfaces SHALL preserve ordinary input and invalidate composition.
+Transformation SHALL be enabled in every application the user has not excluded, with ABC or U.S. input sources, in a field whose assurance the `field-coverage` capability (change `open-app-coverage`) selects. Selection SHALL NOT read a field value, selected text, title, or URL. A user exclusion SHALL override availability. Non-text focus, unreadable fields, and password fields SHALL preserve ordinary input and invalidate composition. A field profile SHALL be an evidence label, not a gate.
 
-#### Scenario: Profile is not accepted
-- **WHEN** the focused field resolves to `notes.text` and that profile is not accepted
-- **THEN** ordinary input passes through and the status is Standby `unsupportedField`
-- **AND** only a native test launch argument can enable it, and diagnostics then report `testSession`
+#### Scenario: Profile has no native evidence
+- **WHEN** the focused field resolves to `notes.text` and that profile has no accepted native evidence
+- **THEN** transformation follows the field's reported capability
+- **AND** Settings labels the field as untested
 
-#### Scenario: A required supported field is active
-- **WHEN** Vietnamese mode is selected and an accepted field in VS Code, Chrome, Dia, Safari, or Apple Notes has the required capabilities
-- **THEN** transformation can become active using that field's accepted transport profile
+#### Scenario: A required field is active
+- **WHEN** Vietnamese mode is selected and a field in VS Code, Chrome, Dia, Safari, or Apple Notes reports the required capabilities
+- **THEN** transformation can become active with the assurance selected for that field
 
 #### Scenario: Renderer or helper receives the key event
 - **WHEN** a supported application uses a renderer or helper process for an accepted field
@@ -68,7 +68,7 @@ Transformation SHALL be enabled only in a field that resolves to an accepted com
 - **THEN** its fields receive ordinary literal input and no tracked word carries into or out of that app
 
 #### Scenario: Use an unsupported surface or input source
-- **WHEN** a terminal, password field, unknown field, unsupported app, or input source other than ABC or U.S. is active
+- **WHEN** a password field, a non-text focus, an unreadable field, or an input source other than ABC or U.S. is active
 - **THEN** Telex transformation is paused and ordinary input is preserved where the OS permits it
 - **AND** VietMac does not switch the system input source automatically
 

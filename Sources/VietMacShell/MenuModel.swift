@@ -1,21 +1,23 @@
 import VietMacPlatform
 
-/// Apps and field kinds from the compiled field-profile table. A stub until M2 supplies the table.
+/// The required apps and their field kinds, with an evidence label for each. It gates nothing:
+/// Vietnamese works in every app that is not excluded (open-app-coverage).
 public struct ProfileCatalog: Equatable, Sendable {
     public struct Profile: Equatable, Hashable, Sendable {
         public let id: String
         public let bundleID: String
         public let field: FieldKind
         public let assurance: Assurance
-        public let accepted: Bool
+        /// Native evidence exists for this field family. A label only.
+        public let tested: Bool
 
         public init(id: String, bundleID: String, field: FieldKind, assurance: Assurance = .observed,
-                    accepted: Bool) {
+                    tested: Bool) {
             self.id = id
             self.bundleID = bundleID
             self.field = field
             self.assurance = assurance
-            self.accepted = accepted
+            self.tested = tested
         }
     }
 
@@ -31,28 +33,28 @@ public struct ProfileCatalog: Equatable, Sendable {
         return profiles.map(\.bundleID).filter { seen.insert($0).inserted }
     }
 
-    public func hasProfile(_ bundleID: String?) -> Bool {
-        guard let bundleID else { return false }
-        return profiles.contains { $0.bundleID == bundleID }
-    }
-
     public func profiles(for bundleID: String) -> [Profile] {
         profiles.filter { $0.bundleID == bundleID }
     }
 
-    /// The ten profiles of architecture-spec 6.4. None is accepted: acceptance needs full-engine
-    /// native matrix rows, and M0 rows do not accept a profile.
+    /// The ten profiles of architecture-spec 6.4. `tested` follows the ledger: browser page fields by
+    /// native automation (2026-11-14), address bars, the VS Code editor, and Quick Open by Son's physical
+    /// typing (2026-11-16). VS Code Find and Notes have no accepted evidence.
     public static let stub = ProfileCatalog(profiles: [
-        Profile(id: "chrome.webText", bundleID: "com.google.Chrome", field: .webText, accepted: false),
-        Profile(id: "chrome.addressBar", bundleID: "com.google.Chrome", field: .addressBar, accepted: false),
-        Profile(id: "safari.webText", bundleID: "com.apple.Safari", field: .webText, accepted: false),
-        Profile(id: "safari.addressBar", bundleID: "com.apple.Safari", field: .addressBar, accepted: false),
-        Profile(id: "dia.webText", bundleID: "company.thebrowser.dia", field: .webText, accepted: false),
-        Profile(id: "dia.addressBar", bundleID: "company.thebrowser.dia", field: .addressBar, accepted: false),
-        Profile(id: "vscode.editor", bundleID: "com.microsoft.VSCode", field: .editor, accepted: false),
-        Profile(id: "vscode.find", bundleID: "com.microsoft.VSCode", field: .find, accepted: false),
-        Profile(id: "vscode.quickInput", bundleID: "com.microsoft.VSCode", field: .quickInput, accepted: false),
-        Profile(id: "notes.text", bundleID: "com.apple.Notes", field: .noteText, accepted: false),
+        Profile(id: "chrome.webText", bundleID: "com.google.Chrome", field: .webText, tested: true),
+        Profile(id: "chrome.addressBar", bundleID: "com.google.Chrome", field: .addressBar, assurance: .eventOnly,
+                tested: true),
+        Profile(id: "safari.webText", bundleID: "com.apple.Safari", field: .webText, tested: true),
+        Profile(id: "safari.addressBar", bundleID: "com.apple.Safari", field: .addressBar, assurance: .eventOnly,
+                tested: true),
+        Profile(id: "dia.webText", bundleID: "company.thebrowser.dia", field: .webText, tested: true),
+        Profile(id: "dia.addressBar", bundleID: "company.thebrowser.dia", field: .addressBar, assurance: .eventOnly,
+                tested: true),
+        Profile(id: "vscode.editor", bundleID: "com.microsoft.VSCode", field: .editor, assurance: .eventOnly,
+                tested: true),
+        Profile(id: "vscode.find", bundleID: "com.microsoft.VSCode", field: .find, tested: false),
+        Profile(id: "vscode.quickInput", bundleID: "com.microsoft.VSCode", field: .quickInput, tested: true),
+        Profile(id: "notes.text", bundleID: "com.apple.Notes", field: .noteText, tested: false),
     ])
 }
 
@@ -81,7 +83,7 @@ public struct MenuModel: Equatable, Sendable {
     ///   - exclusionsSupported: false while the host cannot apply exclusions (M0), so the item never
     ///     claims an exclusion that typing would ignore.
     public init(status: RuntimeStatus, presentation: StatusPresentation, setupComplete: Bool,
-                shortcutDisplay: String?, excluded: Set<String>, catalog: ProfileCatalog,
+                shortcutDisplay: String?, excluded: Set<String>,
                 exclusionsSupported: Bool, names: NameResolver = .fallback) {
         var items: [Item] = [.info(presentation.statusLine, secondary: false)]
         if let detail = presentation.detailLine { items.append(.info(detail, secondary: true)) }
@@ -90,7 +92,7 @@ public struct MenuModel: Equatable, Sendable {
         let chord = status.shortcutArmed ? shortcutDisplay : nil
         items.append(.mode(.vietnamese, checked: status.mode == .vietnamese, chord: chord))
         items.append(.mode(.english, checked: status.mode == .english, chord: nil))
-        if exclusionsSupported, let app = status.frontmostBundleID, catalog.hasProfile(app),
+        if exclusionsSupported, let app = status.frontmostBundleID,
            presentation.nextStep?.action != .removeExclusion(bundleID: app) {
             let isExcluded = excluded.contains(app)
             let key = isExcluded ? "menu.turnOnInApp" : "menu.turnOffInApp"

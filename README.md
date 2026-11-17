@@ -7,7 +7,8 @@ The repository, Swift modules, scripts, and bundle ID (`local.sonquach.vietmac`)
 so macOS permissions survive the rename. The built bundle is `.artifacts/GoDau.app`.
 You type Telex, and VietMac replaces the keys with precomposed Unicode through generated events.
 It does not use marked text.
-The app must work in five applications: VS Code, Chrome, Dia, Safari, and Apple Notes.
+Vietnamese works in every application you have not excluded (change `open-app-coverage`, 2026-11-17).
+Five applications are the acceptance set: VS Code, Chrome, Dia, Safari, and Apple Notes. Other applications are best effort and untested.
 
 ## Current status
 
@@ -17,6 +18,7 @@ The app starts in English mode.
 
 - Verified: native automation passed the Telex scenarios in Chrome, Dia, and Safari on 2026-11-14.
 - Not yet accepted: physical typing, Notes, VS Code, and callback performance.
+- Not yet verified natively: typing in applications outside the five. Each field gets `observed` checking when it reports a caret and a character count, and `eventOnly` when it is a text field without them. Other focus stays as typed.
 
 To test the app yourself, follow [the manual test guide](docs/verification/ux-shell-manual-test.md).
 
@@ -67,7 +69,7 @@ VietMac/
   openspec/
     config.yaml                    Project context and artifact rules
     specs/                         Baseline requirements for delivered capabilities
-    changes/                       Active changes: ux-shell, telex-input-mvp, macos-transport-spike, native-test-automation
+    changes/                       Active changes: ux-shell, telex-input-mvp, macos-transport-spike, native-test-automation, open-app-coverage
   .agents/skills/                  Generated OpenSpec skills for Codex
   .claude/skills/                  Generated OpenSpec skills for Claude
   .claude/commands/opsx/           Generated Claude commands
@@ -89,7 +91,7 @@ The [bootstrap evidence](docs/verification/bootstrap.md) separates tested scaffo
 
 ## OpenSpec changes
 
-Four changes are active. The next work is in `ux-shell`, then `telex-input-mvp`.
+Five changes are active. The next work is in `ux-shell`, then `telex-input-mvp`.
 
 | Change | Purpose | Tasks done (2026-11-14) |
 | --- | --- | --- |

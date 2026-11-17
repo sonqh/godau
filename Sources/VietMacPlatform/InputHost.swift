@@ -14,8 +14,8 @@ public final class InputHost {
     public var enabled: Bool { pipeline.enabled }
     /// The last refresh read secure input as on. Read-only; cached outside the key callback.
     public var secureInput: Bool { pipeline.environment.secureInput }
-    /// Apps where the user turned Vietnamese off. An excluded app is treated like an unsupported one,
-    /// so every key passes through. Setting it refreshes the environment, which clears the tracked word.
+    /// Apps where the user turned Vietnamese off: every key passes through. Setting it refreshes the
+    /// environment, which clears the tracked word.
     public var excludedBundleIDs: Set<String> = [] {
         didSet { if excludedBundleIDs != oldValue { refresh() } }
     }
@@ -36,20 +36,27 @@ public final class InputHost {
     /// The focused field has the `addressBar` profile: `eventOnly` (no settled observation is required before a
     /// replacement), and a forward Delete first while the caret is at the end.
     private var addressBarField = false
-    /// The focused field has an event-only profile (`addressBar` or `vscodeEditor`).
+    /// The focused field is event-only: the `addressBar` or `vscodeEditor` profile, or a text field that
+    /// has no selected-range or character-count attribute (open-app-coverage).
     private var eventOnlyField = false
+    /// Assurance of the focused field, for the published status.
+    public var assurance: Assurance { eventOnlyField ? .eventOnly : .observed }
+    /// Why the focused field has no usable context, for the published status.
+    public private(set) var fieldStandby = StandbyReason.fieldUnreadable
     /// Element hash of the last VS Code text field that had focus (the editor or Quick Open). VS Code moves
     /// Accessibility focus to an `AXStaticText` (suggestion widget, Quick Open result) and back after keys;
     /// that round trip keeps the word.
     private var vscodeFieldHash: UInt?
+    private var vscodeEditorField = false
     private var addressBarCaretAtEnd = false
     private var addressBarCompletionShown = false
     private var lastTrackedKeyNanos: UInt64 = 0
     private var pid: pid_t = 0
     private var sleeping = false
     private var uncertainSend = false
-    private let trialApps: Set<String> = ["com.microsoft.VSCode", "com.google.Chrome", "com.apple.Safari",
-                                         "company.thebrowser.dia", "com.apple.Notes"]
+    /// The MVP acceptance set. Reported in diagnostics only; it gates nothing.
+    private let requiredApps: Set<String> = ["com.microsoft.VSCode", "com.google.Chrome", "com.apple.Safari",
+                                            "company.thebrowser.dia", "com.apple.Notes"]
 
     public init() {
         pipeline = PrototypePipeline(environment: InputEnvironment(permissions: .current(), certainContext: false))
@@ -131,7 +138,7 @@ public final class InputHost {
         let certain = observeFocus(source: source)
         let environment = InputEnvironment(permissions: permissions,
             secureInput: IsSecureEventInputEnabled(),
-            supportedApp: supportedApp,
+            appExcluded: appExcluded,
             supportedSource: ["com.apple.keylayout.ABC", "com.apple.keylayout.US"].contains(inputSource),
             certainContext: !sleeping && !uncertainSend && certain)
         pipeline.updateEnvironment(environment)
@@ -141,8 +148,8 @@ public final class InputHost {
         }
     }
 
-    private var supportedApp: Bool {
-        frontmostBundleID.map { trialApps.contains($0) && !excludedBundleIDs.contains($0) } ?? false
+    private var appExcluded: Bool {
+        frontmostBundleID.map { excludedBundleIDs.contains($0) } ?? false
     }
 
     /// AX notification path: field metadata only, without capability or app lookups.
@@ -156,7 +163,8 @@ public final class InputHost {
     /// Compares observed caret/length with predicted key effects. Returns whether a caret is known.
     private func observeFocus(source: String) -> Bool {
         let inspection = focus.inspect(pid: pid, bundleID: frontmostBundleID,
-                                      allowed: permissions.accessibility && supportedApp && !sleeping)
+                                      allowed: permissions.accessibility && !appExcluded && !sleeping
+                                          && pid != ProcessInfo.processInfo.processIdentifier)
         var inspected = inspection
         let inVSCode = frontmostBundleID == "com.microsoft.VSCode"
         if let hash = vscodeFieldHash, inVSCode {
@@ -174,7 +182,14 @@ public final class InputHost {
         let textRoles: Set<String> = [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole]
         vscodeFieldHash = inVSCode && textRoles.contains(inspected.role ?? "") ? inspected.elementHash : nil
         addressBarField = inspected.addressBar
-        eventOnlyField = inspected.addressBar || inspected.vscodeEditor
+        let keysOnly = inspected.keysOnly
+        let wasEventOnly = eventOnlyField
+        eventOnlyField = inspected.eventOnly
+        fieldStandby = inspected.standbyReason
+        vscodeEditorField = inspected.vscodeEditor
+        // The same element changed assurance, for example its first caret reading arrived. Treat it as a
+        // new field: the word survives only when the field holds exactly that word.
+        if wasEventOnly != eventOnlyField { inspected.changed = true }
         if eventOnlyField {
             // Event-only profile: keep focus and reading resets, skip prediction checks.
             if inspected.changed {
@@ -183,8 +198,8 @@ public final class InputHost {
             }
             field.reset()
             let certain: Bool
-            if inspected.vscodeEditor {
-                // FG-1 option B: the default-mode editor reports nothing usable; keys alone drive the word.
+            if keysOnly {
+                // The field reports nothing usable; keys alone drive the word.
                 addressBarCaretAtEnd = false
                 addressBarCompletionShown = false
                 certain = true
@@ -280,7 +295,7 @@ public final class InputHost {
         case .active: stateText = "active"
         case .paused(let reason): stateText = "paused: \(reason.rawValue)"
         }
-        let apps = trialApps.sorted().map { id in
+        let apps = requiredApps.sorted().map { id in
             let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: id)
             let bundle = url.flatMap { Bundle(url: $0) }
             return AppInfo(bundleID: id, installed: url != nil,
@@ -373,7 +388,8 @@ public final class InputHost {
                     let prepared = try transport.prepare(plan, insertionKeyCode: CGKeyCode(edit.keyCode),
                                                          leadingKey: completionClearKey)
                     if addressBarField { counters.addressBarReplacements &+= 1 }
-                    else if eventOnlyField { counters.vscodeEditorReplacements &+= 1 }
+                    else if vscodeEditorField { counters.vscodeEditorReplacements &+= 1 }
+                    else if eventOnlyField { counters.eventOnlyReplacements &+= 1 }
                     let result = transport.send(prepared, isCurrent: { pipeline.isCurrent(edit) }, post: {
                         $0.tapPostEvent(proxy)
                         return true // A void OS post is not client acknowledgement.

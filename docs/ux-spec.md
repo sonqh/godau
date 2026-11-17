@@ -286,7 +286,7 @@ UI classes map one-to-one onto the architecture's availability (architecture-spe
 | Active | `.active(_)` | `VI` | none |
 | English | `.off` | `EN` | none; triangle if a capability is missing |
 | Blocked (needs action) | `.blocked(reason)` | `VI` | `exclamationmark.triangle.fill` |
-| Standby, shown | `.standby` with `secureInput`, `passwordField`, `unsupportedApp`, `excludedApp`, `unsupportedField` | `VI` | `pause.fill` |
+| Standby, shown | `.standby` with `secureInput`, `passwordField`, `excludedApp`, `unsupportedField` | `VI` | `pause.fill` |
 | Standby, quiet | `.standby` with `noTextField`, `fieldUnreadable`, `sleeping` | `VI` | none; reason appears in the menu only |
 | Word-level hold | not a status | unchanged | none; no UI at the time (Help only) |
 
@@ -371,7 +371,6 @@ Standby (clears by itself):
 | --- | --- | --- | --- | --- | --- |
 | `secureInput` | Badge | Một ô mật khẩu hoặc chế độ nhập an toàn đang bật. Tiếng Việt tạm dừng. | A password field or secure input is on. Vietnamese is paused. | Xem lý do… → Help › Password fields | See the Reason… |
 | `passwordField` | Badge | Đây là ô mật khẩu. VietMac không đổi chữ ở đây. | This is a password field. VietMac does not change text here. | none; clears when you leave the field | — |
-| `unsupportedApp` | Badge | VietMac chưa hỗ trợ `<App>`. Chữ bạn gõ được giữ nguyên. | VietMac does not support `<App>` yet. Your text stays as typed. | Xem ứng dụng được hỗ trợ… | See Supported Apps… |
 | `excludedApp` | Badge | Bạn đã tắt tiếng Việt trong `<App>`. | You turned off Vietnamese in `<App>`. | Bật lại tiếng Việt trong `<App>` | Turn On Vietnamese in `<App>` |
 | `unsupportedField` | Badge | VietMac chưa hỗ trợ `<Field kind>` trong `<App>`. | VietMac does not support `<Field kind>` in `<App>` yet. | Xem ứng dụng được hỗ trợ… | See Supported Apps… |
 | `noTextField` | Quiet | Chưa chọn ô để gõ. | No text field is selected. | none | — |
@@ -384,7 +383,7 @@ VS Code hint: only if FG-1 selects A1. When the resolved profile is `vscode.edit
 
 Field-kind names in `<Field kind>` come from section 7.2 Apps table.
 
-M0 traceability: the twelve M0 `PauseReason` cases map as follows. `accessibility`, `listening`, `posting`, `secureInput`, `unsupportedSource`, `tapUnavailable`, `recoveryLimit`, `userDisabledTap`, `transportUncertain` keep their names. `unsupportedApp` splits into `unsupportedApp`, `excludedApp`, `unsupportedField`, `noTextField`, `passwordField`. `uncertainContext` splits into word-level holds (selection, lagging observation) and `fieldUnreadable`; M0's sleep case becomes `sleeping`.
+M0 traceability: the twelve M0 `PauseReason` cases map as follows. `accessibility`, `listening`, `posting`, `secureInput`, `unsupportedSource`, `tapUnavailable`, `recoveryLimit`, `userDisabledTap`, `transportUncertain` keep their names. `unsupportedApp` was removed by `open-app-coverage` (2026-11-17): the M0 reason is now `excludedApp`, and a field without context reports `noTextField`, `passwordField`, or `fieldUnreadable`. `uncertainContext` splits into word-level holds (selection, lagging observation) and `fieldUnreadable`; M0's sleep case becomes `sleeping`.
 
 Copy rules:
 
@@ -455,7 +454,7 @@ From the menu `Cài đặt…`, or by opening VietMac again from Finder, Launchp
 
 **Ứng dụng / Apps**
 
-One row per supported app, from the compiled profile table (architecture-spec 6.4). Each row lists the field kinds the runtime can tell apart, not the seventeen test groups (architecture-spec 7.10 rule 5).
+One row per required app, from the compiled profile table (architecture-spec 6.4), then one row per excluded app outside that table, with no field kinds. Since `open-app-coverage` (2026-11-17) Vietnamese works in every app that is not excluded, and the state label is evidence only. Each row lists the field kinds the runtime can tell apart, not the seventeen test groups (architecture-spec 7.10 rule 5).
 
 | App | Field kinds shown (VI / EN) | Profiles |
 | --- | --- | --- |
@@ -467,21 +466,21 @@ Per field kind, a state label:
 
 | Profile state | Vietnamese | English |
 | --- | --- | --- |
-| Accepted, `observed` | Hỗ trợ ✓ | Supported ✓ |
-| Accepted, `eventOnly` (only if FG-1 selects B) | Hỗ trợ, kiểm tra giảm ⓘ | Supported, reduced checking ⓘ |
+| Tested, `observed` | Đã kiểm thử ✓ | Tested ✓ |
+| Tested, `eventOnly` | Đã kiểm thử, kiểm tra giảm ⓘ | Tested, reduced checking ⓘ |
 | Accepted, needs VS Code screen-reader mode (only if FG-1 selects A1) | Cần bật chế độ trình đọc màn hình của VS Code ⓘ | Needs VS Code's screen reader mode ⓘ |
-| Not accepted | Chưa hỗ trợ | Not supported yet |
+| No native evidence | Chưa kiểm thử | Not tested yet |
 
 Each app row has a checkbox `Gõ tiếng Việt` / `Type Vietnamese`, on by default. Off means the app is excluded.
 No "installed" status: a synchronous scan of installed apps is not allowed on the main thread (architecture-spec 7.10 rule 11).
 
-VS Code in v0.1: the editor and Quick Open rows show `Chưa hỗ trợ` unless FG-1 selects A1 or B and the full-engine rows pass. Find shows its own state. No copy anywhere says VS Code is supported until its rows pass.
+VS Code: the editor (`eventOnly`) and Quick Open rows show the tested label from Son's physical typing on 2026-11-16. Find shows `Chưa kiểm thử`. No copy says "supported".
 
 Info text for reduced checking, only if FG-1 selects B: `<App> không cho VietMac xem vị trí con trỏ. Vì vậy VietMac chỉ dựa vào phím bạn gõ. VietMac không thấy chữ do gợi ý, đọc chính tả hoặc ứng dụng chèn vào. Đôi khi VietMac có thể đổi một từ sai chỗ. Nếu điều đó xảy ra, hãy tắt tiếng Việt trong ứng dụng này.` / `<App> does not let VietMac see the caret. Thus VietMac uses only the keys you press. VietMac cannot see text that suggestions, dictation, or the app insert. Sometimes VietMac may change a word in the wrong place. If that occurs, turn off Vietnamese in this app.`
 
 Info text for A1: `VietMac cần VS Code bật chế độ trình đọc màn hình (editor.accessibilitySupport) để xem vị trí con trỏ. Chế độ này thay đổi một số hành vi của VS Code.` / `VietMac needs the screen reader mode of VS Code (editor.accessibilitySupport) to see the caret. This mode changes some VS Code behavior.`
 
-Footer: `Trong ứng dụng khác, VietMac không đổi chữ. Trong một số trình soạn thảo trên web, nhiều từ hơn có thể giữ nguyên.` / `In other apps, VietMac does not change text. In some web editors, more words may stay as typed.`
+Footer: `Gõ Dấu cũng hoạt động trong ứng dụng khác, nhưng chưa được kiểm thử. Để tắt trong một ứng dụng, dùng menu khi ứng dụng đó ở phía trước.` / `Gõ Dấu also works in other apps, which are not tested. To turn it off in an app, use the menu while that app is in front.`
 
 **Trạng thái / Status**
 
@@ -521,13 +520,13 @@ Counters are in memory for this process only; the label says `Từ lần mở Vi
 | Retyping after Backspace into an earlier word | An untracked Backspace resets the word; the next letter starts a new word (AD-18) | Help explains that new letters form their own word | Son, 2026-11-15: in Vietnamese mode, always type Vietnamese; no text is read |
 | A word in an address bar comes out wrong while a suggestion changes | Address bars are event-only since 2026-11-16 (architecture-spec 6.2); VietMac clears the inline completion before replacing | Nothing at the time | Rare; type the word again |
 | A word with `w` first, brackets, or an escape stays literal | Language rule (**verified** spec) | Help › Telex | Expected Telex behavior |
-| Nothing transforms in an app or field | `unsupportedApp`, `unsupportedField`, `excludedApp` | Standby badge; menu reason | Badge is passive and silent |
+| Nothing transforms in an app or field | `unsupportedField`, `excludedApp` | Standby badge; menu reason | Badge is passive and silent |
 | Nothing transforms in a field VietMac cannot read | `fieldUnreadable` | Menu line only | Frequent and not actionable, except the VS Code hint under A1 |
 | Nothing transforms anywhere | Grant lost, wrong source, other tool, sticky pause | Blocked badge; menu reason and action | Needs action, so it is visible |
 | Typing in a password field | `passwordField` or `secureInput` | Standby badge; menu reason | Users expect no transformation there |
 | Typing stops transforming after a fast burst | `transportUncertain` or `recoveryLimit` | Blocked badge; menu says which word to check; resume | The only case where the user must check text |
 | The shortcut does nothing | Tap absent (grant, secure input, sticky pause) | Title already shows the cause; Settings shows "the shortcut does not work now" | The menu always works |
-| VS Code editor stays as typed | FG-1 outcome C, or A1 without screen-reader mode | Settings › Apps shows `Chưa hỗ trợ` or the A1 requirement; under A1 the menu hint | No promise of VS Code support until its rows pass |
+| VS Code editor stays as typed | FG-1 outcome C, or A1 without screen-reader mode | Settings › Apps shows `Chưa kiểm thử` or the A1 requirement; under A1 the menu hint | No tested claim for VS Code until its rows pass |
 
 Help window: the setup window opened in Help mode, with short pages: `Bảng gõ Telex`, `Vì sao một từ không đổi`, `Ô mật khẩu`, `Quyền của VietMac`, `Bộ gõ khác`, and `VS Code` (only if FG-1 selects A1 or B). Each page is under 120 words. No external links.
 
@@ -664,7 +663,7 @@ Each criterion has an action, a visible result, and what must not happen. "Immed
 | UX-21 | Export a diagnostic report after typing | Only the "may show" fields of architecture-spec 7.9 | Typed text, key identity, field values, titles, URLs |
 | UX-22 | Set a shortcut, then remove a grant (or turn on secure input) and press the chord | Mode does not change; the chord reaches the app as usual; the menu still switches mode; Settings shows the not-armed line | The UI implying the shortcut works |
 | UX-23 | Log in with VietMac as a login item and a grant missing | No window opens; title shows the triangle; menu offers `Tiếp tục thiết lập…` | A window or focus change at login |
-| UX-24 | Open Settings › Apps | Field kinds match the profile table (ten profiles); VS Code editor and Quick Open show `Chưa hỗ trợ` unless their rows passed | "All websites", "all fields", or a VS Code support claim without accepted rows |
+| UX-24 | Open Settings › Apps | Field kinds match the profile table (ten profiles); a field shows `Đã kiểm thử` only with native evidence; an excluded app outside the table has a row | "All websites", "all fields", or a tested claim without native evidence |
 | UX-25 | On macOS 27, move the Liquid Glass slider to each end, turn Reduce Transparency on and off, switch light and dark, and turn "Show menu bar background" on and off | Every title, badge, menu line, and window text stays readable; windows and controls use the system shapes | Custom blur, a fixed window radius, a colored menu bar item, or unreadable text in any setting |
 
 The Debug simulator builds `RuntimeStatus` values with the public initializer and never calls `InputHost` (architecture-spec 7.2). It is not in Release builds.

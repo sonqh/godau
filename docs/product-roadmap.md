@@ -215,7 +215,7 @@ Decided without Son (recorded for review, not for approval):
 
 | ID | Decision | Owner |
 | --- | --- | --- |
-| AD-10 | Field profiles replace `trialApps`; `observed` is the only level built in v0.1 (was OD-3) | Architect |
+| AD-10 | Superseded 2026-11-17 by `open-app-coverage`: no application list; assurance per field from what it reports; profiles are evidence labels | Son |
 | AD-11 | Address bars stay `observed`; words stay literal while a completion is shown; no `selectionAware` in v0.1 (was OD-2) | Architect |
 | PD-1 | Shortcut stays unset by default; setup offers one suggested chord after a native conflict check in the five apps (was G-3) | Product owner |
 | PD-2 | The standby badge shows in unsupported apps and fields; revisit in Phase 5 if noisy (was G-4) | Product owner |

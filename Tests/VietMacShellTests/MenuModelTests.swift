@@ -6,7 +6,7 @@ struct MenuModelTests {
     private func model(_ status: RuntimeStatus, setupComplete: Bool = true, shortcut: String? = nil,
                        excluded: Set<String> = [], exclusions: Bool = true) -> MenuModel {
         MenuModel(status: status, presentation: StatusPresentation(status: status), setupComplete: setupComplete,
-                  shortcutDisplay: shortcut, excluded: excluded, catalog: .stub, exclusionsSupported: exclusions)
+                  shortcutDisplay: shortcut, excluded: excluded, exclusionsSupported: exclusions)
     }
 
     private func commands(_ model: MenuModel) -> [MenuModel.Command] {
@@ -37,10 +37,14 @@ struct MenuModelTests {
         guard case .info(_, secondary: true) = m.items[1] else { Issue.record("no detail line"); return }
     }
 
-    @Test func noExclusionOrContinueSetupWithoutProfileWhenSetUp() {
-        let m = model(makeStatus(availability: .standby(.unsupportedApp), frontmost: "com.tinyspeck.slackmacgap"))
-        #expect(exclusion(m) == nil)
+    @Test func exclusionIsOfferedForAnAppOutsideTheRequiredFive() {
+        let slack = "com.tinyspeck.slackmacgap"
+        let m = model(makeStatus(availability: .active(.eventOnly), frontmost: slack))
+        #expect(exclusion(m) != nil)
         #expect(!commands(m).contains(.continueSetup))
+        guard case .exclusion(let bundleID, _, let excluded)? = exclusion(m) else { return }
+        #expect(bundleID == slack)
+        #expect(!excluded)
     }
 
     @Test func continueSetupWhileIncomplete() {
@@ -74,9 +78,9 @@ struct MenuModelTests {
         #expect(m.items.contains(.command(.saveReport, alternate: true)))
     }
 
-    @Test func quickPassThroughUnsupportedAppDoesNotFlicker() {
+    @Test func quickPassThroughExcludedAppDoesNotFlicker() {
         let active = StatusPresentation(status: makeStatus(availability: .active(.observed)))
-        let paused = StatusPresentation(status: makeStatus(availability: .standby(.unsupportedApp)))
+        let paused = StatusPresentation(status: makeStatus(availability: .standby(.excludedApp)))
         let quiet = StatusPresentation(status: makeStatus(availability: .standby(.noTextField)))
         #expect(TitleTiming.timing(from: active, to: paused) == .delayed(milliseconds: 500))
         #expect(TitleTiming.timing(from: paused, to: active) == .immediate)
@@ -94,9 +98,9 @@ struct MenuModelTests {
         #expect(TitleTiming.timing(from: nil, to: blocked) == .immediate)
     }
 
-    @Test func stubCatalogHasTenUnacceptedProfiles() {
+    @Test func stubCatalogLabelsOnlyFieldsWithNativeEvidence() {
         #expect(ProfileCatalog.stub.profiles.count == 10)
-        #expect(!ProfileCatalog.stub.profiles.contains { $0.accepted })
+        #expect(ProfileCatalog.stub.profiles.filter { !$0.tested }.map(\.id) == ["vscode.find", "notes.text"])
         #expect(ProfileCatalog.stub.bundleIDs.count == 5)
     }
 }

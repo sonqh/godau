@@ -91,7 +91,7 @@ Rules:
 | `InputPipeline` | Platform | Reducer instance, key ownership, live mode, pause state | Replaces `PrototypePipeline` (M2) |
 | `FocusMonitor`, `FieldContextTracker` | Platform | Observed and predicted field metadata | Delivered |
 | `ContextPolicy` | Platform | None | Delivered against `PrototypePipeline`; its signatures move to `InputPipeline` in M2 |
-| `FieldProfile` table and resolver | Platform | Immutable table plus the current resolved profile | New (M2), section 6.4. Replaces `trialApps` |
+| `FieldProfile` table and resolver | Platform | Immutable table plus the current resolved profile | New (M2), section 6.4. An evidence label since `open-app-coverage`; capability selects the assurance |
 | `PreparedTransport` | Platform | Event source and marker | Delivered; strategies added only with evidence |
 | `InputHost` | Platform | Tap, timer, observers; owns all of the above; publishes `RuntimeStatus` | Delivered; gains the status interface of section 7.2 |
 | `Configuration` | Platform | Immutable value: shortcut and exclusions | New (M2), section 6.6 |
@@ -145,7 +145,7 @@ The order matches the diagram for the replace branch. The diagram in the first v
 | C3 | Reduction is two-phase. Pass-through accepts the candidate at once (4a). Replace accepts only at step 9 | Today the prototype mutates on pass-through and defers on replace inside one function |
 | C4 | Backspace can be a replace intent. `hoàn` plus Backspace must give `hòa` (telex-composition spec), which is delete 3, insert `òa`, with keycode 51 as the consumed trigger | AD-5 is proven only for a letter trigger. The insertion keycode for a Backspace trigger is **unknown** (U-5). Proposed rule: use the consumed trigger when it is a letter key; otherwise use a fixed letter keycode that a 128-bit key-down table shows as not held |
 | C5 | The transport refuses an insertion longer than the natively tested length, before step 8 | Only one-character insertions have native evidence. Developer reports describe a 20-unit limit per event for `keyboardSetUnicodeString`; not confirmed in Apple documentation (**unknown**, U-4) |
-| C6 | Step 3 reads the resolved profile and exclusions through the cached availability; step 5 uses the profile's assurance | Profiles replace `trialApps` |
+| C6 | Step 3 reads the resolved profile and exclusions through the cached availability; step 5 uses the profile's assurance | Capability selection replaced the allowlist (`open-app-coverage`) |
 | C7 | Prediction widths come from the rendered previous text of the intent | Today they come from `pipeline.word` |
 | C8 | A state change inside the callback (timeout, tap disabled, uncertain send, shortcut toggle) only marks the status dirty | Section 7.4. The callback never calls the shell |
 
@@ -238,7 +238,6 @@ The status reports the first failing gate only. M0 evaluates a sticky pause befo
 | `secureInput` | Standby | `IsSecureEventInputEnabled` on refresh | Automatically |
 | `passwordField` | Standby | AX secure subrole (`FocusMonitor.swift:106`) | Automatically |
 | `sleeping` | Standby | Sleep and wake notifications. M0 reports this as `uncertainContext`; the enum case `sleeping` is never produced | On wake |
-| `unsupportedApp` | Standby | Frontmost bundle ID has no profile | Automatically |
 | `excludedApp` | Standby | Configuration exclusion | When Son removes the exclusion |
 | `unsupportedField` | Standby | Resolver finds no accepted profile for the focused text element | Automatically |
 | `noTextField` | Standby | No focused element, or its role is not a text role (`FocusMonitor.swift:103`) | Automatically |
@@ -305,7 +304,23 @@ Decision order: run U-1 first. Prefer A1, then B, then C. A2 is held back unless
 
 ### 6.4 Field profiles
 
-The accepted app/field profile already exists in the `telex-input-mvp` design (decision 5) and the `input-mode-control` spec. This section fixes its shape. It replaces the hard-coded `trialApps` set (`InputHost.swift:33`).
+**Changed 2026-11-17 (`open-app-coverage`, Son's decision).** No application list and no profile gates transformation. Vietnamese is available in every application the user has not excluded. The assurance of each focused element comes from what it reports, once per observation and outside the key callback:
+
+| Reading of the focused element | Result |
+| --- | --- |
+| Identified as a browser address bar or the VS Code default-mode editor | That profile's behavior (event-only) |
+| Secure text subrole | Literal, `passwordField` |
+| Text role; selected range and character count read | `observed` |
+| Text role; the range or count attribute returns "unsupported" or "no value" | `eventOnly` |
+| Text role; a read fails for another reason (timeout, cannot complete) | Literal, `fieldUnreadable`, until a read succeeds |
+| Other role, no focused element, or VietMac's own windows | Literal, `noTextField` |
+
+- An element that has reported a caret stays `observed` until focus changes. A failed read never selects `eventOnly`.
+- An element that changes assurance is treated as a new field. The word survives only when the field holds exactly that word.
+- The mapping from AX error code to "unsupported" is **inferred** from the API contract. The observation trace records `rangeUnsupported` and `countUnsupported`, so a native run shows what each application returns.
+- A profile below is now the unit of acceptance evidence. `tested` is a label shown in Settings. It does not enable or disable anything. The paragraphs below that describe `accepted` as a gate, `none` for an unmatched field, and the test launch argument are superseded.
+
+The rest of this section is the profile shape as designed before that change.
 
 ```swift
 struct FieldProfile {
@@ -407,7 +422,7 @@ public enum BlockReason {                               // Son must act
 }
 public enum StandbyReason {                             // clears by itself
     case secureInput, passwordField, sleeping
-    case unsupportedApp, excludedApp, unsupportedField, noTextField, fieldUnreadable
+    case excludedApp, unsupportedField, noTextField, fieldUnreadable
 }
 public enum Availability {
     case off                                            // English mode
@@ -667,7 +682,7 @@ No plugin registry, runtime ledger, or service is added for any of these.
 | AD-7 | Required apps: VS Code, Chrome, Dia, Safari, Apple Notes | Son, 2026-10-15 |
 | AD-8 | Native automation is evidence, labeled separately; physical spot checks remain | Harness design |
 | AD-9 | Trusted local signing certificate for grant continuity | Verified, sessions 3–5 |
-| AD-10 | Field profiles replace `trialApps` in M2, with `observed` as the only level built. Resolves OD-3: profiles are already in the MVP design; `eventOnly` is specified here and built only through FG-1 | Architect, 2026-11-12 |
+| AD-10 | Superseded 2026-11-17 by `open-app-coverage` (Son): no application list gates transformation. Each focused field gets `observed` or `eventOnly` from what it reports, and a profile is an evidence label. Earlier text: field profiles replace the allowlist in M2, with `observed` as the only level built | Architect, 2026-11-12; Son, 2026-11-17 |
 | AD-11 | Superseded on 2026-11-16 by Son: address bars use the event-only `addressBar` profile with a completion-clearing key (section 6.2). Original: address bars keep `observed`, words stay literal while an inline completion is shown | Architect, 2026-11-12; Son, 2026-11-16 |
 | AD-12 | One status value with Active, Standby, and Blocked classes; word-level holds are not status (sections 6.1, 7.2) | Architect, 2026-11-12 |
 | AD-13 | The platform owns the live mode; the shell persists it. `Configuration` holds only shortcut and exclusions (section 6.6) | Architect, 2026-11-12 |

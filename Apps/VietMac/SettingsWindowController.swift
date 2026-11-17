@@ -183,8 +183,8 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             let fields = NSStackView(views: row.fields.map { field in
                 let kind = makeLabel(strings(field.name), size: 12, width: 220)
                 kind.setContentHuggingPriority(.defaultLow, for: .horizontal)
-                let state = makeLabel(strings(field.state), size: 12, weight: field.supported ? .semibold : .regular,
-                                      color: field.supported ? .systemGreen : .secondaryLabelColor, width: 120)
+                let state = makeLabel(strings(field.state), size: 12, weight: field.tested ? .semibold : .regular,
+                                      color: field.tested ? .systemGreen : .secondaryLabelColor, width: 120)
                 let line = NSStackView(views: [kind, state])
                 line.spacing = 8
                 line.widthAnchor.constraint(equalToConstant: 330).isActive = true

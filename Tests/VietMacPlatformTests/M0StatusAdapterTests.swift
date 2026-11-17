@@ -13,7 +13,7 @@ struct M0StatusAdapterTests {
             (.userDisabledTap, .blocked(.userDisabledTap)),
             (.transportUncertain, .blocked(.transportUncertain)),
             (.secureInput, .standby(.secureInput)),
-            (.unsupportedApp, .standby(.unsupportedApp)),
+            (.excludedApp, .standby(.excludedApp)),
             (.uncertainContext, .standby(.fieldUnreadable)),
             (.sleeping, .standby(.sleeping)),
         ]
@@ -65,19 +65,22 @@ struct M0StatusAdapterTests {
         #expect(publisher.last == make(.active(.observed)))
     }
 
-    @Test func excludedAppIsReportedAsExcluded() {
-        let status = M0StatusAdapter.status(enabled: true, state: .paused(.unsupportedApp),
-                                            permissions: PermissionSnapshot(accessibility: true, eventListening: true,
-                                                                            eventPosting: true),
-                                            inputSource: "com.apple.keylayout.ABC", frontmostBundleID: "com.google.Chrome",
-                                            modeSource: .menu, excluded: ["com.google.Chrome"])
-        #expect(status.availability == .standby(.excludedApp))
-        let other = M0StatusAdapter.status(enabled: true, state: .paused(.unsupportedApp),
-                                           permissions: PermissionSnapshot(accessibility: true, eventListening: true,
-                                                                           eventPosting: true),
-                                           inputSource: "com.apple.keylayout.ABC", frontmostBundleID: "com.slack",
-                                           modeSource: .menu, excluded: ["com.google.Chrome"])
-        #expect(other.availability == .standby(.unsupportedApp))
+    @Test func statusReportsAssuranceAndTheFieldReason() {
+        func availability(_ state: InputRuntimeState, _ assurance: Assurance = .observed,
+                          _ reason: StandbyReason = .fieldUnreadable) -> Availability {
+            M0StatusAdapter.status(enabled: true, state: state,
+                                   permissions: PermissionSnapshot(accessibility: true, eventListening: true,
+                                                                   eventPosting: true),
+                                   inputSource: "com.apple.keylayout.ABC", frontmostBundleID: "com.tinyspeck.slackmacgap",
+                                   modeSource: .menu, assurance: assurance, fieldStandby: reason).availability
+        }
+        #expect(availability(.active) == .active(.observed))
+        #expect(availability(.active, .eventOnly) == .active(.eventOnly))
+        #expect(availability(.paused(.uncertainContext), .observed, .noTextField) == .standby(.noTextField))
+        #expect(availability(.paused(.uncertainContext), .observed, .passwordField) == .standby(.passwordField))
+        #expect(availability(.paused(.uncertainContext)) == .standby(.fieldUnreadable))
+        // An application outside the required five is excluded only by the user.
+        #expect(availability(.paused(.excludedApp)) == .standby(.excludedApp))
     }
 
     @Test func shortcutArmingFollowsTheGate() {
@@ -85,7 +88,7 @@ struct M0StatusAdapterTests {
         #expect(!M0StatusAdapter.shortcutArmed(configured: false, capabilities: all, availability: .off, secureInput: false))
         #expect(M0StatusAdapter.shortcutArmed(configured: true, capabilities: all, availability: .off, secureInput: false))
         #expect(M0StatusAdapter.shortcutArmed(configured: true, capabilities: all,
-                                              availability: .standby(.unsupportedApp), secureInput: false))
+                                              availability: .standby(.excludedApp), secureInput: false))
         #expect(M0StatusAdapter.shortcutArmed(configured: true, capabilities: all,
                                               availability: .blocked(.unsupportedSource), secureInput: false))
         #expect(!M0StatusAdapter.shortcutArmed(configured: true, capabilities: all, availability: .off, secureInput: true))

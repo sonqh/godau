@@ -24,7 +24,6 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     weak var router: ShellRouter?
     var strings = Strings()
     var features = SetupFeatures.current
-    var catalog = ProfileCatalog.stub
     var context = PresentationContext()
     var exclusionsSupported = true
     var excluded: Set<String> = []
@@ -151,7 +150,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         let p = presentation(for: status)
         let model = MenuModel(status: status, presentation: p,
                               setupComplete: SetupPlan(status: status, features: features).isComplete(status: status),
-                              shortcutDisplay: shortcutDisplay, excluded: excluded, catalog: catalog,
+                              shortcutDisplay: shortcutDisplay, excluded: excluded,
                               exclusionsSupported: exclusionsSupported, names: SystemNames.resolver())
         menu.removeAllItems()
         var previous: NSMenuItem?

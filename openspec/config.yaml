@@ -4,7 +4,8 @@ context: |
   VietMac is Son's personal macOS Vietnamese input app.
   The MVP uses Telex, precomposed Unicode, and event-based text replacement.
   Composition underline is forbidden. Do not introduce marked text as the default integration.
-  Required applications are VS Code, Chrome, Dia, Safari, and Apple Notes.
+  Required applications (the acceptance set) are VS Code, Chrome, Dia, Safari, and Apple Notes.
+  Other applications are best effort and untested; no application list gates input (open-app-coverage).
   Native transport must have evidence before the complete engine investment.
   Speak to Son in Vietnamese. Write repository artifacts in English.
   Claude and Codex share one workflow and an append-only development ledger.

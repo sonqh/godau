@@ -1,3 +1,4 @@
+import ApplicationServices
 import Testing
 import VietMacCore
 @testable import VietMacPlatform
@@ -17,6 +18,8 @@ private struct Session {
     var pipeline = activePipeline()
     var field = FieldContextTracker()
     var counters = ContextCounters()
+    /// The host's `eventOnlyField`: a replacement needs no settled observation.
+    var eventOnly = false
 
     mutating func observe(caret: Int, length: Int, focusChanged: Bool = false) {
         observe(.caret(FieldSnapshot(caret: caret, length: length)), focusChanged: focusChanged)
@@ -36,7 +39,8 @@ private struct Session {
                                             pipeline: &pipeline, counters: &counters)
             return nil
         case .replace(let edit):
-            guard ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
+            guard eventOnly
+                    || ContextPolicy.admitsReplacement(field: field, pipeline: &pipeline, counters: &counters) else {
                 ContextPolicy.expectPassThrough(input, keyCode: keyCode, previous: before, field: &field,
                                                 pipeline: &pipeline, counters: &counters)
                 return nil
@@ -477,6 +481,91 @@ struct ContextPolicyTests {
         #expect(session.counters.replacementsPosted == 2)
         #expect(session.counters.unexplainedFieldChanges == 0)
         #expect(session.pipeline.state == .active)
+    }
+}
+
+/// open-app-coverage: the assurance of a field comes from what it reports.
+struct FieldCapabilityTests {
+    private let caret = FieldReading.caret(FieldSnapshot(caret: 1, length: 1))
+
+    @Test func everyReadingMapsToOneCapability() {
+        let table: [(FieldReading, FieldCapability)] = [
+            (caret, .observed),
+            (.selection, .observed),
+            (.unavailable(.rangeUnsupported), .eventOnly),
+            (.unavailable(.countUnsupported), .eventOnly),
+            (.unavailable(.noSelectedRange), .unreadable),
+            (.unavailable(.noCharacterCount), .unreadable),
+            (.unavailable(.secureField), .secureField),
+            (.unavailable(.unsupportedRole), .noTextField),
+            (.unavailable(.noFocusedElement), .noTextField),
+            (.unavailable(.notInspected), .noTextField),
+        ]
+        for (reading, expected) in table {
+            #expect(FieldCapability.resolve(reading, sawCaret: false) == expected, "\(reading)")
+        }
+    }
+
+    @Test func aFailedReadNeverSelectsEventOnly() {
+        #expect(FieldCapability.isUnsupported(.attributeUnsupported))
+        #expect(FieldCapability.isUnsupported(.noValue))
+        for error in [AXError.cannotComplete, .failure, .apiDisabled, .invalidUIElement, .notImplemented] {
+            #expect(!FieldCapability.isUnsupported(error), "\(error.rawValue)")
+        }
+    }
+
+    @Test func anElementThatReportedACaretStaysObserved() {
+        #expect(FieldCapability.resolve(.unavailable(.rangeUnsupported), sawCaret: true) == .unreadable)
+        #expect(FieldCapability.resolve(.unavailable(.countUnsupported), sawCaret: true) == .unreadable)
+    }
+
+    @Test func identifiedProfilesComeBeforeCapability() {
+        func inspection(_ capability: FieldCapability, addressBar: Bool = false,
+                        vscodeEditor: Bool = false) -> FocusInspection {
+            FocusInspection(changed: false, field: .unavailable(.unsupportedRole), addressBar: addressBar,
+                            vscodeEditor: vscodeEditor, capability: capability)
+        }
+        #expect(!inspection(.observed).eventOnly)
+        #expect(inspection(.eventOnly).eventOnly && inspection(.eventOnly).keysOnly)
+        // An address bar keeps its profile: event-only, and its readings still drive the completion key.
+        #expect(inspection(.observed, addressBar: true).eventOnly)
+        #expect(!inspection(.eventOnly, addressBar: true).keysOnly)
+        #expect(inspection(.observed, vscodeEditor: true).keysOnly)
+        for capability in [FieldCapability.noTextField, .secureField, .unreadable] {
+            #expect(!inspection(capability).eventOnly, "\(capability)")
+        }
+        #expect(inspection(.noTextField).standbyReason == .noTextField)
+        #expect(inspection(.secureField).standbyReason == .passwordField)
+        #expect(inspection(.unreadable).standbyReason == .fieldUnreadable)
+    }
+
+    @Test func eventOnlyFieldReplacesWithoutAnObservation() {
+        var session = Session()
+        session.eventOnly = true
+        #expect(session.key(a) == nil)
+        #expect(session.key(s, keyCode: 1) == "á")
+    }
+
+    @Test func eventOnlyWordEndsAtAFocusChange() {
+        var session = Session()
+        session.eventOnly = true
+        #expect(session.key(a) == nil)
+        // The host invalidates on a focus change, a mouse press, and an app change.
+        ContextPolicy.invalidate(field: &session.field, pipeline: &session.pipeline)
+        #expect(session.key(s, keyCode: 1) == nil)
+        #expect(session.pipeline.word == "s")
+    }
+
+    @Test func nonTextFocusKeepsEveryKeyLiteral() {
+        var session = Session()
+        session.observe(.unavailable(.unsupportedRole), focusChanged: true)
+        var environment = session.pipeline.environment
+        environment.certainContext = false
+        session.pipeline.updateEnvironment(environment)
+        #expect(session.pipeline.state == .paused(.uncertainContext))
+        #expect(session.key(a) == nil)
+        #expect(session.key(s, keyCode: 1) == nil)
+        #expect(session.counters.replacementsPosted == 0)
     }
 }
 

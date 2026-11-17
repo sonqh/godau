@@ -33,11 +33,15 @@ The General tab SHALL show the `Mở VietMac khi đăng nhập` checkbox, off by
 - **AND** it does not show `Đã bật`
 
 ### Requirement: Apps tab from the profile table
-The Apps tab SHALL list one row per supported app from the compiled field-profile table, with the field kinds the runtime can tell apart and a state label per kind: `Hỗ trợ ✓` for an accepted `observed` profile and `Chưa hỗ trợ` otherwise. Each row SHALL have a `Gõ tiếng Việt` checkbox, on unless the app is excluded. The tab SHALL NOT claim support for all websites or all fields, and SHALL NOT scan installed apps.
+The Apps tab SHALL list one row per required app from the compiled field-profile table, with its field kinds and an evidence label per kind: `Đã kiểm thử ✓` with native evidence, `Chưa kiểm thử` otherwise. It SHALL add one row, without field kinds, for each excluded app outside the table. Each row SHALL have a `Gõ tiếng Việt` checkbox, on unless the app is excluded. A label SHALL NOT enable or disable typing (change `open-app-coverage`). The tab SHALL NOT scan installed apps.
 
-#### Scenario: VS Code before FG-1
-- **WHEN** the profile table has no accepted `vscode.editor` or `vscode.quickInput` profile
-- **THEN** the VS Code editor and Quick Open rows show `Chưa hỗ trợ`
+#### Scenario: VS Code Find has no evidence
+- **WHEN** the profile table has no native evidence for `vscode.find`
+- **THEN** the VS Code Find row shows `Chưa kiểm thử`
+
+#### Scenario: Excluded app outside the table
+- **WHEN** the exclusions contain an app that is not in the profile table
+- **THEN** the tab shows a row for it with `Gõ tiếng Việt` unchecked and no field kinds
 
 #### Scenario: Uncheck an app
 - **WHEN** the user unchecks `Gõ tiếng Việt` for Safari

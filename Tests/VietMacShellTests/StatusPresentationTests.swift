@@ -104,9 +104,6 @@ struct StatusPresentationTests {
              "Xem lý do…", "See the Reason…", .openHelp(.password)),
             (.standby(.passwordField), "Đây là ô mật khẩu. Gõ Dấu không đổi chữ ở đây.",
              "This is a password field. Gõ Dấu does not change text here.", nil, nil, nil),
-            (.standby(.unsupportedApp), "Gõ Dấu chưa hỗ trợ Chrome. Chữ bạn gõ được giữ nguyên.",
-             "Gõ Dấu does not support Chrome yet. Your text stays as typed.",
-             "Xem ứng dụng được hỗ trợ…", "See Supported Apps…", .openSettings(.apps)),
             (.standby(.excludedApp), "Bạn đã tắt tiếng Việt trong Chrome.", "You turned off Vietnamese in Chrome.",
              "Bật lại tiếng Việt trong Chrome", "Turn On Vietnamese in Chrome",
              .removeExclusion(bundleID: "com.google.Chrome")),
@@ -173,7 +170,7 @@ struct StatusPresentationTests {
     }
 
     @Test func presentationIsPureFunctionOfStatus() {
-        let status = makeStatus(availability: .standby(.unsupportedApp))
+        let status = makeStatus(availability: .standby(.excludedApp))
         #expect(StatusPresentation(status: status) == StatusPresentation(status: status))
     }
 }

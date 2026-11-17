@@ -409,23 +409,6 @@
         }
       }
     },
-    "detail.unsupportedApp": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gõ Dấu does not support %@ yet. Your text stays as typed."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gõ Dấu chưa hỗ trợ %@. Chữ bạn gõ được giữ nguyên."
-          }
-        }
-      }
-    },
     "detail.unsupportedField": {
       "extractionState": "manual",
       "localizations": {
@@ -1095,64 +1078,64 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In other apps, Gõ Dấu does not change text. In some web editors, more words may stay as typed."
+            "value": "Gõ Dấu also works in other apps, which are not tested. To turn it off in an app, use the menu while that app is in front."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trong ứng dụng khác, Gõ Dấu không đổi chữ. Trong một số trình soạn thảo trên web, nhiều từ hơn có thể giữ nguyên."
+            "value": "Gõ Dấu cũng hoạt động trong ứng dụng khác, nhưng chưa được kiểm thử. Để tắt trong một ứng dụng, dùng menu khi ứng dụng đó ở phía trước."
           }
         }
       }
     },
-    "settings.apps.notSupported": {
+    "settings.apps.tested": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Not supported yet"
+            "value": "Tested ✓"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chưa hỗ trợ"
+            "value": "Đã kiểm thử ✓"
           }
         }
       }
     },
-    "settings.apps.supported": {
+    "settings.apps.testedReduced": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supported ✓"
+            "value": "Tested, reduced checking ⓘ"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hỗ trợ ✓"
+            "value": "Đã kiểm thử, kiểm tra giảm ⓘ"
           }
         }
       }
     },
-    "settings.apps.supportedReduced": {
+    "settings.apps.untested": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supported, reduced checking ⓘ"
+            "value": "Not tested yet"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hỗ trợ, kiểm tra giảm ⓘ"
+            "value": "Chưa kiểm thử"
           }
         }
       }

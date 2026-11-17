@@ -49,7 +49,7 @@ public enum BlockReason: String, Equatable, Hashable, Sendable, CaseIterable {
 /// Nothing to do here. Clears by itself when the context changes.
 public enum StandbyReason: String, Equatable, Hashable, Sendable, CaseIterable {
     case secureInput, passwordField, sleeping
-    case unsupportedApp, excludedApp, unsupportedField, noTextField, fieldUnreadable
+    case excludedApp, unsupportedField, noTextField, fieldUnreadable
 }
 
 /// Evidence required before deleting text (architecture-spec 6.3).

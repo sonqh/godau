@@ -148,12 +148,14 @@ public enum ModeHUDRule {
     }
 }
 
-/// Settings › Apps (ux-spec 7.2): one row per app in the profile table, never a scan of installed apps.
+/// Settings › Apps (ux-spec 7.2): one row per required app, then one per excluded app outside that list.
+/// Never a scan of installed apps.
 public struct AppsTab: Equatable, Sendable {
     public struct Field: Equatable, Hashable, Sendable {
         public let name: LocalizedText
         public let state: LocalizedText
-        public let supported: Bool
+        /// Native evidence exists. A label; it does not turn typing on or off.
+        public let tested: Bool
     }
 
     public struct Row: Equatable, Hashable, Sendable {
@@ -170,15 +172,15 @@ public struct AppsTab: Equatable, Sendable {
     static let fieldOrder: [FieldKind] = [.webText, .addressBar, .editor, .find, .quickInput, .noteText, .textField]
 
     public init(catalog: ProfileCatalog, excluded: Set<String>, names: NameResolver = .fallback) {
-        rows = catalog.bundleIDs.map { bundleID in
+        let listed = catalog.bundleIDs
+        rows = (listed + excluded.subtracting(listed).sorted()).map { bundleID in
             let profiles = catalog.profiles(for: bundleID)
                 .sorted { Self.fieldOrder.firstIndex(of: $0.field)! < Self.fieldOrder.firstIndex(of: $1.field)! }
             let fields = profiles.map { profile in
-                let supported = profile.accepted
-                let state = !supported ? "settings.apps.notSupported"
-                    : profile.assurance == .eventOnly ? "settings.apps.supportedReduced" : "settings.apps.supported"
+                let state = !profile.tested ? "settings.apps.untested"
+                    : profile.assurance == .eventOnly ? "settings.apps.testedReduced" : "settings.apps.tested"
                 return Field(name: LocalizedText("field.\(profile.field.rawValue)"), state: LocalizedText(state),
-                             supported: supported)
+                             tested: profile.tested)
             }
             let name = bundleID == "com.apple.Notes"
                 ? LocalizedText("app.notes") : LocalizedText("text.literal", names.appName(bundleID))

@@ -201,7 +201,7 @@ Letters typed while the only pause is `uncertainContext` are kept in memory (at 
 ### 13. Dogfood build (FG-4)
 
 After M2, a build may enable only profiles whose full-engine rows passed, by native automation and a physical spot check, for every group the profile covers. M0 two-rule rows do not qualify. The build needs a recorded safe U-3 result and ships the `ux-shell` UI, not the M0 developer menu.
-Other profiles show Standby `unsupportedField` or `unsupportedApp`. Son keeps a content-free log and exports a diagnostic report weekly.
+Other profiles showed Standby `unsupportedField` or `unsupportedApp` before `open-app-coverage` (2026-11-17); they now transform according to what the field reports and are labeled untested. Son keeps a content-free log and exports a diagnostic report weekly.
 
 ## Risks / Trade-offs
 

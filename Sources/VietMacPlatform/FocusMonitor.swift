@@ -6,8 +6,44 @@ enum FieldUnavailableReason: String, Equatable {
     case noFocusedElement
     case unsupportedRole
     case secureField
+    /// A read of the selected range or character count failed (timeout, cannot complete). Not a capability.
     case noSelectedRange
     case noCharacterCount
+    /// The element does not have the selected-range or character-count attribute.
+    case rangeUnsupported
+    case countUnsupported
+}
+
+/// What the focused element supports, from what it reports (open-app-coverage design D2 and D3).
+enum FieldCapability: Equatable {
+    /// Reports a caret and a character count: every key is checked against a reading.
+    case observed
+    /// A text role without those attributes: keys alone drive the word.
+    case eventOnly
+    /// Not a text-entry element, or no focused element.
+    case noTextField
+    case secureField
+    /// A read failed, or an observed element stopped answering. Literal until a read succeeds.
+    case unreadable
+
+    /// `sawCaret`: the element reported a caret since it gained focus. It then stays observed.
+    static func resolve(_ reading: FieldReading, sawCaret: Bool) -> FieldCapability {
+        switch reading {
+        case .caret, .selection: return .observed
+        case .unavailable(let reason):
+            switch reason {
+            case .rangeUnsupported, .countUnsupported: return sawCaret ? .unreadable : .eventOnly
+            case .notInspected, .noFocusedElement, .unsupportedRole: return .noTextField
+            case .secureField: return .secureField
+            case .noSelectedRange, .noCharacterCount: return .unreadable
+            }
+        }
+    }
+
+    /// An AX error that says the attribute does not exist, as opposed to a failed read.
+    static func isUnsupported(_ error: AXError) -> Bool {
+        error == .attributeUnsupported || error == .noValue
+    }
 }
 
 enum FieldReading: Equatable {
@@ -29,6 +65,20 @@ struct FocusInspection {
     var completionShown = false
     /// The focused element is the VS Code editor in its default mode (`vscodeEditor` profile, FG-1 option B).
     var vscodeEditor = false
+    var capability = FieldCapability.noTextField
+
+    /// Keys alone drive the word and no reading is needed. Identified profiles come before capability.
+    var keysOnly: Bool { vscodeEditor || (!addressBar && capability == .eventOnly) }
+    /// A replacement needs no settled observation.
+    var eventOnly: Bool { addressBar || keysOnly }
+    /// Why this field has no usable context, for the published status.
+    var standbyReason: StandbyReason {
+        switch capability {
+        case .noTextField: .noTextField
+        case .secureField: .passwordField
+        case .observed, .eventOnly, .unreadable: .fieldUnreadable
+        }
+    }
 }
 
 /// Reads identity, selected range, and character count only, never document or typed text.
@@ -43,6 +93,8 @@ final class FocusMonitor {
     /// Address-bar identity of `element`, resolved once per focused-element change.
     private var elementIsAddressBar = false
     private var elementIsVSCodeEditor = false
+    /// `element` reported a caret since it gained focus.
+    private var elementSawCaret = false
     var onNotification: (() -> Void)?
 
     func stop() {
@@ -99,6 +151,7 @@ final class FocusMonitor {
             AXUIElementSetMessagingTimeout(focused, 0.05)
             elementIsAddressBar = Self.isAddressBar(focused, bundleID: bundleID)
             elementIsVSCodeEditor = Self.isVSCodeEditor(focused, bundleID: bundleID)
+            elementSawCaret = false
             if let observer {
                 // Value changes can be external edits that keep the same caret.
                 for name in Self.elementNotifications {
@@ -114,17 +167,19 @@ final class FocusMonitor {
         let addressBar = elementIsAddressBar
         let vscodeEditor = elementIsVSCodeEditor
         func result(_ field: FieldReading, completion: Bool = false) -> FocusInspection {
-            FocusInspection(changed: changed, field: field, role: roleName, elementHash: CFHash(focused),
-                            addressBar: addressBar, completionShown: completion, vscodeEditor: vscodeEditor)
+            if case .caret = field { elementSawCaret = true }
+            return FocusInspection(changed: changed, field: field, role: roleName, elementHash: CFHash(focused),
+                                   addressBar: addressBar, completionShown: completion, vscodeEditor: vscodeEditor,
+                                   capability: FieldCapability.resolve(field, sawCaret: elementSawCaret))
         }
         guard let roleName, [kAXTextFieldRole, kAXTextAreaRole, kAXComboBoxRole].contains(roleName) else {
             return result(.unavailable(.unsupportedRole))
         }
         guard subrole as? String != kAXSecureTextFieldSubrole else { return result(.unavailable(.secureField)) }
         var rangeValue: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(focused, kAXSelectedTextRangeAttribute as CFString, &rangeValue) == .success,
-              let rangeValue, CFGetTypeID(rangeValue) == AXValueGetTypeID() else {
-            return result(.unavailable(.noSelectedRange))
+        let rangeError = AXUIElementCopyAttributeValue(focused, kAXSelectedTextRangeAttribute as CFString, &rangeValue)
+        guard rangeError == .success, let rangeValue, CFGetTypeID(rangeValue) == AXValueGetTypeID() else {
+            return result(.unavailable(FieldCapability.isUnsupported(rangeError) ? .rangeUnsupported : .noSelectedRange))
         }
         let value = rangeValue as! AXValue
         var range = CFRange()
@@ -132,9 +187,10 @@ final class FocusMonitor {
               range.location >= 0, range.length >= 0 else { return result(.unavailable(.noSelectedRange)) }
         // A count, not content. Without it a same-caret external edit is unobservable.
         var count: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(focused, kAXNumberOfCharactersAttribute as CFString, &count) == .success,
-              let length = count as? Int, length >= range.location else {
-            return result(range.length == 0 ? .unavailable(.noCharacterCount) : .selection)
+        let countError = AXUIElementCopyAttributeValue(focused, kAXNumberOfCharactersAttribute as CFString, &count)
+        guard countError == .success, let length = count as? Int, length >= range.location else {
+            guard range.length == 0 else { return result(.selection) }
+            return result(.unavailable(FieldCapability.isUnsupported(countError) ? .countUnsupported : .noCharacterCount))
         }
         if range.length > 0 {
             // In an address bar a selection that runs to the end is the inline completion: report the caret at

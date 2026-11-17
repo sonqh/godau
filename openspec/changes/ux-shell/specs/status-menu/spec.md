@@ -26,8 +26,8 @@ The menu bar item SHALL show a fixed-width template title, `VI` in Vietnamese mo
 ### Requirement: Publication timing without flicker
 The title SHALL apply a Blocked change, a mode change, and a change to Active within one run-loop pass after the status is published. It MAY delay adding or removing a Standby badge by up to 500 ms. The shell SHALL NOT open a window, play a sound, or post a notification because of a status change.
 
-#### Scenario: Focus passes through an unsupported app quickly
-- **WHEN** availability goes `active` → `standby(unsupportedApp)` → `active` within 300 ms
+#### Scenario: Focus passes through an excluded app quickly
+- **WHEN** availability goes `active` → `standby(excludedApp)` → `active` within 300 ms
 - **THEN** the title shows no pause badge at any point
 
 #### Scenario: Grant revoked while running
@@ -76,7 +76,7 @@ The radio items SHALL call `setMode` and SHALL work in every state. The menu SHA
 - **AND** choosing a mode item still changes the mode
 
 ### Requirement: Per-app exclusion from the menu
-Choosing `Tắt tiếng Việt trong <App>` SHALL add that app's bundle ID to the stored exclusions and apply the new configuration. While the frontmost app is excluded, the item SHALL read `Bật lại tiếng Việt trong <App>` and remove the exclusion. Exclusions SHALL be per app, never per field.
+The menu SHALL offer `Tắt tiếng Việt trong <App>` for every frontmost app that has a bundle ID (change `open-app-coverage`). Choosing it SHALL add that app's bundle ID to the stored exclusions and apply the new configuration. While the frontmost app is excluded, the item SHALL read `Bật lại tiếng Việt trong <App>` and remove the exclusion. Exclusions SHALL be per app, never per field.
 
 #### Scenario: Exclude Chrome
 - **WHEN** Chrome is frontmost and the user chooses `Tắt tiếng Việt trong Chrome`

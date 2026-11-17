@@ -20,12 +20,12 @@ Platform integration of the full engine SHALL follow the successful native gate 
 - **AND** the missing or failed native task stays pending
 
 ### Requirement: Dogfood build with accepted profiles only
-A build for daily use before the full matrix passes SHALL enable only field profiles whose full-engine rows passed by native automation and a physical spot check for every matrix group the profile covers. M0 prototype rows SHALL NOT accept a profile. The build SHALL require a recorded safe result for granting and revoking capabilities with the tap installed (U-3).
+A build for daily use before the full matrix passes SHALL label as tested only field profiles whose full-engine rows passed by native automation or a physical check for the matrix groups the profile covers. The label SHALL NOT gate transformation, which follows the `field-coverage` capability (change `open-app-coverage`). M0 prototype rows SHALL NOT mark a profile as tested. The build SHALL require a recorded safe result for granting and revoking capabilities with the tap installed (U-3).
 
-#### Scenario: Browser page fields accepted first
+#### Scenario: Browser page fields tested first
 - **WHEN** only the three `*.webText` profiles have passing full-engine rows
-- **THEN** the dogfood build transforms only in browser page fields
-- **AND** address bars, VS Code, and Notes show Standby with an unsupported reason
+- **THEN** only browser page fields carry the tested label
+- **AND** address bars, VS Code, and Notes still transform according to what their fields report, labeled untested
 
 #### Scenario: Revoke stalls the keyboard
 - **WHEN** U-3 records that a revoke with the tap installed stalls input after the mitigations

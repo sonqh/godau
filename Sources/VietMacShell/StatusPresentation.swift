@@ -182,9 +182,6 @@ public struct StatusPresentation: Equatable, Sendable {
                     NextStep(title: LocalizedText("action.seeReason"), action: .openHelp(.password)))
         case .passwordField:
             return (LocalizedText("detail.passwordField"), nil)
-        case .unsupportedApp:
-            return (LocalizedText("detail.unsupportedApp", app),
-                    NextStep(title: LocalizedText("action.seeSupportedApps"), action: .openSettings(.apps)))
         case .excludedApp:
             let step = status.frontmostBundleID.map {
                 NextStep(title: LocalizedText("menu.turnOnInApp", app), action: .removeExclusion(bundleID: $0))

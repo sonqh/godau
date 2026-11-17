@@ -151,7 +151,7 @@ enum Snapshots {
         for value in statuses {
             let p = StatusPresentation(status: value)
             let model = MenuModel(status: value, presentation: p, setupComplete: true, shortcutDisplay: nil,
-                                  excluded: [], catalog: .stub, exclusionsSupported: true)
+                                  excluded: [], exclusionsSupported: true)
             text += "== \(value.availability) | title \(p.title) badge \(p.badge.rawValue) | \(strings(p.accessibilityLabel))\n"
             for item in model.items {
                 switch item {

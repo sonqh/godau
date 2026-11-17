@@ -37,8 +37,8 @@ public final class M0StatusAdapter {
     public var status: RuntimeStatus {
         Self.status(enabled: host.enabled, state: host.state, permissions: host.permissions,
                     inputSource: host.inputSource, frontmostBundleID: host.frontmostBundleID, modeSource: modeSource,
-                    excluded: host.excludedBundleIDs, secureInput: host.secureInput,
-                    shortcutConfigured: shortcutConfigured)
+                    secureInput: host.secureInput, shortcutConfigured: shortcutConfigured,
+                    assurance: host.assurance, fieldStandby: host.fieldStandby)
     }
 
     /// Publishes from one main run-loop observer, before the loop waits, at most once per pass.
@@ -86,13 +86,11 @@ public final class M0StatusAdapter {
 
     nonisolated public static func status(enabled: Bool, state: InputRuntimeState, permissions: PermissionSnapshot,
                               inputSource: String, frontmostBundleID: String?, modeSource: ModeSource,
-                              excluded: Set<String> = [], secureInput: Bool = false,
-                              shortcutConfigured: Bool = false) -> RuntimeStatus {
-        var availability = enabled ? availability(for: state) : .off
-        // M0 treats an excluded app as unsupported; the status names the real reason.
-        if availability == .standby(.unsupportedApp), let app = frontmostBundleID, excluded.contains(app) {
-            availability = .standby(.excludedApp)
-        }
+                              secureInput: Bool = false, shortcutConfigured: Bool = false,
+                              assurance: Assurance = .observed,
+                              fieldStandby: StandbyReason = .fieldUnreadable) -> RuntimeStatus {
+        let availability = enabled
+            ? availability(for: state, assurance: assurance, fieldStandby: fieldStandby) : .off
         let capabilities = Capabilities(permissions)
         return RuntimeStatus(mode: enabled ? .vietnamese : .english, modeSource: modeSource,
                              availability: availability, capabilities: capabilities, inputSourceID: inputSource,
@@ -117,10 +115,12 @@ public final class M0StatusAdapter {
     }
 
     /// The M0 reason mapping table in ux-shell design D2.
-    nonisolated public static func availability(for state: InputRuntimeState) -> Availability {
+    /// `assurance` is the focused field's level; `fieldStandby` says why a field has no usable context.
+    nonisolated public static func availability(for state: InputRuntimeState, assurance: Assurance = .observed,
+                                                fieldStandby: StandbyReason = .fieldUnreadable) -> Availability {
         switch state {
         case .disabled: .off
-        case .active: .active(.observed)
+        case .active: .active(assurance)
         case .paused(let reason):
             switch reason {
             case .accessibility: .blocked(.accessibility)
@@ -132,8 +132,8 @@ public final class M0StatusAdapter {
             case .userDisabledTap: .blocked(.userDisabledTap)
             case .transportUncertain: .blocked(.transportUncertain)
             case .secureInput: .standby(.secureInput)
-            case .unsupportedApp: .standby(.unsupportedApp)
-            case .uncertainContext: .standby(.fieldUnreadable)
+            case .excludedApp: .standby(.excludedApp)
+            case .uncertainContext: .standby(fieldStandby)
             case .sleeping: .standby(.sleeping)
             }
         }

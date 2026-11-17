@@ -102,7 +102,7 @@ struct PrototypePipelineTests {
     }
 
     @Test func capabilityAndSecureInputChangesInvalidateComposition() {
-        for reason in [PauseReason.accessibility, .listening, .posting, .secureInput, .unsupportedApp,
+        for reason in [PauseReason.accessibility, .listening, .posting, .secureInput, .excludedApp,
                        .unsupportedSource, .uncertainContext] {
             var model = activePipeline()
             _ = model.handle(.letter(97, keyCode: 0, isRepeat: false))
@@ -112,7 +112,7 @@ struct PrototypePipelineTests {
             case .listening: environment.permissions = .init(accessibility: true, eventListening: false, eventPosting: true)
             case .posting: environment.permissions = .init(accessibility: true, eventListening: true, eventPosting: false)
             case .secureInput: environment.secureInput = true
-            case .unsupportedApp: environment.supportedApp = false
+            case .excludedApp: environment.appExcluded = true
             case .unsupportedSource: environment.supportedSource = false
             case .uncertainContext: environment.certainContext = false
             default: break

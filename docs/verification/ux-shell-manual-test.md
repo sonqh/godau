@@ -77,7 +77,7 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 - Address bars in Chrome, Dia, and Safari transform words even while a suggestion is shown (2026-11-16). Retest B17 in the address bar.
 - The mode shortcut can be ⌃⇧ alone: press both, release both, with no other key. (Added on 2026-11-15. Retest B9.)
 - FG-1 (Son, 2026-11-15): option B. The VS Code editor (English UI, default mode) transforms with the event-only profile. Quick Open stays an observed field.
-- No field profile is accepted yet, so Settings › Apps shows `Chưa hỗ trợ` for every field. The mockup's `Hỗ trợ ✓` appears only after full-engine native acceptance.
+- Settings › Apps labels are evidence only (`open-app-coverage`, 2026-11-17): `Đã kiểm thử ✓` for fields with native evidence, `Chưa kiểm thử` for VS Code Find and Notes. Vietnamese works in every app that is not excluded.
 - The mode shortcut is a system hot key, because M0 has no shortcut matching in the key callback. VietMac registers it only while `shortcutArmed` is true.
 - `⌃⌥V` is a candidate shortcut. Its conflicts in the five apps are unknown (PD-1).
 - Login startup uses `SMAppService.mainApp`. The result of registering a bundle under `.artifacts` is unknown (U-7). Turn login startup off after the test.
@@ -117,7 +117,7 @@ B1 and the UX-1 to UX-3 checks need a bundle that has no grants and no saved set
 | --- | --- | --- |
 | A1 (UX-8) | `Availability` › each `blocked(...)` and `standby(...)` reason. Repeat with `UI Language › English` | Title `VI` with a triangle (blocked), a pause badge (shown standby), or no badge (`noTextField`, `fieldUnreadable`, `sleeping`). The menu shows the status line, one detail line, and at most one action, as in `menu-vi.txt` and `menu-en.txt` in the snapshots. No raw enum name, no "error" or "lỗi" |
 | A2 | `off (English)`, then `Capabilities` › turn Accessibility off | Title `EN` with a triangle. Menu line `Bạn vẫn gõ được. Tiếng Việt chưa sẵn sàng.` `Tiếp tục thiết lập…` appears |
-| A3 | `active(observed)` → `standby(unsupportedApp)` → `active(observed)` quickly | No pause badge flicker (500 ms delay) |
+| A3 | `active(observed)` → `standby(excludedApp)` → `active(observed)` quickly (switch through an excluded app) | No pause badge flicker (500 ms delay) |
 | A4 | `Frontmost App` › Chrome, `active(observed)`. Choose `Tắt tiếng Việt trong Chrome` | VietMac stores the exclusion. Settings › Apps shows Chrome unchecked. In simulator mode the status does not change by itself. Pick `standby(excludedApp)` to see `Bật lại tiếng Việt trong Chrome` |
 | A5 | `blocked(tapUnavailable)`, choose `Thử lại` | The simulator stays blocked. The item becomes `Mở lại VietMac` |
 | A6 | Hold Option with the menu open | `Lưu báo cáo chẩn đoán…` replaces `Hướng dẫn…` |

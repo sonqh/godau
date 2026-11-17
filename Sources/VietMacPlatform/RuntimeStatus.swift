@@ -28,7 +28,7 @@ public enum PauseReason: String, Equatable, Sendable {
     case listening = "Input monitoring is unavailable"
     case posting = "Event posting is unavailable"
     case secureInput = "Secure input is active"
-    case unsupportedApp = "Application is outside the M0 trial"
+    case excludedApp = "The user turned Vietnamese off in this application"
     case unsupportedSource = "Use ABC or U.S. input source"
     case uncertainContext = "Focus or selection is uncertain"
     case tapUnavailable = "The event tap could not start"
@@ -47,16 +47,16 @@ public enum InputRuntimeState: Equatable, Sendable {
 public struct InputEnvironment: Equatable, Sendable {
     public var permissions: PermissionSnapshot
     public var secureInput: Bool
-    public var supportedApp: Bool
+    public var appExcluded: Bool
     public var supportedSource: Bool
     public var certainContext: Bool
 
     public init(permissions: PermissionSnapshot, secureInput: Bool = false,
-                supportedApp: Bool = true, supportedSource: Bool = true,
+                appExcluded: Bool = false, supportedSource: Bool = true,
                 certainContext: Bool = true) {
         self.permissions = permissions
         self.secureInput = secureInput
-        self.supportedApp = supportedApp
+        self.appExcluded = appExcluded
         self.supportedSource = supportedSource
         self.certainContext = certainContext
     }
@@ -66,7 +66,7 @@ public struct InputEnvironment: Equatable, Sendable {
         if !permissions.eventListening { return .listening }
         if !permissions.eventPosting { return .posting }
         if secureInput { return .secureInput }
-        if !supportedApp { return .unsupportedApp }
+        if appExcluded { return .excludedApp }
         if !supportedSource { return .unsupportedSource }
         if !certainContext { return .uncertainContext }
         return nil
@@ -99,6 +99,8 @@ public struct ContextCounters: Encodable, Equatable, Sendable {
     /// VS Code moved Accessibility focus from a text field to a static text (suggestion widget, Quick Open
     /// result) and back; ignored.
     public var vscodeFocusBounces: UInt64 = 0
+    /// Replacements sent in a text field that has no selected-range or character-count attribute.
+    public var eventOnlyReplacements: UInt64 = 0
 
     public init() {}
 }
