@@ -97,7 +97,7 @@ More build details:
 - For a read-only capability report, run `.artifacts/GoDau.app/Contents/MacOS/VietMac --diagnostics`. This command creates no event tap.
 - To record a session, open the app with `open .artifacts/GoDau.app --args --evidence-dir <absolute path>`. The app writes its capabilities, context counters, and callback timings there. Send `SIGUSR1` to write them again. The record holds no typed text.
 
-The app was named VietMac until 2026-11-16. The repository, the Swift modules, the scripts, and the executable keep that name.
+The app was named VietMac until 2026-11-16. The Swift modules, the scripts, and the executable keep that name. The GitHub repository was renamed from `vietmac` to `godau` on 2026-11-17.
 The bundle ID changed from `local.sonquach.vietmac` to `io.github.sonqh.godau` on 2026-11-17, before the first public release. The app copies its old preferences once. macOS permissions do not move, so grant them again after that update.
 
 ## Project layout

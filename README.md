@@ -10,10 +10,10 @@ Gõ Dấu is a pre-release (version 0.1.0). The author uses it every day, and it
 
 ### With the install script
 
-No release is published yet. When one is, this command installs it:
+Run this command in Terminal:
 
 ```sh
-curl -fsSL https://github.com/sonqh/vietmac/releases/latest/download/install.sh | sh
+curl -fsSL https://github.com/sonqh/godau/releases/latest/download/install.sh | sh
 ```
 
 The script downloads the app, checks its SHA-256 and its code signature, puts `GoDau.app` in `/Applications`, and opens it. It does not use `sudo`. If you cannot write to `/Applications`, it uses `~/Applications`.
@@ -23,8 +23,8 @@ The script downloads the app, checks its SHA-256 and its code signature, puts `G
 You need the Xcode Command Line Tools with Swift 6 or later.
 
 ```sh
-git clone https://github.com/sonqh/vietmac.git
-cd vietmac
+git clone https://github.com/sonqh/godau.git
+cd godau
 make install
 ```
 
@@ -112,6 +112,6 @@ VNI, macros, more layouts, and per-app modes may come later, when usage justifie
 
 ## Help and license
 
-Report a problem in the [issue tracker](https://github.com/sonqh/vietmac/issues). The menu item `Save Diagnostic Report…` (hold Option) writes a report with no typed text. You can attach that report.
+Report a problem in the [issue tracker](https://github.com/sonqh/godau/issues). The menu item `Save Diagnostic Report…` (hold Option) writes a report with no typed text. You can attach that report.
 
 Gõ Dấu uses the [MIT license](LICENSE).
