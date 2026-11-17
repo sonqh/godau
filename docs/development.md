@@ -73,3 +73,54 @@ Do not hand-edit generated skills as a substitute for project rules.
 
 The official integration paths and invocation forms are documented by
 [OpenSpec supported tools](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md).
+
+## Build, install, and package
+
+You need Swift 6 or later and a macOS SDK. The checks also need Python 3.9 or later and Node.js 20.19 or later. The app itself has no Node or Python dependency.
+
+| Command | What it does |
+| --- | --- |
+| `make setup` | Installs the pinned development tools |
+| `make check` | Runs the spec checks, the ledger check, the tests, and the fixture replay |
+| `make bench` | Measures the replacement planner in a release build |
+| `make app` | Builds `.artifacts/GoDau.app` and signs it locally. It does not open or install the app |
+| `make install` | Builds the app, replaces `/Applications/GoDau.app`, and opens it |
+| `make dist` | Builds a universal app and writes `GoDau.zip`, `GoDau.zip.sha256`, and `install.sh` to `.artifacts/dist`. It uploads nothing |
+
+To publish a build, set `VIETMAC_DIST_URL` to the public HTTPS folder that will hold the three files, run `make dist`, and upload them.
+
+More build details:
+
+- Signing is ad hoc by default. To sign with an identity you chose, set `VIETMAC_SIGNING_IDENTITY`.
+- `scripts/swift.sh` uses the installed Command Line Tools when they are available. It does not change global developer settings. To use another toolchain, set `VIETMAC_SWIFT_BIN` to a Swift executable.
+- The tests use Swift Testing. The test command disables XCTest. When the Command Line Tools layout requires it, the wrapper loads the bundled test macro.
+- For a read-only capability report, run `.artifacts/GoDau.app/Contents/MacOS/VietMac --diagnostics`. This command creates no event tap.
+- To record a session, open the app with `open .artifacts/GoDau.app --args --evidence-dir <absolute path>`. The app writes its capabilities, context counters, and callback timings there. Send `SIGUSR1` to write them again. The record holds no typed text.
+
+The app was named VietMac until 2026-11-16. The repository, the Swift modules, the scripts, and the executable keep that name.
+The bundle ID changed from `local.sonquach.vietmac` to `io.github.sonqh.godau` on 2026-11-17, before the first public release. The app copies its old preferences once. macOS permissions do not move, so grant them again after that update.
+
+## Project layout
+
+```text
+Apps/VietMac/             Menu bar app and bundle metadata
+Sources/VietMacCore/      Telex composer and replacement planner. No macOS frameworks
+Sources/VietMacPlatform/  Event tap, field inspection, and event transport
+Sources/VietMacShell/     Menu, Setup, Settings, and Help as data, plus the strings
+Sources/VietMacReplay/    Fixture replay
+Sources/VietMacBench/     Release benchmark
+Tests/                    Model tests
+Fixtures/                 Expected results for the replay
+openspec/                 Requirements and planned changes
+ledger/                   Append-only development evidence
+scripts/                  Build, install, spec, and ledger commands
+docs/                     Architecture, UX, workflow, and verification records
+```
+
+## Where the detail is
+
+- [Project status](project-status.md): what is delivered, what is pending, and the active changes.
+- [Architecture](architecture.md), [development workflow](development.md), and [performance policy](performance.md).
+- [Manual test guide](verification/ux-shell-manual-test.md).
+- [Provenance](provenance.md): where the requirements and the research come from.
+- `AGENTS.md` holds the instructions for the Codex and Claude assistants that work in this repository.

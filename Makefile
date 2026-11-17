@@ -1,4 +1,4 @@
-.PHONY: setup check test test-sanitize replay bench bench-engine app app-debug install icon snapshots driver specs ledger
+.PHONY: setup check test test-sanitize replay bench bench-engine app app-debug install dist icon snapshots driver specs ledger
 
 setup:
 	npm ci --ignore-scripts --no-audit --no-fund
@@ -41,6 +41,11 @@ icon:
 # Builds the Release app and installs it to /Applications/GoDau.app, replacing and reopening a running copy.
 install: app
 	./scripts/install-app.sh
+
+# Packages a universal Release app as .artifacts/dist/GoDau.zip with its SHA-256 and install.sh. No upload.
+# Set VIETMAC_DIST_URL to the public folder that will hold the three files.
+dist:
+	./scripts/dist-app.sh
 
 # Renders every setup step, Help page, Settings tab, and the menu text for every reason (Debug only).
 snapshots: app-debug

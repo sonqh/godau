@@ -189,7 +189,7 @@ Trade-off: a trust change in any app costs one refresh interval of literal typin
 
 ### 11. Single instance and login startup (AD-16)
 
-`InstanceLock` takes a non-blocking `flock` on `~/Library/Application Support/VietMac/instance.lock` before `InputHost` exists. A second process posts `local.sonquach.vietmac.reopen` and exits; the first instance opens Settings.
+`InstanceLock` takes a non-blocking `flock` on `~/Library/Application Support/VietMac/instance.lock` before `InputHost` exists. A second process posts `io.github.sonqh.godau.reopen` and exits; the first instance opens Settings.
 Login startup uses `SMAppService.mainApp`. The system status is the truth; the stored preference is only the last request.
 Trade-off: registration after a rebuild in place or with ad hoc signing is **unknown** (U-7); M3 fixes a stable bundle location first.
 

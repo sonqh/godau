@@ -1,128 +1,117 @@
 # Gõ Dấu
 
-Vietnamese input for macOS. Private repository: [sonqh/vietmac](https://github.com/sonqh/vietmac).
+Gõ Dấu is a Vietnamese input app for macOS. You type Telex, and the app changes the keys into Vietnamese letters as you type, with no underline under the word.
 
-Gõ Dấu is Son's personal Vietnamese input app for macOS. The app was renamed from VietMac on 2026-11-16.
-The repository, Swift modules, scripts, and bundle ID (`local.sonquach.vietmac`) keep the VietMac name,
-so macOS permissions survive the rename. The built bundle is `.artifacts/GoDau.app`.
-You type Telex, and VietMac replaces the keys with precomposed Unicode through generated events.
-It does not use marked text.
-Vietnamese works in every application you have not excluded (change `open-app-coverage`, 2026-11-17).
-Five applications are the acceptance set: VS Code, Chrome, Dia, Safari, and Apple Notes. Other applications are best effort and untested.
+It is for people who type Vietnamese on a Mac with the ABC or U.S. keyboard. It needs macOS 13 or later and runs on Apple Silicon and Intel.
 
-## Current status
+Gõ Dấu is a pre-release (version 0.1.0). The author uses it every day, and it is tested in a small set of apps. Read [Limits](#limits) before you rely on it.
 
-The M0 event-tap host now runs the complete Telex composer (`VietMacCore/TelexComposer`) with prepared Unicode replacement.
-The `ux-shell` UI runs on top of it: the menu, Setup, Help, Settings, and the mode HUD.
-The app starts in English mode.
+## Install
 
-- Verified: native automation passed the Telex scenarios in Chrome, Dia, and Safari on 2026-11-14.
-- Not yet accepted: physical typing, Notes, VS Code, and callback performance.
-- Not yet verified natively: typing in applications outside the five. Each field gets `observed` checking when it reports a caret and a character count, and `eventOnly` when it is a text field without them. Other focus stays as typed.
+### With the install script
 
-To test the app yourself, follow [the manual test guide](docs/verification/ux-shell-manual-test.md).
-
-## Quick start
-
-You need Swift 6 or later, a macOS SDK, Python 3.9 or later, and Node.js 20.19 or later.
-OpenSpec is a pinned local development dependency. The runtime has no Node or Python dependency.
+No release is published yet. When one is, this command installs it:
 
 ```sh
-make setup
-make check
-make bench
-make app
+curl -fsSL https://github.com/sonqh/vietmac/releases/latest/download/install.sh | sh
 ```
 
-`make app` builds `.artifacts/GoDau.app` and signs it locally. It does not open or install the app.
+The script downloads the app, checks its SHA-256 and its code signature, puts `GoDau.app` in `/Applications`, and opens it. It does not use `sudo`. If you cannot write to `/Applications`, it uses `~/Applications`.
 
-### Open and inspect the app
+### From source
 
-- Signing is ad hoc by default. To sign with a local identity you chose, set `VIETMAC_SIGNING_IDENTITY`.
-- For a read-only capability snapshot, run `.artifacts/GoDau.app/Contents/MacOS/VietMac --diagnostics`. This command creates no event tap.
-- To record evidence, open the app with `open .artifacts/GoDau.app --args --evidence-dir <absolute path>`. The app records the session's capabilities, context counters, and callback timings. Send `SIGUSR1` to refresh the record.
-- Before you enable the prototype, read [M0 verification and pending native checks](docs/verification/macos-transport-spike.md).
+You need the Xcode Command Line Tools with Swift 6 or later.
 
-### Toolchain
-
-- `scripts/swift.sh` uses the installed Command Line Tools when they are available. It does not change global developer settings.
-- To use another toolchain, set `VIETMAC_SWIFT_BIN` to an explicit Swift executable.
-- Swift Testing provides the core tests. The local test command disables XCTest.
-- When the CLT layout requires it, the wrapper loads the bundled test macro explicitly.
-
-## Project layout
-
-```text
-VietMac/
-  AGENTS.md                        Shared instructions for Codex and Claude
-  CLAUDE.md                        Claude entry point
-  Package.swift                    Runtime modules and development executables
-  Apps/VietMac/                    Menu bar application shell and bundle metadata
-  Sources/
-    VietMacCore/                   Reusable semantic contracts and replacement planner
-    VietMacPlatform/               Event tap, context inspection, prototype, and prepared transport
-    VietMacReplay/                 Synthetic fixture replay
-    VietMacBench/                  Release benchmark with explicit measurement scope
-  Tests/                          Core/Unicode and synthetic platform checks
-  Fixtures/                        Synthetic expected behavior
-  benchmarks/baselines/            Tracked measurements with scope and environment
-  openspec/
-    config.yaml                    Project context and artifact rules
-    specs/                         Baseline requirements for delivered capabilities
-    changes/                       Active changes: ux-shell, telex-input-mvp, macos-transport-spike, native-test-automation, open-app-coverage
-  .agents/skills/                  Generated OpenSpec skills for Codex
-  .claude/skills/                  Generated OpenSpec skills for Claude
-  .claude/commands/opsx/           Generated Claude commands
-  ledger/                          Append-only development evidence
-  scripts/                         Build, spec, and ledger entry points
-  docs/                            Architecture, workflow, provenance, and evidence
+```sh
+git clone https://github.com/sonqh/vietmac.git
+cd vietmac
+make install
 ```
 
-## Design documents
+`make install` builds the app, puts it in `/Applications/GoDau.app`, and opens it.
 
-Start with [architecture](docs/architecture.md), [development workflow](docs/development.md), and [performance policy](docs/performance.md).
+## Type your first word
 
-Three proposed documents describe the target app and the delivery order:
-the [architecture specification](docs/architecture-spec.md), the [UX specification](docs/ux-spec.md), and the [product roadmap](docs/product-roadmap.md).
-They do not describe delivered behavior.
-Son decided FG-1 on 2026-11-14 (option C: the VS Code editor and Quick Open stay literal in v0.1). FG-2 to FG-5 still await Son.
+1. Open Gõ Dấu. A setup screen asks for two permissions: Input Monitoring and Accessibility. Grant both.
+2. Find `EN` in the menu bar. Click it and choose `Vietnamese`. The title changes to `VI`.
+3. Click in a text field and type `tieengs Vieetj`.
 
-The [bootstrap evidence](docs/verification/bootstrap.md) separates tested scaffolding from pending native behavior.
+The field shows `tiếng Việt`.
 
-## OpenSpec changes
+## What it does
 
-Five changes are active. The next work is in `ux-shell`, then `telex-input-mvp`.
+- Telex input with precomposed Unicode letters. The text you get is the same in every app.
+- No underline and no pop-up while you type. Gõ Dấu sends the changed letters as ordinary key events.
+- Works in every app you have not turned it off in. [Limits](#limits) lists the apps that are tested.
+- A menu bar item shows `VI` or `EN` and holds every action.
+- `Turn Off Vietnamese in <App>` in the menu stops Gõ Dấu in one app.
+- An optional shortcut switches between Vietnamese and English. You set it in Settings.
+- Gõ Dấu can open at login. You turn this on in Settings.
+- The interface is in Vietnamese and English.
 
-| Change | Purpose | Tasks done (2026-11-14) |
+### Telex keys
+
+Type the letter, then the tone key.
+
+| Keys | Result |
+| --- | --- |
+| `s` `f` `r` `x` `j` | acute, grave, hook, tilde, dot |
+| `aa` `aw` `ee` `oo` `ow` `uw` `dd` | â ă ê ô ơ ư đ |
+| `z` | removes the tone |
+| a tone key typed twice | removes the tone and keeps the letter |
+
+## Limits
+
+- Gõ Dấu supports Telex only. It has no VNI, no macros, and no other output encodings.
+- It works only with the ABC or U.S. input source. With another source it pauses and does not switch the source for you.
+- It does not change text in password fields, or while an app has secure input on.
+- It changes only the letters that it saw you type in the current field. When it is not sure, it leaves the word as typed. This happens when you click inside existing text, press Delete, or when an address bar shows a suggestion. Type a space and then the word again.
+- A field that does not report its caret position gets less checking. Gõ Dấu then follows your keys alone. If the caret moves in a way that Gõ Dấu cannot see, the next change may remove a wrong letter.
+- Some apps draw their own text and do not report a text field. Gõ Dấu leaves your keys as typed there.
+
+Tested, as of 2026-11-17:
+
+| App | Where | How it was tested |
 | --- | --- | --- |
-| [ux-shell](openspec/changes/ux-shell/proposal.md) | Status menu, guided Setup, Settings, Help, and mode HUD | 12 of 16 |
-| [telex-input-mvp](openspec/changes/telex-input-mvp/proposal.md) | Complete Telex reducer, English/Vietnamese controls, full-engine native acceptance | 8 of 27 |
-| [macos-transport-spike](openspec/changes/macos-transport-spike/proposal.md) | M0 proof of ordered replacement and context resets (`as` → `á`, `aa` → `â`) | 5 of 12 |
-| [native-test-automation](openspec/changes/native-test-automation/proposal.md) | Scripted synthetic key events for repeatable native tests | 7 of 15 |
+| Chrome, Dia, Safari | Text fields on web pages | Scripted key events |
+| Chrome, Dia, Safari | Address bar | Typing by hand |
+| VS Code | Editor and Quick Open | Typing by hand |
+| TextEdit | Document | Typing by hand |
 
-- `ux-shell` waits for Son's results from [the manual test guide](docs/verification/ux-shell-manual-test.md). These results close tasks 3.2, 3.3, 3.4, and 5.1.
-- `telex-input-mvp` continues with milestone M2. Its [specifications](openspec/changes/telex-input-mvp/specs/telex-composition/spec.md) use Son's selected `hòa`, `khỏe`, and `thúy` convention. The reducer and the callback have separate performance gates.
-- `macos-transport-spike` closes after the native unknowns U-1, U-3, U-4, and U-14 run. Native verification must cover the required fields and autocomplete behavior in all five apps.
+Apple Notes and VS Code Find are not yet accepted. Other apps are not tested. Gõ Dấu still runs in them, and you can turn it off for one app from the menu.
 
-The plan put the native spike before the full engine.
-On 2026-11-14, Son made an FG-2 exception: the composer runs before the M0 native gate closes, so that the MVP can be tested.
-The MVP artifacts still describe planned behavior. Typing support counts as delivered only after native acceptance.
+Not yet verified: an install on a second Mac with the script, and the Intel build on Intel hardware.
 
-```sh
-./scripts/openspec.sh list
-./scripts/openspec.sh status --change ux-shell
-python3 scripts/ledger.py recent --limit 5
-```
+## Permissions and privacy
 
-Both assistants use the same workflow. Replace `<change>` with a change name from the table:
+Gõ Dấu needs two permissions.
 
-- Claude: `/opsx:apply <change>` in the project chat.
-- Codex: `$openspec-apply-change <change>` or select the generated skill in the app.
+- Input Monitoring lets Gõ Dấu receive the keys you press.
+- Accessibility lets Gõ Dấu check the caret position and the kind of field. It also lets Gõ Dấu send the changed letters.
 
-You type these in the assistant, not in a terminal.
-The generated integrations follow the [official OpenSpec tool paths](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md).
+Gõ Dấu does not read text in other apps. It does not store or send what you type. It does not use the network.
+
+The app has no Developer ID signature and is not notarized. After an update, macOS may ask you to grant Accessibility again.
+
+## Remove it
+
+1. Choose `Quit Gõ Dấu` from its menu.
+2. Move `GoDau.app` from `/Applications` or `~/Applications` to the Trash.
+3. Open System Settings, then Privacy & Security. Remove Gõ Dấu from Accessibility and Input Monitoring.
+
+## For developers
+
+- [Build, install, and package](docs/development.md#build-install-and-package): the `make` commands and the project layout.
+- [Project status](docs/project-status.md): what is delivered, what is pending, and the active changes.
+- [Architecture](docs/architecture.md) and [performance policy](docs/performance.md).
+- [Provenance](docs/provenance.md): where the requirements and the research come from.
 
 ## Later work
 
-Later extensions include VNI, macros, more layouts, and per-app modes, when usage justifies them.
-See [provenance](docs/provenance.md) for the OpenKey research baseline.
+VNI, macros, more layouts, and per-app modes may come later, when usage justifies them.
+
+## Help and license
+
+Report a problem in the [issue tracker](https://github.com/sonqh/vietmac/issues). The menu item `Save Diagnostic Report…` (hold Option) writes a report with no typed text. You can attach that report.
+
+Gõ Dấu uses the [MIT license](LICENSE).

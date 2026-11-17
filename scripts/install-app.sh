@@ -1,6 +1,6 @@
 #!/bin/sh
 # Installs the Release build to /Applications/GoDau.app: stops a running copy, replaces it, and opens it.
-# Run `make app` first. The bundle ID stays local.sonquach.vietmac, so permissions and preferences carry over
+# Run `make app` first. The bundle ID stays io.github.sonqh.godau, so permissions and preferences carry over
 # when the signing identity is unchanged.
 set -eu
 cd "$(dirname "$0")/.."

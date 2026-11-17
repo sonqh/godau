@@ -9,6 +9,22 @@ final class ShellPreferences {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        if defaults === UserDefaults.standard { Self.migrateLegacyPreferences(into: defaults) }
+    }
+
+    /// The bundle ID before the first public release (2026-11-17). macOS keys preferences by bundle ID.
+    static let legacyBundleID = "local.sonquach.vietmac"
+
+    /// Copies the preferences stored under the old bundle ID, once, and only into the Release app.
+    /// A key that already has a value keeps it. Permissions do not move: the user grants them again.
+    static func migrateLegacyPreferences(into defaults: UserDefaults) {
+        let marker = "migratedLegacyPreferences"
+        guard Bundle.main.bundleIdentifier == "io.github.sonqh.godau", !defaults.bool(forKey: marker) else { return }
+        defaults.set(true, forKey: marker)
+        guard let legacy = defaults.persistentDomain(forName: legacyBundleID) else { return }
+        for (key, value) in legacy where defaults.object(forKey: key) == nil {
+            defaults.set(value, forKey: key)
+        }
     }
 
     /// The last setup step the user saw. Setup progress is otherwise derived from the status.

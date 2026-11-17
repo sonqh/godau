@@ -86,7 +86,7 @@ Task 5.1 also asks for Reduce Motion (UX-20), both UI languages on a Vietnamese 
 
 ```sh
 export VIETMAC_SIGNING_IDENTITY="VietMac Local Signing"   # trusted identity: grants survive rebuilds
-make app-debug     # .artifacts/GoDau Debug.app: Simulator (Debug) submenu, bundle ID local.sonquach.vietmac.debug
+make app-debug     # .artifacts/GoDau Debug.app: Simulator (Debug) submenu, bundle ID io.github.sonqh.godau.debug
 make app           # .artifacts/GoDau.app: Release, no simulator
 make snapshots     # .artifacts/ux-snapshots: every setup step, Help page, Settings tab, light and dark, VI and EN
 ```
@@ -103,7 +103,7 @@ B1 and the UX-1 to UX-3 checks need a bundle that has no grants and no saved set
 
 1. Quit the bundle.
 2. In System Settings › Privacy & Security, select the bundle in Input Monitoring and click −. Do the same in Accessibility.
-3. Delete its preferences. For the Debug bundle, run `defaults delete local.sonquach.vietmac.debug`. For the Release bundle, run `defaults delete local.sonquach.vietmac`.
+3. Delete its preferences. For the Debug bundle, run `defaults delete io.github.sonqh.godau.debug`. For the Release bundle, run `defaults delete io.github.sonqh.godau`.
 4. Open the bundle again.
 
 ## A. Simulator checks (no permissions needed)
@@ -132,7 +132,7 @@ Choose `Use Live M0 Status` in the simulator submenu, or use the Release build.
 
 | ID | Steps | Expected |
 | --- | --- | --- |
-| B1 (UX-1) | First start of a fresh build. Delete preferences with `defaults delete local.sonquach.vietmac.debug` | Setup opens at `Bước 1 / 6`. Title `EN` with a triangle. No permission prompt before a click |
+| B1 (UX-1) | First start of a fresh build. Delete preferences with `defaults delete io.github.sonqh.godau.debug` | Setup opens at `Bước 1 / 6`. Title `EN` with a triangle. No permission prompt before a click |
 | B2 (UX-2) | Step 2, click `Mở Cài đặt Hệ thống` | macOS lists VietMac in Input Monitoring and the pane opens |
 | B3 (UX-3) | Turn the switch on in System Settings | Within 1 s the step shows `Đã bật ✓`. The window comes to the front only because System Settings is frontmost. Focus is on `Tiếp tục` |
 | B4 | Return from System Settings without turning the switch on, wait 20 s | `Mở lại VietMac` appears as a secondary button |

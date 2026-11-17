@@ -20,7 +20,7 @@
 
 ## Read the relevant context
 
-1. Read `README.md` for implemented capabilities and the current next task.
+1. Read `docs/project-status.md` for implemented capabilities and the current next task. `README.md` is the public page for users.
 2. Read `docs/architecture.md` when a change affects module boundaries.
 3. Run `python3 scripts/ledger.py recent --limit 5` for recent evidence and handoffs.
 4. Read the active change's proposal, design, specs, and tasks when you implement that change.

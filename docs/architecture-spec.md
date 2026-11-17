@@ -41,7 +41,7 @@ flowchart LR
     Host --- Obs
 ```
 
-- One process: `VietMac.app`, a menu bar agent (`LSUIElement`), bundle ID `local.sonquach.vietmac` (**verified**, `Apps/VietMac/Info.plist`).
+- One process: `VietMac.app`, a menu bar agent (`LSUIElement`), bundle ID `io.github.sonqh.godau` (**verified**, `Apps/VietMac/Info.plist`).
 - No helper process, XPC service, network client, database, or InputMethodKit component.
 - The runtime reads three capabilities: Accessibility (`AXIsProcessTrusted`), event listening (`CGPreflightListenEventAccess`), and event posting (`CGPreflightPostEventAccess`) (**verified**, `RuntimeStatus.swift:17-23`).
   System Settings has two panes for them, Accessibility and Input Monitoring. Posting has no pane of its own; it is **inferred** to follow Accessibility. Section 7.6 has the full model.
@@ -534,7 +534,7 @@ flowchart LR
 ### 7.7 Single instance, reopen, and relaunch
 
 - `InstanceLock` takes an exclusive, non-blocking `flock` on `~/Library/Application Support/VietMac/instance.lock` before it creates `InputHost`. The kernel releases it when the process exits, including a crash. The `--diagnostics` invocation does not take the lock and never creates a tap.
-- A second process that fails to take the lock posts the distributed notification `local.sonquach.vietmac.reopen` and exits without creating `InputHost`. The notification carries no data; its only effect is that the first instance opens its settings window.
+- A second process that fails to take the lock posts the distributed notification `io.github.sonqh.godau.reopen` and exits without creating `InputHost`. The notification carries no data; its only effect is that the first instance opens its settings window.
 - Opening the same bundle again starts no second process. macOS delivers a reopen event to the running instance (`applicationShouldHandleReopen`), which opens the settings window (**inferred** for an `LSUIElement` app).
 - A lock is used instead of a check of running applications because two launches at login can race, and two copies at different paths share the bundle ID.
 - Launch context. The shell reads once, in `applicationDidFinishLaunching`, whether the launch was a login-item launch: the current Apple event is the open-application event and its `keyAEPropData` parameter equals `keyAELaunchedAsLogInItem`. This is documented for classic login items; for a `SMAppService.mainApp` registration on macOS 13 and later it is **unknown** (U-15). A reopen event, a second-process notification, and a relaunch are manual by definition.

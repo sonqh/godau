@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIdentifier</key>
-	<string>local.sonquach.vietmac.driver</string>
+	<string>io.github.sonqh.godau.driver</string>
 	<key>CFBundleName</key>
 	<string>VietMacDriver</string>
 	<key>CFBundleExecutable</key>
